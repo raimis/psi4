@@ -1,0 +1,42 @@
+clone_depth: 1
+
+image:
+  - Visual Studio 2015
+#  - Visual Studio 2017
+
+cache:
+  - C:\Miniconda36-x64\pkgs
+
+install:
+  - C:\Miniconda36-x64\Scripts\conda create --name build --yes numpy mpmath mkl-devel networkx pytest
+  - C:\Miniconda36-x64\Scripts\activate build
+  - C:\Miniconda36-x64\Scripts\conda install --channel conda-forge --yes pthreads-win32 deepdiff
+  - C:\Miniconda36-x64\Scripts\conda list
+  - set MATH_ROOT=C:\Miniconda36-x64\envs\build\Library
+
+before_build:
+  - mkdir build & cd build
+  - cmake -A x64
+          -DMAX_AM_ERI=3
+          -DENABLE_OPENMP=OFF
+          -DCMAKE_C_FLAGS="/wd4018 /wd4101 /wd4996"
+          -DCMAKE_CXX_FLAGS="/D_USE_MATH_DEFINES /EHs /bigobj /wd4251 /wd4267"
+          -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+          -DCMAKE_INSTALL_PREFIX=C:\projects\psi4\install
+          ..
+
+build_script:
+  - cmake --build .
+
+test_script:
+  - cd C:\projects\psi4\install\lib
+  - dir
+  - python.exe -c "import sys; print(sys.path)"
+  - python.exe -c "import psi4; print(psi4); print(dir(psi4))"
+  - set PYTHONPATH=C:\projects\psi4\install\lib
+  - python.exe psi4\tests\test_psi4.py
+#  - python.exe -c "import psi4; psi4.test()"
+#  - ctest --build-config Debug --verbose
+
+artifacts:
+  - path: install
