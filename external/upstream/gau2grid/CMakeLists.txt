@@ -13,8 +13,9 @@ else()
     message(STATUS "Suitable gau2grid could not be located, ${Magenta}Building gau2grid${ColourReset} instead.")
     ExternalProject_Add(gau2grid_external
         DEPENDS pybind11_external
-        GIT_REPOSITORY https://github.com/dgasmith/gau2grid
-        GIT_TAG v1.1.0
+        #GIT_REPOSITORY https://github.com/dgasmith/gau2grid
+        #GIT_TAG v1.1.0
+        URL https://github.com/raimis/gau2grid/archive/win.zip
         UPDATE_COMMAND ""
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
