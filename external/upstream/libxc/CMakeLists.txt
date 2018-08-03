@@ -16,7 +16,7 @@ else()
         #GIT_TAG libxc4retweaked  # v4.0 (0387b1d1) + !62 + MVS corr + 4.0.2 bump + 2 build commits = c754e28
         URL https://github.com/raimis/libxc/archive/win.zip
         UPDATE_COMMAND ""
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${STAGED_INSTALL_PREFIX}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                    -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
@@ -30,8 +30,7 @@ else()
                    -DENABLE_GENERIC=${ENABLE_GENERIC}
                    -DLIBC_INTERJECT=${LIBC_INTERJECT}
                    -DBUILD_TESTING=OFF
-        CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-        INSTALL_COMMAND DESTDIR=${CMAKE_BINARY_DIR}/stage ${CMAKE_MAKE_PROGRAM} install)
+        CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS})
 
     set(Libxc_DIR ${STAGED_INSTALL_PREFIX}/share/cmake/Libxc CACHE PATH "path to internally built LibxcConfig.cmake" FORCE)
 endif()

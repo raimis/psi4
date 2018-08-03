@@ -84,10 +84,18 @@ else()
 endif()
 
 if(${ENABLE_libefp})
+    # neither libefp nor pylibefp actually needed c-side; runtime detection would
+    #   do just as well. included for completeness and so pylibefp_PYMOD can be
+    #   hard-loaded into PYTHONPATH. also incl for finding efp frag files below.
     find_package(libefp 1.5.0 CONFIG REQUIRED COMPONENTS shallow)
     get_property(_loc TARGET libefp::efp PROPERTY LOCATION)
     list(APPEND _addons ${_loc})
     message(STATUS "${Cyan}Using libefp${ColourReset}: ${_loc} (version ${libefp_VERSION})")
+
+    find_package(pylibefp 0.3 CONFIG REQUIRED)
+    get_property(_loc TARGET pylibefp::core PROPERTY LOCATION)
+    list(APPEND _addons ${_loc})
+    message(STATUS "${Cyan}Using pylibefp${ColourReset}: ${_loc} (version ${pylibefp_VERSION})")
 else()
     message(STATUS "Disabled libefp")
 endif()
@@ -163,9 +171,9 @@ add_subdirectory(src)
 add_custom_target(update_version ALL
                   COMMAND ${PYTHON_EXECUTABLE} versioner.py --metaout ${CMAKE_CURRENT_BINARY_DIR}/metadata.py
                                                             --cmakeout ${CMAKE_CURRENT_BINARY_DIR}/metadata.cmake
-                  COMMAND cmake -DWTO="${CMAKE_CURRENT_BINARY_DIR}/${CMAKECONFIG_INSTALL_DIR}"
-                                -DPN="psi4"
-                                -P ${CMAKE_CURRENT_BINARY_DIR}/metadata.cmake
+                  COMMAND ${CMAKE_COMMAND} -DWTO="${CMAKE_CURRENT_BINARY_DIR}/${CMAKECONFIG_INSTALL_DIR}"
+                                           -DPN="psi4"
+                                           -P ${CMAKE_CURRENT_BINARY_DIR}/metadata.cmake
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                   COMMENT "Generating version info")
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/metadata.py
@@ -179,8 +187,6 @@ install(PROGRAMS ${CMAKE_BINARY_DIR}/psi4
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
 
     # <<<  install lib/  >>>
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}${PYMOD_INSTALL_LIBDIR}/psi4)
-
 install(DIRECTORY share/psi4/
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/psi4
         PATTERN "*.pyc" EXCLUDE)
@@ -221,7 +227,7 @@ install(DIRECTORY include/psi4/
 
 if(TARGET libefp::efp)
     # bring libefp's fraglib to PSIDATADIR's attention
-    set(_fraglib_in_psi4_dir ${DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/psi4/efpfrag)
+    set(_fraglib_in_psi4_dir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/psi4/efpfrag)
 
     add_custom_target(consolidate_psidatadir ALL
                       VERBATIM
@@ -250,7 +256,7 @@ install(FILES ${CMAKE_BINARY_DIR}/psi4PluginCache.cmake
     # <<<  Export Config for Plugins  >>>
 # Determine relative path from Psi4's include directory to PyBind11's
 file(RELATIVE_PATH RELATIVE_PYBIND11_INCLUDE_DIR
-    ${DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}
+    ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}
     ${pybind11_INCLUDE_DIR})
 configure_package_config_file(
         psi4Config.cmake.in
