@@ -233,3 +233,6 @@ def test_psi4_scfproperty():
     assert psi4.compare_values(psi4.get_variable('B3LYP QUADRUPOLE XY'), 0.000000000000, 4, "B3LYP QUADRUPOLE XY")
     assert psi4.compare_values(psi4.get_variable('B3LYP QUADRUPOLE XZ'), 0.000000000000, 4, "B3LYP QUADRUPOLE XZ")
     assert psi4.compare_values(psi4.get_variable('B3LYP QUADRUPOLE YZ'), -0.000000000000, 4, "B3LYP QUADRUPOLE YZ")
+
+if __name__ == '__main__':
+    test_psi4_basic()
