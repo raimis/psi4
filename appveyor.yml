@@ -1,9 +1,12 @@
+platform:
+  - x64
+
 image:
   - Visual Studio 2015
 #  - Visual Studio 2017
 
-cache:
-  - C:\Miniconda36-x64\pkgs
+configuration:
+  - Debug
 
 install:
   - C:\Miniconda36-x64\Scripts\conda create --name build --yes numpy mpmath mkl-devel networkx pytest
@@ -13,32 +16,43 @@ install:
   - set MATH_ROOT=C:\Miniconda36-x64\envs\build\Library
 
 before_build:
+  - set INSTALL_PREFX=C:\projects\psi4\install
   - mkdir build & cd build
-  - cmake -A x64
+  - cmake -A %PLATFORM%
           -DMAX_AM_ERI=3
           -DENABLE_XHOST=OFF
           -DENABLE_OPENMP=OFF
+          -DCMAKE_BUILD_TYPE=%CONFIGURATION%
           -DCMAKE_C_FLAGS="/wd4018 /wd4101 /wd4996"
           -DCMAKE_CXX_FLAGS="/D_USE_MATH_DEFINES /EHs /bigobj /wd4251 /wd4267"
           -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
-          -DCMAKE_INSTALL_PREFIX=C:\projects\psi4\install
+          -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFX%
           ..
 
 build_script:
   - cmake --build .
+          --config %CONFIGURATION%
+          
 
 after_build:
-  - cmake --build . --target install
+  - cmake --build .
+          --config %CONFIGURATION%
+          --target install
+
+before_test:
+  - cd C:\
+  - set PYTHONPATH=%INSTALL_PREFX%\lib
+  - python.exe -c "import psi4; print(psi4)"
 
 test_script:
-  - cd C:\projects\psi4\install\lib
-  - dir
-  - python.exe -c "import sys; print(sys.path)"
-  - python.exe -c "import psi4; print(psi4); print(dir(psi4))"
-  - set PYTHONPATH=C:\projects\psi4\install\lib
-  - python.exe psi4\tests\test_psi4.py
+  - python.exe %INSTALL_PREFX%\lib\psi4\tests\test_psi4.py
 #  - python.exe -c "import psi4; psi4.test()"
-#  - ctest --build-config Debug --verbose
+#  - ctest --build-config %CONFIGURATION%
+#          --verbose
+
+cache:
+  - C:\Miniconda36-x64\pkgs
 
 artifacts:
   - path: install
+    name: psi4
