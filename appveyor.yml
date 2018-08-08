@@ -9,50 +9,68 @@ configuration:
   - Debug
 
 install:
+  # TODO general conda
+  # TODO update conda
   - C:\Miniconda36-x64\Scripts\conda create --name build --yes numpy mpmath mkl-devel networkx pytest
   - C:\Miniconda36-x64\Scripts\activate build
   - C:\Miniconda36-x64\Scripts\conda install --channel conda-forge --yes pthreads-win32 deepdiff
   - C:\Miniconda36-x64\Scripts\conda list
-  - set MATH_ROOT=C:\Miniconda36-x64\envs\build\Library
+  - set MATH_ROOT=C:\Miniconda36-x64\envs\build\Library # TODO check
 
 before_build:
-  - set INSTALL_PREFX=C:\projects\psi4\install
-  - mkdir build & cd build
+  - set SOURCE_FOLDER=%APPVEYOR_BUILD_FOLDER%
+  - set BUILD_FOLDER=%SOURCE_FOLDER%\build
+  - set INSTALL_FOLDER=%SOURCE_FOLDER%\install
+  - mkdir %BUILD_FOLDER% & cd %BUILD_FOLDER%
+  # TODO OpenMP
+  # TODO CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+  # TODO /D_USE_MATH_DEFINES
+  # TODO /EHs
+  # TODO /bigobj
   - cmake -A %PLATFORM%
-          -DMAX_AM_ERI=3
-          -DENABLE_XHOST=OFF
-          -DENABLE_OPENMP=OFF
           -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+          -DCMAKE_INSTALL_PREFIX=%INSTALL_FOLDER%
           -DCMAKE_C_FLAGS="/wd4018 /wd4101 /wd4996"
           -DCMAKE_CXX_FLAGS="/D_USE_MATH_DEFINES /EHs /bigobj /wd4251 /wd4267"
           -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
-          -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFX%
-          ..
+          -DENABLE_OPENMP=OFF
+          -DENABLE_XHOST=OFF
+          -DMAX_AM_ERI=5
+          %SOURCE_FOLDER%
 
 build_script:
+  # TODO Paralle build
+  - echo %NUMBER_OF_PROCESSORS%
   - cmake --build .
           --config %CONFIGURATION%
-          
 
 after_build:
+  # TODO Paralle build
   - cmake --build .
           --config %CONFIGURATION%
           --target install
 
 before_test:
-  - cd C:\
-  - set PYTHONPATH=%INSTALL_PREFX%\lib
-  - python.exe -c "import psi4; print(psi4)"
+  - set PYTHONPATH=%INSTALL_FOLDER%\lib
+  - python -c "import psi4; print(psi4)"
+  # TODO psi4.bat
+  # TODO set PATH
+  - python %INSTALL_FOLDER%\bin\psi4 --version
 
 test_script:
-  - python.exe %INSTALL_PREFX%\lib\psi4\tests\test_psi4.py
-#  - python.exe -c "import psi4; psi4.test()"
-#  - ctest --build-config %CONFIGURATION%
-#          --verbose
+  - python %INSTALL_FOLDER%\lib\psi4\tests\test_psi4.py # TODO remove
+  - python %INSTALL_FOLDER%\bin\psi4 %SOURCE_FOLDER%\tests\tu1-h2o-energy\input.dat
+
+on_success:
+  - ctest --build-config %CONFIGURATION%
+          --label-regex quick
+          --output-on-failure
+          --parallel %NUMBER_OF_PROCESSORS%
+  - python %INSTALL_FOLDER%\bin\psi4 --test
 
 cache:
   - C:\Miniconda36-x64\pkgs
 
 artifacts:
-  - path: install
-    name: psi4
+  - path: %INSTALL_FOLDER%
+    name: %APPVEYOR_PROJECT_NAME%
