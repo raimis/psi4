@@ -15,6 +15,7 @@ install:
   - C:\Miniconda36-x64\Scripts\activate build
   - C:\Miniconda36-x64\Scripts\conda install --channel conda-forge --yes pthreads-win32 deepdiff
   - C:\Miniconda36-x64\Scripts\conda list
+  - C:\Miniconda36-x64\Scripts\conda clean --all --yes
   - set MATH_ROOT=C:\Miniconda36-x64\envs\build\Library # TODO check
 
 before_build:
@@ -40,15 +41,16 @@ before_build:
 
 build_script:
   # TODO Paralle build
-  - echo %NUMBER_OF_PROCESSORS%
   - cmake --build .
           --config %CONFIGURATION%
+          -- /maxcpucount:%NUMBER_OF_PROCESSORS%
 
 after_build:
   # TODO Paralle build
   - cmake --build .
           --config %CONFIGURATION%
           --target install
+          -- /maxcpucount:%NUMBER_OF_PROCESSORS%
 
 before_test:
   - set PYTHONPATH=%INSTALL_FOLDER%\lib
@@ -61,16 +63,16 @@ test_script:
   - python %INSTALL_FOLDER%\lib\psi4\tests\test_psi4.py # TODO remove
   - python %INSTALL_FOLDER%\bin\psi4 %SOURCE_FOLDER%\tests\tu1-h2o-energy\input.dat
 
-on_success:
-  - ctest --build-config %CONFIGURATION%
-          --label-regex quick
-          --output-on-failure
-          --parallel %NUMBER_OF_PROCESSORS%
-  - python %INSTALL_FOLDER%\bin\psi4 --test
+#on_success:
+#  - ctest --build-config %CONFIGURATION%
+#          --label-regex quick
+#          --output-on-failure
+#          --parallel %NUMBER_OF_PROCESSORS%
+#  - python %INSTALL_FOLDER%\bin\psi4 --test
 
 cache:
   - C:\Miniconda36-x64\pkgs
 
 artifacts:
-  - path: %INSTALL_FOLDER%
-    name: %APPVEYOR_PROJECT_NAME%
+  - path: install
+    name: \%APPVEYOR_PROJECT_NAME%
