@@ -9,14 +9,21 @@ configuration:
   - Debug
 
 install:
-  # TODO general conda
-  # TODO update conda
-  - C:\Miniconda36-x64\Scripts\conda create --name build --yes numpy mpmath mkl-devel networkx pytest
-  - C:\Miniconda36-x64\Scripts\activate build
-  - C:\Miniconda36-x64\Scripts\conda install --channel conda-forge --yes pthreads-win32 deepdiff
-  - C:\Miniconda36-x64\Scripts\conda list
-  - C:\Miniconda36-x64\Scripts\conda clean --all --yes
-  - set MATH_ROOT=C:\Miniconda36-x64\envs\build\Library # TODO check
+  - set CONDA_ENV=build
+  - C:\Miniconda3-x64\Scripts\activate base
+  - conda config --set always_yes yes
+  - conda create --channel conda-forge
+                 --name %CONDA_ENV%
+                 deepdiff
+                 mkl-devel
+                 mpmath
+                 networkx
+                 numpy
+                 pthreads-win32
+                 pytest
+  - conda clean --all
+  - activate %CONDA_ENV%
+  - conda list
 
 before_build:
   - set SOURCE_FOLDER=%APPVEYOR_BUILD_FOLDER%
@@ -24,7 +31,7 @@ before_build:
   - set INSTALL_FOLDER=%SOURCE_FOLDER%\install
   - mkdir %BUILD_FOLDER% & cd %BUILD_FOLDER%
   # TODO OpenMP
-  # TODO CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+  # TODO -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
   # TODO /D_USE_MATH_DEFINES
   # TODO /EHs
   # TODO /bigobj
@@ -40,13 +47,11 @@ before_build:
           %SOURCE_FOLDER%
 
 build_script:
-  # TODO Paralle build
   - cmake --build .
           --config %CONFIGURATION%
           -- /maxcpucount:%NUMBER_OF_PROCESSORS%
 
 after_build:
-  # TODO Paralle build
   - cmake --build .
           --config %CONFIGURATION%
           --target install
@@ -71,8 +76,8 @@ test_script:
 #  - python %INSTALL_FOLDER%\bin\psi4 --test
 
 cache:
-  - C:\Miniconda36-x64\pkgs
+  - C:\Miniconda3-x64\pkgs
 
 artifacts:
   - path: install
-    name: \%APPVEYOR_PROJECT_NAME%
+    name: psi4
