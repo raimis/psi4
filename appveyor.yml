@@ -70,12 +70,12 @@ test_script:
   - python %INSTALL_FOLDER%\lib\psi4\tests\test_psi4.py # TODO remove
   - python %INSTALL_FOLDER%\bin\psi4 %SOURCE_FOLDER%\tests\tu1-h2o-energy\input.dat
 
-#on_success:
-#  - ctest --build-config %CONFIGURATION%
-#          --label-regex quick
-#          --output-on-failure
-#          --parallel %NUMBER_OF_PROCESSORS%
-#  - python %INSTALL_FOLDER%\bin\psi4 --test
+on_success:
+  - ctest --build-config %CONFIGURATION%
+          --label-regex quick
+          --output-on-failure
+          --parallel %NUMBER_OF_PROCESSORS%
+  - python %INSTALL_FOLDER%\bin\psi4 --test
 
 cache:
   - C:\Miniconda3-x64\pkgs
