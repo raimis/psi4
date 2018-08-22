@@ -21,6 +21,7 @@ install:
                  ninja
                  numpy
                  pthreads-win32
+                 pybind11
                  pytest
   - conda clean --all
   - activate %CONDA_ENV%
