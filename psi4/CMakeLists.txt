@@ -46,6 +46,7 @@ endif()
 
 #  <<  Pybind11 & Python  >>
 if(MSVC)
+    # As for MSVC 14.0, it is not possible to set anything bellow C++14, so just use defaults
     set(PYBIND11_CPP_STANDARD "")
 else()
     set(PYBIND11_CPP_STANDARD "-std=c++${CMAKE_CXX_STANDARD}")

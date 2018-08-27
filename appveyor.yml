@@ -3,7 +3,6 @@ platform:
 
 image:
   - Visual Studio 2015
-#  - Visual Studio 2017
 
 configuration:
   - Debug
@@ -26,6 +25,7 @@ install:
   - conda clean --all
   - activate %CONDA_ENV%
   - conda list
+
 before_build:
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
@@ -33,8 +33,7 @@ before_build:
   - set BUILD_FOLDER=%SOURCE_FOLDER%\build
   - set INSTALL_FOLDER=%SOURCE_FOLDER%\install
   - mkdir %BUILD_FOLDER% & cd %BUILD_FOLDER%
-  # TODO OpenMP
-  # TODO /EHs
+  # TODO fix OpenMP
   - cmake -G Ninja
           -DCMAKE_BUILD_TYPE=%CONFIGURATION%
           -DCMAKE_INSTALL_PREFIX=%INSTALL_FOLDER%
@@ -64,18 +63,25 @@ before_test:
 
 test_script:
   - python %INSTALL_FOLDER%\bin\psi4 %SOURCE_FOLDER%\tests\tu1-h2o-energy\input.dat
-  # Too long tests: cbs-delta-energy cbs-xtpl-gradient dfmp2-ecp fnocc2 psimrcc-sp1 pywrap-all
-  # Failling tests: casscf-semi casscf-fzc-sp casscf-sa-sp casscf-sp rasscf-sp
-  #                 cc-module ci-multi ci-property
-  #                 cubeprop
-  #                 dfcasscf-fzc-sp dfcasscf-sa-sp dfcasscf-sp dfrasscf-sp
-  #                 dfep2-1 dfep2-2
-  #                 fsapt2 fsapt-terms sapt-dft1 sapt1 sapt8 tu5-sapt
-  #                 json-v11-energy
-  #                 molden1 molden2
-  #                 mp2-module mpn-bh psi4numpy-dfmp2
-  #                 pywrap-alias pywrap-cbs1 pywrap-db1
-  #                 python-3-index-transforms
+  #
+  # Skipped long tests (not enough time to run all of them):
+  #     cbs-delta-energy cbs-xtpl-gradien
+  #     dfmp2-ecp fnocc2
+  #     psimrcc-sp1 pywrap-all
+  #
+  # Failling tests:
+  #     casscf-fzc-sp casscf-sa-sp casscf-semi casscf-sp rasscf-sp
+  #     cc-module ci-multi ci-property
+  #     cubeprop
+  #     dfcasscf-fzc-sp dfcasscf-sa-sp dfcasscf-sp dfrasscf-sp
+  #     dfep2-1 dfep2-2
+  #     fsapt2 fsapt-terms sapt-dft1 sapt1 sapt8 tu5-sapt
+  #     json-v11-energy
+  #     molden1 molden2
+  #     mp2-module mpn-bh psi4numpy-dfmp2
+  #     python-3-index-transforms
+  #     pywrap-alias pywrap-cbs1 pywrap-db1
+  #
   - ctest --build-config %CONFIGURATION%
           --exclude-regex "^(cbs-delta-energy|cbs-xtpl-gradient|dfmp2-ecp|fnocc2|psimrcc-sp1|pywrap-all|casscf-semi|casscf-fzc-sp|casscf-sa-sp|casscf-sp|ci-multi|ci-property|cubeprop|dfcasscf-fzc-sp|dfcasscf-sa-sp|dfcasscf-sp|dfrasscf-sp|fsapt2|fsapt-terms|molden1|molden2|mp2-module|mpn-bh|pywrap-alias|pywrap-cbs1|pywrap-db1|rasscf-sp|sapt-dft1|sapt1|sapt8|dfep2-1|dfep2-2|tu5-sapt|cc-module|psi4numpy-dfmp2|python-3-index-transforms|json-v11-energy)$"
           --label-regex quick
@@ -84,8 +90,9 @@ test_script:
 
 after_test:
   # Run failling tests, but their results are ignored
+  # TODO fix the tests
   - ctest --build-config %CONFIGURATION%
-          --tests-regex "^(casscf-semi|casscf-fzc-sp|casscf-sa-sp|casscf-sp|ci-multi|ci-property|cubeprop|fcasscf-fzc-sp|dfcasscf-sa-sp|dfcasscf-sp|dfrasscf-sp|fsapt2|fsapt-terms|molden1|molden2|mp2-module|mpn-bh|pywrap-alias|pywrap-cbs1|pywrap-db1|rasscf-sp|sapt-dft1|sapt1|sapt8|dfep2-1|dfep2-2|tu5-sapt|cc-module|psi4numpy-dfmp2|python-3-index-transforms|json-v11-energy)$"
+          --tests-regex "^(casscf-fzc-sp|casscf-sa-sp|casscf-semi|casscf-sp|ci-multi|ci-property|cubeprop|fcasscf-fzc-sp|dfcasscf-sa-sp|dfcasscf-sp|dfrasscf-sp|fsapt2|fsapt-terms|molden1|molden2|mp2-module|mpn-bh|pywrap-alias|pywrap-cbs1|pywrap-db1|rasscf-sp|sapt-dft1|sapt1|sapt8|dfep2-1|dfep2-2|tu5-sapt|cc-module|psi4numpy-dfmp2|python-3-index-transforms|json-v11-energy)$"
           --output-on-failure
           --parallel %NUMBER_OF_PROCESSORS% & exit 0
   - python %INSTALL_FOLDER%\bin\psi4 --test & exit 0
