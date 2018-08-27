@@ -34,14 +34,12 @@ before_build:
   - set INSTALL_FOLDER=%SOURCE_FOLDER%\install
   - mkdir %BUILD_FOLDER% & cd %BUILD_FOLDER%
   # TODO OpenMP
-  # TODO /D_USE_MATH_DEFINES
   # TODO /EHs
-  # TODO /bigobj
   - cmake -G Ninja
           -DCMAKE_BUILD_TYPE=%CONFIGURATION%
           -DCMAKE_INSTALL_PREFIX=%INSTALL_FOLDER%
           -DCMAKE_C_FLAGS="/wd4018 /wd4101 /wd4996"
-          -DCMAKE_CXX_FLAGS="/D_USE_MATH_DEFINES /EHs /bigobj /wd4251 /wd4267"
+          -DCMAKE_CXX_FLAGS="/wd4251 /wd4267"
           -DENABLE_OPENMP=OFF
           -DENABLE_XHOST=OFF
           -DMAX_AM_ERI=5
@@ -61,8 +59,7 @@ after_build:
 before_test:
   - set PYTHONPATH=%INSTALL_FOLDER%\lib
   - python -c "import psi4; print(psi4)"
-  # TODO psi4.bat
-  # TODO set PATH
+  # TODO create psi4.bat and set PATH
   - python %INSTALL_FOLDER%\bin\psi4 --version
 
 test_script:
