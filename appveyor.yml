@@ -34,7 +34,6 @@ before_build:
   - set INSTALL_FOLDER=%SOURCE_FOLDER%\install
   - mkdir %BUILD_FOLDER% & cd %BUILD_FOLDER%
   # TODO OpenMP
-  # TODO -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
   # TODO /D_USE_MATH_DEFINES
   # TODO /EHs
   # TODO /bigobj
@@ -43,7 +42,6 @@ before_build:
           -DCMAKE_INSTALL_PREFIX=%INSTALL_FOLDER%
           -DCMAKE_C_FLAGS="/wd4018 /wd4101 /wd4996"
           -DCMAKE_CXX_FLAGS="/D_USE_MATH_DEFINES /EHs /bigobj /wd4251 /wd4267"
-          -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
           -DENABLE_OPENMP=OFF
           -DENABLE_XHOST=OFF
           -DMAX_AM_ERI=5
