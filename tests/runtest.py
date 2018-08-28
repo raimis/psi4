@@ -107,7 +107,7 @@ def backtick(exelist):
 # run psi4 and collect testing status from any compare_* in input file
 if os.path.isfile(infile):
     if sys.platform.startswith('win'):
-        # HACK set the interpreter explicitly until a better solution found
+        # HACK set the interpreter explicitly until a better solution is found
         pyexitcode = backtick([sys.executable, psi, infile, outfile, '-l', psidatadir])
     else:
         pyexitcode = backtick([psi, infile, outfile, '-l', psidatadir])
