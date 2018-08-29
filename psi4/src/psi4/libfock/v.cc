@@ -248,7 +248,7 @@ double VBase::vv10_nlc(SharedMatrix D, SharedMatrix ret) {
     vv10_tmp_cache.resize(nlgrid.blocks().size());
 
 #pragma omp parallel for private(rank) schedule(guided) num_threads(num_threads_)
-    for (size_t Q = 0; Q < nlgrid.blocks().size(); Q++) {
+    for (int Q = 0; Q < nlgrid.blocks().size(); Q++) {
 // Get thread info
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -311,7 +311,7 @@ double VBase::vv10_nlc(SharedMatrix D, SharedMatrix ret) {
 
 // => Compute the kernel <=
 #pragma omp parallel for private(rank) schedule(guided) num_threads(num_threads_)
-    for (size_t Q = 0; Q < nlgrid.blocks().size(); Q++) {
+    for (int Q = 0; Q < nlgrid.blocks().size(); Q++) {
 // Get thread info
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -385,12 +385,12 @@ double VBase::vv10_nlc(SharedMatrix D, SharedMatrix ret) {
             int mg = function_map[ml];
             for (int nl = 0; nl < ml; nl++) {
                 int ng = function_map[nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vp[mg][ng] += V2p[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vp[ng][mg] += V2p[ml][nl];
             }
-#pragma omp atomic update
+#pragma omp atomic
             Vp[mg][mg] += V2p[ml][ml];
         }
         parallel_timer_off("VV10 Fock", rank);
@@ -460,7 +460,7 @@ void RV::compute_V(std::vector<SharedMatrix> ret) {
 
 // Traverse the blocks of points
 #pragma omp parallel for private(rank) schedule(guided) num_threads(num_threads_)
-    for (size_t Q = 0; Q < grid_->blocks().size(); Q++) {
+    for (int Q = 0; Q < grid_->blocks().size(); Q++) {
 // Get thread info
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -585,12 +585,12 @@ void RV::compute_V(std::vector<SharedMatrix> ret) {
             int mg = function_map[ml];
             for (int nl = 0; nl < ml; nl++) {
                 int ng = function_map[nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vp[mg][ng] += V2p[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vp[ng][mg] += V2p[ml][nl];
             }
-#pragma omp atomic update
+#pragma omp atomic
             Vp[mg][mg] += V2p[ml][ml];
         }
         parallel_timer_off("V_xc", rank);
@@ -707,7 +707,7 @@ void RV::compute_Vx(std::vector<SharedMatrix> Dx, std::vector<SharedMatrix> ret)
 
 // Traverse the blocks of points
 #pragma omp parallel for private(rank) schedule(guided) num_threads(num_threads_)
-    for (size_t Q = 0; Q < grid_->blocks().size(); Q++) {
+    for (int Q = 0; Q < grid_->blocks().size(); Q++) {
 // Get thread info
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -869,12 +869,12 @@ void RV::compute_Vx(std::vector<SharedMatrix> Dx, std::vector<SharedMatrix> ret)
                 int mg = function_map[ml];
                 for (int nl = 0; nl < ml; nl++) {
                     int ng = function_map[nl];
-#pragma omp atomic update
+#pragma omp atomic
                     Vxp[mg][ng] += Vx_localp[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                     Vxp[ng][mg] += Vx_localp[ml][nl];
                 }
-#pragma omp atomic update
+#pragma omp atomic
                 Vxp[mg][mg] += Vx_localp[ml][ml];
             }
             parallel_timer_off("V_XCd", rank);
@@ -942,7 +942,7 @@ SharedMatrix RV::compute_gradient() {
 
 // Traverse the blocks of points
 #pragma omp parallel for private(rank) schedule(dynamic) num_threads(num_threads_)
-    for (size_t Q = 0; Q < grid_->blocks().size(); Q++) {
+    for (int Q = 0; Q < grid_->blocks().size(); Q++) {
 // Get thread info
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -1654,18 +1654,18 @@ void UV::compute_V(std::vector<SharedMatrix> ret) {
             int mg = function_map[ml];
             for (int nl = 0; nl < ml; nl++) {
                 int ng = function_map[nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vap[mg][ng] += Va2p[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vap[ng][mg] += Va2p[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vbp[mg][ng] += Vb2p[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                 Vbp[ng][mg] += Vb2p[ml][nl];
             }
-#pragma omp atomic update
+#pragma omp atomic
             Vap[mg][mg] += Va2p[ml][ml];
-#pragma omp atomic update
+#pragma omp atomic
             Vbp[mg][mg] += Vb2p[ml][ml];
         }
         parallel_timer_off("V_xc", rank);
@@ -1809,7 +1809,7 @@ void UV::compute_Vx(std::vector<SharedMatrix> Dx, std::vector<SharedMatrix> ret)
 
 // Traverse the blocks of points
 #pragma omp parallel for private(rank) schedule(guided) num_threads(num_threads_)
-    for (size_t Q = 0; Q < grid_->blocks().size(); Q++) {
+    for (int Q = 0; Q < grid_->blocks().size(); Q++) {
 // Get thread info
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -2153,19 +2153,19 @@ void UV::compute_Vx(std::vector<SharedMatrix> Dx, std::vector<SharedMatrix> ret)
                 for (int nl = 0; nl < ml; nl++) {
                     int ng = function_map[nl];
 
-#pragma omp atomic update
+#pragma omp atomic
                     Vaxp[mg][ng] += Vax_localp[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                     Vaxp[ng][mg] += Vax_localp[ml][nl];
 
-#pragma omp atomic update
+#pragma omp atomic
                     Vbxp[mg][ng] += Vbx_localp[ml][nl];
-#pragma omp atomic update
+#pragma omp atomic
                     Vbxp[ng][mg] += Vbx_localp[ml][nl];
                 }
-#pragma omp atomic update
+#pragma omp atomic
                 Vaxp[mg][mg] += Vax_localp[ml][ml];
-#pragma omp atomic update
+#pragma omp atomic
                 Vbxp[mg][mg] += Vbx_localp[ml][ml];
             }
         }

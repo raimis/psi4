@@ -430,7 +430,7 @@ void MintsHelper::one_body_ao_computer(std::vector<std::shared_ptr<OneBodyAOInt>
 
 // Loop it
 #pragma omp parallel for schedule(guided) num_threads(nthread)
-    for (size_t MU = 0; MU < bs1->nshell(); ++MU) {
+    for (int MU = 0; MU < bs1->nshell(); ++MU) {
         const size_t num_mu = bs1->shell(MU).nfunction();
         const size_t index_mu = bs1->shell(MU).function_index();
 
@@ -503,7 +503,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
     double **Dp = D->pointer();
 
     #pragma omp parallel for schedule(guided) num_threads(nthread)
-    for (size_t P = 0; P < basisset_->nshell(); P++) {
+    for (int P = 0; P < basisset_->nshell(); P++) {
         size_t rank = 0;
 #ifdef _OPENMP
         rank = omp_get_thread_num();
@@ -531,7 +531,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
                     Px += perm * Dp[p + oP][q + oQ] * (*ref++);
                 }
             }
-            # pragma omp atomic update
+            # pragma omp atomic
             outp[aP][0] += Px;
 
             // Py
@@ -541,7 +541,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
                     Py += perm * Dp[p + oP][q + oQ] * (*ref++);
                 }
             }
-            # pragma omp atomic update
+            # pragma omp atomic
             outp[aP][1] += Py;
 
             // Pz
@@ -551,7 +551,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
                     Pz += perm * Dp[p + oP][q + oQ] * (*ref++);
                 }
             }
-            # pragma omp atomic update
+            # pragma omp atomic
             outp[aP][2] += Pz;
 
             // Qx
@@ -561,7 +561,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
                     Qx += perm * Dp[p + oP][q + oQ] * (*ref++);
                 }
             }
-            # pragma omp atomic update
+            # pragma omp atomic
             outp[aQ][0] += Qx;
 
             // Qy
@@ -571,7 +571,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
                     Qy += perm * Dp[p + oP][q + oQ] * (*ref++);
                 }
             }
-            # pragma omp atomic update
+            # pragma omp atomic
             outp[aQ][1] += Qy;
 
             // Qz
@@ -581,7 +581,7 @@ void MintsHelper::grad_two_center_computer(std::vector<std::shared_ptr<OneBodyAO
                     Qz += perm * Dp[p + oP][q + oQ] * (*ref++);
                 }
             }
-            # pragma omp atomic update
+            # pragma omp atomic
             outp[aQ][2] += Qz;
         }
     }
@@ -1723,7 +1723,7 @@ SharedMatrix MintsHelper::potential_grad(SharedMatrix D) {
     double **Dp = D->pointer();
 
 #pragma omp parallel for schedule(dynamic) num_threads(nthread_)
-    for (size_t PQ = 0L; PQ < PQ_pairs.size(); PQ++) {
+    for (int PQ = 0L; PQ < PQ_pairs.size(); PQ++) {
         size_t P = PQ_pairs[PQ].first;
         size_t Q = PQ_pairs[PQ].second;
 
