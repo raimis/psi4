@@ -2972,11 +2972,14 @@ void DFHelper::compute_J_symm(std::vector<SharedMatrix> D, std::vector<SharedMat
     }
 }
 void DFHelper::fill(double* b, size_t count, double value) {
-    #pragma omp parallel for num_threads(nthreads_) schedule(static)
     #if _OPENMP >= 201307 // OpenMP 4.0 or newer
-    #pragma omp simd
+    #pragma omp parallel for simd num_threads(nthreads_) schedule(static)
+    #else
+    #pragma omp parallel for num_threads(nthreads_) schedule(static)
     #endif
-    for (int i = 0; i < count; i++) b[i] = value;
+    for (int i = 0; i < count; i++){
+        b[i] = value;
+    }
 }
 void DFHelper::compute_J(std::vector<SharedMatrix> D, std::vector<SharedMatrix> J, double* Mp, double* T1p,
                           double* T2p, std::vector<std::vector<double>>& D_buffers, size_t bcount, size_t block_size) {
