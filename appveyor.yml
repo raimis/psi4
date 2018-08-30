@@ -39,7 +39,6 @@ before_build:
           -DCMAKE_INSTALL_PREFIX=%INSTALL_FOLDER%
           -DCMAKE_C_FLAGS="/wd4018 /wd4101 /wd4996"
           -DCMAKE_CXX_FLAGS="/wd4251 /wd4267"
-          -DENABLE_OPENMP=OFF
           -DENABLE_XHOST=OFF
           -DMAX_AM_ERI=5
           %SOURCE_FOLDER%
