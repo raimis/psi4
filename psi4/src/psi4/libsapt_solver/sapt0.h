@@ -195,9 +195,9 @@ struct SAPTDFInts {
   psio_address next_DF_;
 
   SAPTDFInts() { next_DF_ = PSIO_ZERO; B_p_ = nullptr; B_d_ = nullptr; };
-  ~SAPTDFInts() {
-    if (B_p_ != nullptr) free_block(B_p_);
-    if (B_d_ != nullptr) free_block(B_d_); };
+  //~SAPTDFInts() {
+  //  if (B_p_ != nullptr) free_block(B_p_);
+  //  if (B_d_ != nullptr) free_block(B_d_); };
   void rewind() { next_DF_ = PSIO_ZERO; };
   void clear() { free_block(B_p_); B_p_ = nullptr; next_DF_ = PSIO_ZERO; };
   void done() {
@@ -213,7 +213,7 @@ struct Iterator {
   size_t curr_block;
   long int curr_size;
 
-  ~Iterator() { free(block_size); };
+  //~Iterator() { free(block_size); };
   void rewind() { curr_block = 1; curr_size = 0; };
 };
 
