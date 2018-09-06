@@ -1206,7 +1206,7 @@ void Matrix::apply_denominator(const Matrix *const plus) {
 #else
 #pragma omp parallel for
 #endif
-            for (int ij = 0; ij < size; ++ij) {
+            for (long ij = 0; ij < size; ++ij) {
                 lhs[ij] /= rhs[ij];
             }
         }
