@@ -289,7 +289,7 @@ void DFHelper::prepare_sparsity() {
     }
 
     double max_val = 0.0;
-#pragma omp parallel for num_threads(nthreads) if (nao_ > 1000) schedule(guided) reduction(max:max_val)
+#pragma omp parallel for num_threads(nthreads) if (nao_ > 1000) schedule(guided)
     for (long MU = 0; MU < pshells_; ++MU) {
         int rank = 0;
 #ifdef _OPENMP
@@ -306,6 +306,7 @@ void DFHelper::prepare_sparsity() {
                     if (omu >= onu) {
                         size_t index = mu * (numnu * nummu * numnu + numnu) + nu * (nummu * numnu + 1);
                         double val = fabs(buffer[rank][index]);
+                        #pragma omp critical
                         max_val = std::max(val, max_val);
                         if (shell_max_vals[MU * pshells_ + NU] <= val) {
                             shell_max_vals[MU * pshells_ + NU] = val;
