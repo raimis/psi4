@@ -98,8 +98,6 @@ def run_json(json_data, clean=True):
     if return_output:
         with open(outfile, 'r') as f:
             json_data["raw_output"] = f.read()
-        core.close_outfile() # On Windows the file has to be closed before deleting
-        os.unlink(outfile)
 
     return json_data
 
