@@ -289,37 +289,44 @@ void DFHelper::prepare_sparsity() {
     }
 
     double max_val = 0.0;
-#pragma omp parallel for num_threads(nthreads) if (nao_ > 1000) schedule(guided)
-    for (long MU = 0; MU < pshells_; ++MU) {
+    #pragma omp parallel num_threads(nthreads) if (nao_ > 1000)
+    {
         int rank = 0;
-#ifdef _OPENMP
+        #ifdef _OPENMP
         rank = omp_get_thread_num();
-#endif
-        size_t nummu = primary_->shell(MU).nfunction();
-        for (size_t NU = 0; NU <= MU; ++NU) {
-            size_t numnu = primary_->shell(NU).nfunction();
-            eri[rank]->compute_shell(MU, NU, MU, NU);
-            for (size_t mu = 0; mu < nummu; ++mu) {
-                size_t omu = primary_->shell(MU).function_index() + mu;
-                for (size_t nu = 0; nu < numnu; ++nu) {
-                    size_t onu = primary_->shell(NU).function_index() + nu;
-                    if (omu >= onu) {
-                        size_t index = mu * (numnu * nummu * numnu + numnu) + nu * (nummu * numnu + 1);
-                        double val = fabs(buffer[rank][index]);
-                        #pragma omp critical
-                        max_val = std::max(val, max_val);
-                        if (shell_max_vals[MU * pshells_ + NU] <= val) {
-                            shell_max_vals[MU * pshells_ + NU] = val;
-                            shell_max_vals[NU * pshells_ + MU] = val;
-                        }
-                        if (fun_max_vals[omu * nao_ + onu] <= val) {
-                            fun_max_vals[omu * nao_ + onu] = val;
-                            fun_max_vals[onu * nao_ + omu] = val;
+        #endif
+
+        double max_thread_val = 0.0;
+        #pragma omp for schedule(guided)
+        for (long MU = 0; MU < pshells_; ++MU) {
+            size_t nummu = primary_->shell(MU).nfunction();
+            for (size_t NU = 0; NU <= MU; ++NU) {
+                size_t numnu = primary_->shell(NU).nfunction();
+                eri[rank]->compute_shell(MU, NU, MU, NU);
+                for (size_t mu = 0; mu < nummu; ++mu) {
+                    size_t omu = primary_->shell(MU).function_index() + mu;
+                    for (size_t nu = 0; nu < numnu; ++nu) {
+                        size_t onu = primary_->shell(NU).function_index() + nu;
+                        if (omu >= onu) {
+                            size_t index = mu * (numnu * nummu * numnu + numnu) + nu * (nummu * numnu + 1);
+                            double val = fabs(buffer[rank][index]);
+                            max_thread_val = std::max(max_thread_val, val);
+                            if (shell_max_vals[MU * pshells_ + NU] <= val) {
+                                shell_max_vals[MU * pshells_ + NU] = val;
+                                shell_max_vals[NU * pshells_ + MU] = val;
+                            }
+                            if (fun_max_vals[omu * nao_ + onu] <= val) {
+                                fun_max_vals[omu * nao_ + onu] = val;
+                                fun_max_vals[onu * nao_ + omu] = val;
+                            }
                         }
                     }
                 }
             }
         }
+
+        #pragma omp critical
+        max_val = std::max(max_val, max_thread_val);
     }
 
     // get screening tolerance
