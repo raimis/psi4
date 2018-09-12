@@ -32,12 +32,14 @@
 #include "psi4/libpsi4util/exception.h"
 
 #include <cstdio>
-#include <fstream>
 #include <cstdarg>
+#include <iostream>
+#include <fstream>
+
 
 namespace psi {
 
-PsiOutStream::PsiOutStream(std::string fname, std::ios_base::openmode mode) {
+PsiOutStream::PsiOutStream(std::string fname, std::ostream::openmode mode) {
     if (fname == "") {
         stream_ = &std::cout;
         is_cout_ = true;

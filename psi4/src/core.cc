@@ -26,6 +26,8 @@
  * @END LICENSE
  */
 
+#include <ios>
+
 #include <cstdio>
 #include <sstream>
 #include <map>
@@ -224,14 +226,16 @@ void py_reopen_outfile() {
     if (outfile_name == "stdout") {
         // outfile = stdout;
     } else {
-        outfile = std::make_shared<PsiOutStream>(outfile_name, std::ostream::app);
+        //outfile = std::make_shared<PsiOutStream>(outfile_name, std::ios_base::app);
+        outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream(outfile_name, std::ios_base::app));
         if (!outfile) throw PSIEXCEPTION("Psi4: Unable to reopen output file.");
     }
 }
 
 void py_be_quiet() {
     py_close_outfile();
-    outfile = std::make_shared<PsiOutStream>("/dev/null", std::ostream::app);
+    //outfile = std::make_shared<PsiOutStream>("/dev/null", std::ios_base::app);
+    outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream("/dev/null", std::ios_base::app));
     if (!outfile) throw PSIEXCEPTION("Psi4: Unable to redirect output to /dev/null.");
 }
 
@@ -1219,11 +1223,11 @@ PYBIND11_MODULE(core, core) {
     core.def("opt_clean", py_psi_opt_clean, "Cleans up the optimizer's scratch files.");
     core.def("get_options", py_psi_get_options, py::return_value_policy::reference, "Get options");
     core.def("set_output_file", [](const std::string ofname) {
-        outfile = std::make_shared<PsiOutStream>(ofname, std::ostream::trunc);
+        outfile = std::make_shared<PsiOutStream>(ofname, std::ios_base::trunc);
         outfile_name = ofname;
     });
     core.def("set_output_file", [](const std::string ofname, bool append) {
-        outfile = std::make_shared<PsiOutStream>(ofname, (append ? std::ostream::app : std::ostream::trunc));
+        outfile = std::make_shared<PsiOutStream>(ofname, (append ? std::ios_base::app : std::ios_base::trunc));
         outfile_name = ofname;
     });
     core.def("get_output_file", []() { return outfile_name; });
