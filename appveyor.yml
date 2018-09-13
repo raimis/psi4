@@ -13,7 +13,6 @@ install:
   - conda config --set always_yes yes
   - conda create --channel conda-forge
                  --name %CONDA_ENV%
-                 cmake=3.11.1
                  deepdiff
                  mkl-devel
                  mpmath
@@ -27,11 +26,12 @@ install:
   - conda list
 
 before_build:
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  #- call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - set SOURCE_FOLDER=%APPVEYOR_BUILD_FOLDER%
   - set BUILD_FOLDER=%SOURCE_FOLDER%\build
   - set INSTALL_FOLDER=%SOURCE_FOLDER%\install
+  - copy /Y %SOURCE_FOLDER%\Windows-MSVC.cmake "C:\Program Files (x86)\CMake\share\cmake-3.12\Modules\Platform\Windows-MSVC.cmake"
   - mkdir %BUILD_FOLDER% & cd %BUILD_FOLDER%
   # TODO fix OpenMP
   - cmake -G Ninja
