@@ -32,10 +32,8 @@
 #include "psi4/libpsi4util/exception.h"
 
 #include <cstdio>
-#include <cstdarg>
-#include <iostream>
 #include <fstream>
-
+#include <cstdarg>
 
 namespace psi {
 

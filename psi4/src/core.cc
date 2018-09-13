@@ -26,8 +26,6 @@
  * @END LICENSE
  */
 
-#include <ios>
-
 #include <cstdio>
 #include <sstream>
 #include <map>
@@ -226,7 +224,6 @@ void py_reopen_outfile() {
     if (outfile_name == "stdout") {
         // outfile = stdout;
     } else {
-        //outfile = std::make_shared<PsiOutStream>(outfile_name, std::ios_base::app);
         outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream(outfile_name, std::ostream::app));
         if (!outfile) throw PSIEXCEPTION("Psi4: Unable to reopen output file.");
     }
@@ -234,7 +231,6 @@ void py_reopen_outfile() {
 
 void py_be_quiet() {
     py_close_outfile();
-    //outfile = std::make_shared<PsiOutStream>("/dev/null", std::ios_base::app);
     outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream("/dev/null", std::ios_base::app));
     if (!outfile) throw PSIEXCEPTION("Psi4: Unable to redirect output to /dev/null.");
 }
