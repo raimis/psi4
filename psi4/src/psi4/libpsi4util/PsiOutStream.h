@@ -44,7 +44,7 @@ class PSI_API PsiOutStream {
     std::vector<char> buffer_;
 
    public:
-    PsiOutStream(std::string fname = "", std::ostream::openmode mode = std::ostream::trunc);
+    PsiOutStream(std::string fname = "", std::ios_base::openmode mode = std::ios_base::trunc);
     ~PsiOutStream();
 
     void Printf(const char* fmt, ...);

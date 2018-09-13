@@ -4448,7 +4448,7 @@ void OctreeGridBlocker::block()
     int index = 0;
     int unique_block = 0;
     if (bench_) {
-       printer=std::make_shared<PsiOutStream>("finished_blocks.dat",std::ostream::app);
+       printer=std::shared_ptr<PsiOutStream>(new PsiOutStream("finished_blocks.dat", std::ostream::app));
         //outfile->Printf(fh_blocks, "#  %4s %15s %15s %15s %15s\n", "ID", "X", "Y", "Z", "W");
     }
     for (size_t A = 0; A < completed_tree.size(); A++) {

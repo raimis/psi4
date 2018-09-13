@@ -39,7 +39,7 @@
 
 namespace psi {
 
-PsiOutStream::PsiOutStream(std::string fname, std::ostream::openmode mode) {
+PsiOutStream::PsiOutStream(std::string fname, std::ios_base::openmode mode) {
     if (fname == "") {
         stream_ = &std::cout;
         is_cout_ = true;

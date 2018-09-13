@@ -1603,7 +1603,8 @@ void benchmark_math(double min_time)
     ops.push_back("fabs");
 
     // In case the compiler gets awesome
-    auto printer = std::make_shared<PsiOutStream>("dump.dat",std::ostream::trunc);
+    //auto printer = std::make_shared<PsiOutStream>("dump.dat",std::ostream::trunc);
+    auto printer = std::shared_ptr<PsiOutStream>(new PsiOutStream("dump.dat",std::ostream::trunc));
 
     #define LOOP_SIZE 10000
     #define UNROLL_SIZE 10

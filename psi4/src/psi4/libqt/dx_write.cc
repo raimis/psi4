@@ -198,7 +198,7 @@ y*pc_bohr2angstroms, z*pc_bohr2angstroms, dens/b2a3);
   int zsteps = (int) ((zmax - zmin)/step_size + 1);
 
   // Prep .dx file
-  auto printer = std::make_shared<PsiOutStream>("density.dx",std::ostream::app);
+  auto printer = std::shared_ptr<PsiOutStream>(new PsiOutStream("density.dx", std::ostream::app));
   printer->Printf( "#  Output from Psi4 calculation\n");
   printer->Printf( "#  Electronic density (in e/ang^3) for: \n");
   printer->Printf( "object 1 class gridpositions counts %d %d %d\n", xsteps, ysteps, zsteps);
