@@ -52,7 +52,7 @@ void fcidump_tei_helper(int nirrep, bool restricted, std::map<std::string, int> 
                         std::string fname) {
     outfile->Printf("Writing TEI integrals in FCIDUMP format to " + fname + "\n");
     // Append to the file created by the fcidump function Python-side
-    auto intdump = std::make_shared<PsiOutStream>(fname.c_str(), std::ostream::app);
+    auto intdump = std::shared_ptr<PsiOutStream>(new PsiOutStream(fname.c_str(), std::ostream::app));
 
     // Use the IntegralTransform object's DPD instance, for convenience
     dpd_set_default(DPD_info["instance_id"]);

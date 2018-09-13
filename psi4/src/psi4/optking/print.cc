@@ -49,9 +49,8 @@ void oprintf(const std::string psi_fp, const FILE *qc_fp, const char* format,...
   va_end(args);
 
 #if defined(OPTKING_PACKAGE_PSI)
-  std::shared_ptr<psi::PsiOutStream> printer(psi_fp=="outfile"? psi::outfile:
-     std::make_shared<psi::PsiOutStream>(psi_fp,std::ostream::app));
-
+  auto printer = psi_fp == "outfile" ? psi::outfile :
+                 std::shared_ptr<psi::PsiOutStream>(new psi::PsiOutStream(psi_fp, std::ostream::app));
   printer->Printf("%s", line);
 #elif defined(OPTKING_PACKAGE_QCHEM)
   fprintf(qc_fp, "%s", line);

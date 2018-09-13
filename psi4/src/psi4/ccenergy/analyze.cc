@@ -58,7 +58,7 @@ void CCEnergyWavefunction::analyze(void)
   max = 9;
   min = 0;
   width = (max-min) / (num_div);
-  auto printer = std::make_shared<PsiOutStream>("tamps.dat",std::ostream::app);
+  auto printer = std::shared_ptr<PsiOutStream>(new PsiOutStream("tamps.dat",std::ostream::app));
   amp_array = init_array(num_div);
 
   nvir = moinfo_.virtpi[0];
@@ -117,7 +117,7 @@ void CCEnergyWavefunction::analyze(void)
   max = 2;
   min = -5;
   width = (max-min) / (num_div);
-  auto printer2 = std::make_shared<PsiOutStream>("t1amps.dat",std::ostream::app);
+  auto printer2 = std::shared_ptr<PsiOutStream>(new PsiOutStream("t1amps.dat",std::ostream::app));
   amp_array = init_array(num_div);
 
   global_dpd_->file2_init(&T1, PSIF_CC_OEI, 0, 0, 1, "tIA");

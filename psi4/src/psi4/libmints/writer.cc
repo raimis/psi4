@@ -52,7 +52,7 @@ MoldenWriter::MoldenWriter(std::shared_ptr<Wavefunction> wavefunction)
 }
 void MoldenWriter::write(const std::string &filename, std::shared_ptr<Matrix> Ca, std::shared_ptr<Matrix> Cb, std::shared_ptr<Vector> Ea, std::shared_ptr<Vector> Eb, std::shared_ptr<Vector> OccA, std::shared_ptr<Vector> OccB, bool dovirtual)
 {
-    auto printer = std::make_shared<PsiOutStream>(filename,std::ostream::app);
+    auto printer = std::shared_ptr<PsiOutStream>(new PsiOutStream(filename, std::ostream::app));
 
     int atom;
 
@@ -650,7 +650,7 @@ void NBOWriter::write(const std::string &filename)
 
     MintsHelper helper(wavefunction_->basisset(), wavefunction_->options(), 0);
     SharedMatrix sotoao = helper.petite_list()->sotoao();
-    auto printer = std::make_shared<PsiOutStream>(filename,std::ostream::app);
+    auto printer = std::shared_ptr<PsiOutStream>(new PsiOutStream(filename, std::ostream::app));
 
 
     //Get the basis set and molecule from the wavefuntion

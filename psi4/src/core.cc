@@ -1223,13 +1223,12 @@ PYBIND11_MODULE(core, core) {
     core.def("opt_clean", py_psi_opt_clean, "Cleans up the optimizer's scratch files.");
     core.def("get_options", py_psi_get_options, py::return_value_policy::reference, "Get options");
     core.def("set_output_file", [](const std::string ofname) {
-        //outfile = std::make_shared<PsiOutStream>(ofname, std::ios_base::trunc);
-        outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream(ofname, std::ios_base::trunc));
+        outfile = std::make_shared<PsiOutStream>(ofname);
         outfile_name = ofname;
     });
     core.def("set_output_file", [](const std::string ofname, bool append) {
-        //outfile = std::make_shared<PsiOutStream>(ofname, (append ? std::ios_base::app : std::ios_base::trunc));
-        outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream(ofname, (append ? std::ios_base::app : std::ios_base::trunc)));
+        auto mode = append ? std::ostream::app : std::ostream::trunc;
+        outfile = std::shared_ptr<PsiOutStream>(new PsiOutStream(ofname, mode));
         outfile_name = ofname;
     });
     core.def("get_output_file", []() { return outfile_name; });
