@@ -72,7 +72,7 @@ Epsi = {  #TEST
 for key in keys:  #TEST
     compare_values(Eref[key], Epsi[key], 6, key)  #TEST
 
-import os
+import os                                                             #TEST
 import sys
 import subprocess
 
@@ -83,7 +83,7 @@ with open('fA.dat', 'w') as fA:                                       #TEST
 with open('fB.dat', 'w') as fB:                                       #TEST 
     fB.write("Peptide_B  9 10 11 16 26\n")                            #TEST
     fB.write("T-Butyl_B  12 13 14 15 17 18 19 20 21 22 23 24 25")     #TEST
-subprocess.run([sys.executable, os.path.join('..', 'fsapt.py')], check=True)
+subprocess.run([sys.executable, os.path.join('..', 'fsapt.py')], check=True) #TEST
                                                                    
 refInteractions = {
 "Methyl1_A Peptide_B": {"fEelst":  0.463, "fEexch":  0.000, "fEindAB": -0.010, 
