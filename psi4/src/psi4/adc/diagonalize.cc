@@ -75,7 +75,8 @@ ADCWfn::rhf_diagonalize(int irrep, int num_root, bool first, double omega_in, do
     for(int I = 0;I < rpi_[irrep];I++) lambda_o[I] = omega_guess_->get(irrep, I);
     shift_denom4(irrep, omega_in);
 
-    auto printer = std::shared_ptr<PsiOutStream>(new PsiOutStream("iter.dat", std::ostream::app));
+    auto mode = std::ostream::app; // Fails to compile with clang-cl, if inlined into the following line
+    auto printer = std::make_shared<PsiOutStream>("iter.dat", mode);
 
     timer_on("SEM");
     while(converged < rpi_[irrep] && iter < sem_max_){
