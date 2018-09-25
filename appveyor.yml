@@ -8,6 +8,12 @@ configuration:
   - Debug
 
 install:
+  - dir C:\cygwin64\bin
+  - C:\cygwin64\bin\wget.exe --quiet http://releases.llvm.org/7.0.0/LLVM-7.0.0-win64.exe
+  - dir
+  - ren LLVM-7.0.0-win64.exe LLVM-7.0.0-win64.lzma
+  - C:\cygwin64\bin\lzmainfo.exe LLVM-7.0.0-win64.lzma
+  - C:\cygwin64\bin\tar.exe --lzma -xf LLVM-7.0.0-win64.lzma
   - set CONDA_ENV=build
   - C:\Miniconda3-x64\Scripts\activate base
   - conda config --set always_yes yes
