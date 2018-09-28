@@ -16,11 +16,12 @@ def set_up():
 def tear_down():
     import os
     import glob
+    import atexit
     patterns = ['cavity.*', 'grid*', 'pytest_output.*h5',
-                'pytest_output.dat',
                 '*pcmsolver.inp', 'PEDRA.OUT*', 'timer.dat']
     pytest_scratches = []
     for pat in patterns:
         pytest_scratches.extend(glob.glob(pat))
     for fl in pytest_scratches:
         os.unlink(fl)
+    atexit.register(os.unlink, 'pytest_output.dat')
