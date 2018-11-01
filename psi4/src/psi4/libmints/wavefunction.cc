@@ -85,6 +85,13 @@ Wavefunction::Wavefunction(std::shared_ptr<Molecule> molecule, std::shared_ptr<B
     common_init();
 }
 
+Wavefunction::Wavefunction(SharedWavefunction reference_wavefunction, Options &options)
+    : options_(options), dipole_field_strength_{{0.0, 0.0, 0.0}}, PCM_enabled_(false) {
+    // Copy the wavefuntion then update
+    shallow_copy(reference_wavefunction);
+    set_reference_wavefunction(reference_wavefunction);
+}
+
 Wavefunction::Wavefunction(Options &options)
     : options_(options), dipole_field_strength_{{0.0, 0.0, 0.0}}, PCM_enabled_(false) {}
 
@@ -435,7 +442,7 @@ void Wavefunction::common_init() {
     // Make sure that the multiplicity is reasonable
     int multiplicity = molecule_->multiplicity();
     if (multiplicity - 1 > nelectron) {
-        char *str = new char[100];
+        char *str = new char[200];
         sprintf(str,
                 "There are not enough electrons for multiplicity = %d.\n"
                 "Please check your input",
@@ -444,7 +451,7 @@ void Wavefunction::common_init() {
         delete[] str;
     }
     if (multiplicity % 2 == nelectron % 2) {
-        char *str = new char[100];
+        char *str = new char[200];
         sprintf(str,
                 "A multiplicity of %d with %d electrons is impossible.\n"
                 "Please check your input",

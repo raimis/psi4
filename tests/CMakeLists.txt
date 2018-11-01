@@ -37,8 +37,8 @@ set(py3_fail_list pywrap-freq-e-sowreap
 foreach(test_name adc1 adc2 casscf-fzc-sp casscf-semi casscf-sa-sp ao-casscf-sp casscf-sp castup1
                   castup2 castup3 cbs-delta-energy cbs-parser cbs-xtpl-alpha cbs-xtpl-energy
                   cbs-xtpl-freq cbs-xtpl-gradient cbs-xtpl-opt cbs-xtpl-func cbs-xtpl-nbody
-                  cbs-xtpl-wrapper cc1 cc10 cc11 cc12 cc13 cc13a cc13b cc13c cc13d cc14 cc15 cc16
-                  cc17 cc18 cc19 cc2 cc21 cc22 cc23 cc24 cc25 cc26 cc27 cc28
+                  cbs-xtpl-wrapper cbs-xtpl-dict cc1 cc10 cc11 cc12 cc13 cc13a cc13b cc13c 
+                  cc13d cc14 cc15 cc16 cc17 cc18 cc19 cc2 cc21 cc22 cc23 cc24 cc25 cc26 cc27 cc28
                   cc29 cc3 cc30 cc31 cc32 cc33 cc34 cc35 cc36 cc37 cc38 cc39
                   cc4 cc40 cc41 cc42 cc43 cc44 cc45 cc46 cc47 cc48 cc49 cc4a
                   cc50 cc51 cc52 cc53 cc54 cc55 cc5a cc6 cc7 cc8 cc8a cc8b cc8c
@@ -75,6 +75,7 @@ foreach(test_name adc1 adc2 casscf-fzc-sp casscf-semi casscf-sa-sp ao-casscf-sp 
                   omp3-3 omp3-4 omp3-5 omp3-grad1 omp3-grad2 opt-lindep-change
                   opt1 opt1-fd opt2 opt2-fd opt3 opt4 opt5 opt6 opt7 opt8 opt9
                   opt11 opt12 opt13 opt14 opt-irc-1 opt-irc-2 opt-irc-3 opt-freeze-coords
+                  opt-full-hess-every
                   props1 props2 props3 psimrcc-ccsd_t-1 psimrcc-ccsd_t-2
                   psimrcc-ccsd_t-3 psimrcc-ccsd_t-4 psimrcc-fd-freq1
                   psimrcc-fd-freq2 psimrcc-pt2 psimrcc-sp1 psithon1 psithon2

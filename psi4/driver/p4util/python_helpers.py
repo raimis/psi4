@@ -31,6 +31,7 @@ import re
 import sys
 import uuid
 import numpy as np
+import qcelemental as qcel
 
 from psi4 import core
 from psi4.driver import qcdb
@@ -222,9 +223,6 @@ core.VBase.get_np_xyzw = get_np_xyzw
 
 ## Python other helps
 
-core.Molecule.run_dftd3 = qcdb.interface_dftd3.run_dftd3
-core.Molecule.run_gcp = qcdb.interface_gcp.run_gcp
-
 
 def set_options(options_dict):
     """
@@ -269,19 +267,13 @@ def pcm_helper(block):
     core.set_local_option('PCM', 'PCMSOLVER_PARSED_FNAME', '{}'.format(pcmsolver_parsed_fname))
 
 
-def filter_comments(string):
-    """Remove from *string* any Python-style comments ('#' to end of line)."""
-
-    filtered = []
-    for line in string.splitlines():
-        line = line.partition('#')[0]
-        filtered.append(line.rstrip())
-    return '\n'.join(filtered)
-
-
 def basname(name):
     """Imitates BasisSet.make_filename() without the gbs extension"""
     return name.lower().replace('+', 'p').replace('*', 's').replace('(', '_').replace(')', '_').replace(',', '_')
+
+
+def temp_circular_import_blocker():
+    pass
 
 
 def basis_helper(block, name='', key='BASIS', set_option=True):
@@ -296,7 +288,7 @@ def basis_helper(block, name='', key='BASIS', set_option=True):
     key = key.upper()
     name = ('anonymous' + str(uuid.uuid4())[:8]) if name == '' else name
     cleanbas = basname(name).replace('-', '')  # further remove hyphens so can be function name
-    block = filter_comments(block)
+    block = qcel.util.filter_comments(block)
     command_lines = re.split('\n', block)
 
     symbol_re = re.compile(r'^\s*assign\s+(?P<symbol>[A-Z]{1,3})\s+(?P<basis>[-+*\(\)\w]+)\s*$', re.IGNORECASE)
