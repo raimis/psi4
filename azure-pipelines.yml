@@ -4,13 +4,16 @@
 # https://aka.ms/yaml
 
 pool:
-  vmImage: 'Ubuntu 16.04'
+  vmImage: 'vs2015-win2012r2'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # Create and activate a Conda environment.
+  - task: CondaEnvironment
+    inputs:
+      createCustomEnvironment: True
+      environmentName: 'build'
+      packageSpecs: 'python=3.6'
+      #updateConda: # Optional
+      #installOptions: # Optional
+      #createOptions: # Optional
+      #cleanEnvironment: # Optional
