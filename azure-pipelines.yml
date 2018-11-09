@@ -9,7 +9,7 @@ pool:
 steps:
   # Create and activate a Conda environment.
   - task: CondaEnvironment@1
-    inputs:
+    #inputs:
       #createCustomEnvironment: True
       #environmentName: 'build'
       #packageSpecs: 'python=3.6'
