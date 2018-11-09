@@ -8,7 +8,7 @@ pool:
 
 steps:
   # Create and activate a Conda environment.
-  - task: CondaEnvironment
+  - task: CondaEnvironment@1
     inputs:
       createCustomEnvironment: True
       environmentName: 'build'
