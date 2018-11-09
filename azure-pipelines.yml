@@ -13,7 +13,7 @@ steps:
       createCustomEnvironment: True
       environmentName: 'build'
       packageSpecs: 'python=3.6'
-      #updateConda: # Optional
+      updateConda: True
       #installOptions: # Optional
       #createOptions: # Optional
       #cleanEnvironment: # Optional
