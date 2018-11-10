@@ -7,13 +7,4 @@ pool:
   vmImage: 'vs2015-win2012r2'
 
 steps:
-  # Create and activate a Conda environment.
-  - task: CondaEnvironment@1
-    #inputs:
-      #createCustomEnvironment: True
-      #environmentName: 'build'
-      #packageSpecs: 'python=3.6'
-      #updateConda: True
-      #installOptions: # Optional
-      #createOptions: # Optional
-      #cleanEnvironment: # Optional
+  - powershell: 'Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda3.exe'
