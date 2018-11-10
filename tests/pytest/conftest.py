@@ -17,6 +17,8 @@ def tear_down():
     import os
     import glob
     import atexit
+    import psi4
+    psi4.core.close_outfile()
     patterns = ['cavity.*', 'grid*', 'pytest_output.*h5',
                 '*pcmsolver.inp', 'PEDRA.OUT*', 'timer.dat']
     pytest_scratches = []
