@@ -8,6 +8,8 @@ pool:
 
 steps:
 
+  - script: dir
+
 # Python Script
 # Run a Python script.
   - task: PythonScript@0
@@ -19,3 +21,5 @@ steps:
       #pythonInterpreter: # Optional
       #workingDirectory: # Optional
       #failOnStderr: false # Optional
+
+  - script: dir
