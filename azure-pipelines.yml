@@ -25,4 +25,5 @@ steps:
 
   - script: dir
   - script: Miniconda3.exe /S /D=C:\\Miniconda3
-  - script: dir C:\\Miniconda3
+  - script: dir C:\
+  - script: dir C:\Miniconda3
