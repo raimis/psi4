@@ -13,7 +13,7 @@ steps:
     inputs:
       scriptSource: 'inline'
       #scriptPath: # Required when scriptSource == FilePath
-      #script: 'print("Hello world!")'
+      script: 'print("Hello world!")'
       #arguments: # Optional
       #pythonInterpreter: # Optional
       #workingDirectory: # Optional
