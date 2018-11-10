@@ -8,21 +8,13 @@ pool:
 
 steps:
 
-# Use Python Version
-# Retrieves the specified version of Python from the tool cache. Optionally add it to PATH.
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '3.6.1' 
-      addToPath: true 
-      architecture: 'x64'
-
 # Python Script
 # Run a Python script.
   - task: PythonScript@0
     inputs:
       scriptSource: 'inline'
       #scriptPath: # Required when scriptSource == FilePath
-      script: 'print("Hello world!")'
+      script: 'import urllib; urllib.urlretrieve("https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe", "Miniconda3.exe")'
       #arguments: # Optional
       #pythonInterpreter: # Optional
       #workingDirectory: # Optional
