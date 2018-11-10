@@ -23,5 +23,5 @@ steps:
       #failOnStderr: false # Optional
 
   - script: dir
-  - script: "Miniconda3.exe /D=C:\Miniconda3
-  - script: dir C:\Miniconda3
+  - script: "Miniconda3.exe /D="C:\Miniconda3"
+  - script: dir "C:\Miniconda3"
