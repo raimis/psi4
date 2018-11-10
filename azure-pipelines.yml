@@ -7,4 +7,14 @@ pool:
   vmImage: 'vs2015-win2012r2'
 
 steps:
-  - powershell: 'Invoke-WebRequest https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda3.exe'
+# Python Script
+# Run a Python script.
+  - task: PythonScript@0
+    inputs:
+      scriptSource: 'inline'
+      #scriptPath: # Required when scriptSource == FilePath
+      #script: 'print("Hello world!")'
+      #arguments: # Optional
+      #pythonInterpreter: # Optional
+      #workingDirectory: # Optional
+      #failOnStderr: false # Optional
