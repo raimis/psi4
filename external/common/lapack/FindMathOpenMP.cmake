@@ -73,44 +73,74 @@ endmacro()
 
 add_library(tgt::MathOpenMP INTERFACE IMPORTED)
 
-if (${isMKL} MATCHES "MKL")
-    if ((CMAKE_C_COMPILER_ID STREQUAL GNU) OR
-        (CMAKE_CXX_COMPILER_ID STREQUAL GNU) OR
-        (CMAKE_Fortran_COMPILER_ID STREQUAL GNU))
-        if (APPLE)
-            set(_MathOpenMP_LIB_NAMES "iomp5")
+if(WIN32)
+    if(ENABLE_OPENMP)
+        # OpenMP config for clang-cl on Windonws
+        # Note: FindOpenMP doesn't yet support clang-cl, so the config has to be done manually.
+
+        # Check if clang-cl is used
+        if(CMAKE_CXX_COMPILER_ID STREQUAL Clang)
+            unset(USE_CLANG_CL CACHE)
+            check_cxx_compiler_flag("-Xclang -fopenmp" USE_CLANG_CL)
+            if(NOT USE_CLANG_CL)
+                message(FATAL_ERROR "clang-cl (MSVC compatability wrapper) is required, if Clang is used")
+            endif()
         else()
-            # https://stackoverflow.com/questions/25986091/telling-gcc-to-not-link-libgomp-so-it-links-libiomp5-instead
-            set(_MathOpenMP_LIB_NAMES "iomp5;-Wl,--as-needed")
+            message(FATAL_ERROR "Clang compiler is required, if ENABLE_OPENMP=ON")
         endif()
-        find_omp_libs("MathOpenMP" ${_MathOpenMP_LIB_NAMES})
-        set_property(TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES "${MathOpenMP_LIBRARIES}")
+
+        # Find OpenMP run-time library
+        find_library(OPENMP_LIBRARY NAMES "libiomp5md")
+        message(STATUS "Found OpenMP library: ${OPENMP_LIBRARY}")
+
+        # Link OpenMP run-time library and add compiler options
+        target_link_libraries(tgt::MathOpenMP INTERFACE ${OPENMP_LIBRARY})
+        target_compile_options(tgt::MathOpenMP INTERFACE -Xclang)
+        target_compile_options(tgt::MathOpenMP INTERFACE -fopenmp) # This has to be preceed by "-Xclang"
+
+    endif()
+else()
+    if (${isMKL} MATCHES "MKL")
+        if ((CMAKE_C_COMPILER_ID STREQUAL GNU) OR
+            (CMAKE_CXX_COMPILER_ID STREQUAL GNU) OR
+            (CMAKE_Fortran_COMPILER_ID STREQUAL GNU))
+            if (APPLE)
+                set(_MathOpenMP_LIB_NAMES "iomp5")
+            else()
+                # https://stackoverflow.com/questions/25986091/telling-gcc-to-not-link-libgomp-so-it-links-libiomp5-instead
+                set(_MathOpenMP_LIB_NAMES "iomp5;-Wl,--as-needed")
+            endif()
+            find_omp_libs("MathOpenMP" ${_MathOpenMP_LIB_NAMES})
+            set_property(TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES "${MathOpenMP_LIBRARIES}")
+        endif()
+
+        if (CMAKE_C_COMPILER_ID STREQUAL Clang)
+            if (NOT DEFINED OpenMP_C_FLAG)
+                set (OpenMP_C_FLAG "-fopenmp=libiomp5")
+                message(STATUS "OpenMP_C_FLAG ${OpenMP_C_FLAG}")
+            endif()
+        endif()
+        if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
+            if (NOT DEFINED OpenMP_CXX_FLAG)
+                set (OpenMP_CXX_FLAG "-fopenmp=libiomp5")
+                message(STATUS "OpenMP_CXX_FLAG ${OpenMP_CXX_FLAG}")
+            endif()
+        endif()
     endif()
 
-    if (CMAKE_C_COMPILER_ID STREQUAL Clang)
-        if (NOT DEFINED OpenMP_C_FLAG)
-            set (OpenMP_C_FLAG "-fopenmp=libiomp5")
-        endif()
+    if (ENABLE_OPENMP)
+        # *not* REQUIRED b/c some compilers don't support OpenMP and -DENABLE_OPENMP isn't a build-or-die-trying
+        find_package(TargetOpenMP COMPONENTS ${TargetOpenMP_FIND_COMPONENTS})
     endif()
-    if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-        if (NOT DEFINED OpenMP_CXX_FLAG)
-            set (OpenMP_CXX_FLAG "-fopenmp=libiomp5")
-        endif()
-    endif()
-endif()
 
-if (ENABLE_OPENMP)
-    # *not* REQUIRED b/c some compilers don't support OpenMP and -DENABLE_OPENMP isn't a build-or-die-trying
-    find_package(TargetOpenMP QUIET COMPONENTS ${TargetOpenMP_FIND_COMPONENTS})
+    if (TARGET OpenMP::OpenMP)
+        set_property(TARGET tgt::MathOpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES "OpenMP::OpenMP")
+    endif()
 endif()
 
 set(PN MathOpenMP)
 get_property (_ill TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES)
 set (${PN}_MESSAGE "Found MathOpenMP: ${_ill}")
-    
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args (${PN} DEFAULT_MSG ${PN}_MESSAGE)
-
-if (TARGET OpenMP::OpenMP)
-    set_property(TARGET tgt::MathOpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES "OpenMP::OpenMP")
-endif()
