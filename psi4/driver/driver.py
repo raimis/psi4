@@ -165,6 +165,9 @@ def _process_displacement(derivfunc, method, molecule, displacement, n, ndisp, *
     geom_array = np.reshape(displacement["geometry"], (-1, 3))
     molecule.set_geometry(core.Matrix.from_array(geom_array))
 
+    # clean possibly necessary for n=1 if its irrep (unsorted in displacement list) different from initial G0 for freq
+    core.clean()
+
     # Perform the derivative calculation
     derivative, wfn = derivfunc(method, return_wfn=True, molecule=molecule, **kwargs)
     displacement["energy"] = core.get_variable('CURRENT ENERGY')
@@ -580,10 +583,6 @@ def gradient(name, **kwargs):
     """
     kwargs = p4util.kwargs_lower(kwargs)
 
-    # Bounce to CP if bsse kwarg (someday)
-    if kwargs.get('bsse_type', None) is not None:
-        raise ValidationError("Gradient: Cannot specify bsse_type for gradient yet.")
-
     # Figure out what kind of gradient this is
     if hasattr(name, '__call__'):
         if name.__name__ in ['cbs', 'complete_basis_set']:
@@ -591,6 +590,8 @@ def gradient(name, **kwargs):
         else:
             # Bounce to name if name is non-CBS function
             gradient_type = 'custom_function'
+    elif kwargs.get('bsse_type', None) is not None:
+        gradient_type = 'nbody_gufunc'
     elif '/' in name:
         gradient_type = 'cbs_gufunc'
     else:
@@ -616,6 +617,9 @@ def gradient(name, **kwargs):
         else:
             optstash = driver_util._set_convergence_criterion('energy', 'scf', 8, 10, 8, 10, 8)
             lowername = name
+    
+    elif gradient_type == 'nbody_gufunc':
+        return driver_nbody.nbody_gufunc(gradient, name, ptype='gradient', **kwargs)
 
     elif gradient_type == 'cbs_wrapper':
         cbs_methods = driver_cbs._cbs_wrapper_methods(**kwargs)
@@ -979,12 +983,9 @@ def optimize(name, **kwargs):
         step_gradients = []
         step_coordinates = []
 
-    # For CBS wrapper, need to set retention on INTCO file
-    if custom_gradient or ('/' in lowername):
+    # For CBS and nbody wrappers, need to set retention on INTCO file
+    if custom_gradient or ('/' in lowername) or kwargs.get('bsse_type', None) is not None:
         core.IOManager.shared_object().set_specific_retention(1, True)
-
-    if kwargs.get('bsse_type', None) is not None:
-        raise ValidationError("Optimize: Does not currently support 'bsse_type' arguements")
 
     full_hess_every = core.get_option('OPTKING', 'FULL_HESS_EVERY')
     steps_since_last_hessian = 0
@@ -1099,6 +1100,10 @@ def optimize(name, **kwargs):
                 postcallback(lowername, wfn=wfn, **kwargs)
             core.clean()
 
+            # Cleanup binary file 1
+            if custom_gradient or ('/' in lowername) or kwargs.get('bsse_type', None) is not None:
+                core.IOManager.shared_object().set_specific_retention(1, False)
+
             optstash.restore()
 
             if return_history:
@@ -1166,10 +1171,6 @@ def hessian(name, **kwargs):
     """
     kwargs = p4util.kwargs_lower(kwargs)
 
-    # Bounce to CP if bsse kwarg (someday)
-    if kwargs.get('bsse_type', None) is not None:
-        raise ValidationError("Hessian: Cannot specify bsse_type for hessian yet.")
-
     # Figure out what kind of gradient this is
     if hasattr(name, '__call__'):
         if name.__name__ in ['cbs', 'complete_basis_set']:
@@ -1177,13 +1178,19 @@ def hessian(name, **kwargs):
         else:
             # Bounce to name if name is non-CBS function
             gradient_type = 'custom_function'
+
+    elif kwargs.get('bsse_type', None) is not None:
+        gradient_type = 'nbody_gufunc' 
     elif '/' in name:
         gradient_type = 'cbs_gufunc'
     else:
         gradient_type = 'conventional'
 
+    # Call appropriate wrappers
+    if gradient_type == 'nbody_gufunc':
+        return driver_nbody.nbody_gufunc(hessian, name.lower(), ptype='hessian', **kwargs)
     # Check if this is a CBS extrapolation
-    if gradient_type == "cbs_gufunc":
+    elif gradient_type == "cbs_gufunc":
         return driver_cbs._cbs_gufunc(hessian, name.lower(), **kwargs, ptype="hessian")
     elif gradient_type == "cbs_wrapper":
         return driver_cbs.cbs(hessian, "cbs", **kwargs, ptype="hessian")
@@ -1191,7 +1198,7 @@ def hessian(name, **kwargs):
         raise ValidationError("Hessian: Does not yet support custom functions.")
     else:
         lowername = name.lower()
-
+    
     return_wfn = kwargs.pop('return_wfn', False)
     core.clean_variables()
     dertype = 2
