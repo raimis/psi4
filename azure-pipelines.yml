@@ -10,13 +10,14 @@ steps:
  
   # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
   - powershell: |
+      Get-ChildItem Env:
       Set-ExecutionPolicy Bypass -Scope Process -Force
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-      echo $PATH
+      Get-ChildItem Env:
       choco -?
   
   # Install Miniconda
   - powershell: |
-      echo $PATH
+      Get-ChildItem Env:
       choco install miniconda3
       conda --version
