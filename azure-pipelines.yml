@@ -50,7 +50,7 @@ steps:
       clang-cl --version
 
   # Configure
-  - script: |
+  - powershell: |
       dir
       cmake --version
       ninja --version
