@@ -16,11 +16,11 @@ steps:
       echo $Env:PATH
       $Env:PATH = "C:\ProgramData\chocolatey\bin;" + $env:PATH
       echo $Env:PATH
+      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
   
   # Install Miniconda
   - powershell: |
       echo $Env:PATH
       dir C:\ProgramData\chocolatey\bin
       C:\ProgramData\chocolatey\bin\choco install miniconda3 --yes
-      dir C:\tools\miniconda3\bin
-      C:\tools\miniconda3\conda --version
+      dir C:\tools\miniconda3
