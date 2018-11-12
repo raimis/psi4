@@ -7,30 +7,11 @@ pool:
   vmImage: 'vs2015-win2012r2'
 
 steps:
-  - script: dir
-  
+ 
+  # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
   - powershell: |
       Set-ExecutionPolicy Bypass -Scope Process -Force
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-      choco upgrade chocolatey
   
-  - powershell: Invoke-WebRequest -Uri "http://releases.llvm.org/7.0.0/LLVM-7.0.0-win64.exe" -OutFile "LLVM.exe"
-  - script: LLVM.exe
-
-  - powershell: Invoke-WebRequest -Uri "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe" -OutFile "Miniconda3.exe"
-
-# Python Script
-# Run a Python script.
-#  - task: PythonScript@0
-#    inputs:
-#      scriptSource: 'inline'
-      #scriptPath: # Required when scriptSource == FilePath
-#      script: 'import urllib; urllib.urlretrieve("https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe", "Miniconda3.exe")'
-      #arguments: # Optional
-      #pythonInterpreter: # Optional
-      #workingDirectory: # Optional
-      #failOnStderr: false # Optional
-
-  - script: dir
-  - script: Miniconda3.exe /D=D:\\a\\1\\s\\Miniconda3
-  - script: dir
+  # Install Miniconda
+  - powershell: choco install miniconda3
