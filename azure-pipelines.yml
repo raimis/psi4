@@ -15,5 +15,6 @@ steps:
   
   # Install Miniconda
   - powershell: |
+      echo %PATH%
       choco install miniconda3
       conda --version
