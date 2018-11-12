@@ -12,15 +12,13 @@ steps:
   - powershell: |
       Set-ExecutionPolicy Bypass -Scope Process -Force
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-      choco -?
-      echo $Env:PATH
-      $Env:PATH = "C:\ProgramData\chocolatey\bin;" + $env:PATH
-      echo $Env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
   
   # Install Miniconda
   - powershell: |
-      echo $Env:PATH
-      dir C:\ProgramData\chocolatey\bin
-      C:\ProgramData\chocolatey\bin\choco install miniconda3 --yes
+      echo $env:PATH
+      choco install miniconda3 --yes
+      echo $env:PATH
+      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       dir C:\tools\miniconda3
+      C:\tools\miniconda3\Scripts\conda --version
