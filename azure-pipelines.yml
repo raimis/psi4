@@ -12,9 +12,10 @@ steps:
   - powershell: |
       Set-ExecutionPolicy Bypass -Scope Process -Force
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      echo $PATH
   
   # Install Miniconda
   - powershell: |
-      echo %PATH%
+      echo $PATH
       choco install miniconda3
       conda --version
