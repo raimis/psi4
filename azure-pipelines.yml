@@ -14,7 +14,6 @@ steps:
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       choco --version
-
   
   # Install Miniconda
   - powershell: |
@@ -23,15 +22,8 @@ steps:
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       conda --version
 
-  # Install LLVM
-  - powershell: |
-      choco install llvm --yes
-      $env:PATH = $env:PATH + "C:\Program Files\LLVM\bin;"
-      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      clang-cl --version
-
   # Create conda enviroment
-  # Note: conda does not work yet with PowerShell... :(
+  # Note: conda doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
   - script: |
       conda config --set always_yes yes 
       conda create --channel conda-forge ^
@@ -49,3 +41,29 @@ steps:
                    python=3.6
       activate build
       conda list
+
+  # Install LLVM
+  # Note: LLVM distributed by conda is too old
+  - powershell: |
+      choco install llvm --yes
+      $env:PATH = $env:PATH + "C:\Program Files\LLVM\bin;"
+      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+      clang-cl --version
+
+  # Configure
+  - script: |
+      activate build
+      dir
+      cmake --version
+
+  # Build
+  
+  # Install
+  
+  # Test
+  
+  # Package
+  
+  # Deploy
+  
+  
