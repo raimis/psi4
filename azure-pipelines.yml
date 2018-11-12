@@ -17,7 +17,7 @@ steps:
   # Install Miniconda
   - powershell: |
       choco install miniconda3 --yes
-      $env:PATH = $env:PATH + "C:\tools\miniconda3\Scripts\conda;"
+      $env:PATH = $env:PATH + "C:\tools\miniconda3\Scripts;"
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       conda --version
       
