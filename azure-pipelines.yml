@@ -20,4 +20,4 @@ steps:
   - powershell: |
       echo $Env:PATH
       dir C:\ProgramData\chocolatey\bin
-      C:\ProgramData\chocolatey\bin\choco install miniconda3
+      C:\ProgramData\chocolatey\bin\choco install --yes miniconda3
