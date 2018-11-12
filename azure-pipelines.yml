@@ -31,20 +31,21 @@ steps:
       clang-cl --version
 
   # Create conda enviroment
-  - powershell: |
+  # Note: conda does not work yet with PowerShell... :(
+  - script: |
       conda config --set always_yes yes 
-      conda create --channel conda-forge `
-                   --name build `
-                   cmake `
-                   deepdiff `
-                   intel-openmp=2018.0.3 `
-                   mkl-devel=2018.0.3 `
-                   mpmath `
-                   networkx `
-                   ninja `
-                   numpy `
-                   pybind11 `
-                   pytest `
+      conda create --channel conda-forge ^
+                   --name build ^
+                   cmake ^
+                   deepdiff ^
+                   intel-openmp=2018.0.3 ^
+                   mkl-devel=2018.0.3 ^
+                   mpmath ^
+                   networkx ^
+                   ninja ^
+                   numpy ^
+                   pybind11 ^
+                   pytest ^
                    python=3.6
       activate build
       conda list
