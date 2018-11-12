@@ -45,7 +45,6 @@ steps:
                    numpy `
                    pybind11 `
                    pytest `
-                   python=3.6 `
-                   activate base
+                   python=3.6
       activate build
       conda list
