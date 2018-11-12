@@ -9,6 +9,10 @@ pool:
 steps:
   - script: dir
   
+  - powershell: |
+      Set-ExecutionPolicy Bypass -Scope Process -Force
+      iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  
   - powershell: Invoke-WebRequest -Uri "http://releases.llvm.org/7.0.0/LLVM-7.0.0-win64.exe" -OutFile "LLVM.exe"
   - script: LLVM.exe
 
