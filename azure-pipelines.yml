@@ -40,6 +40,9 @@ steps:
                     python=3.6
       conda list
       dir C:\tools\miniconda3
+      dir C:\tools\miniconda3\envs
+      dir C:\tools\miniconda3\Library
+      dir C:\tools\miniconda3\Lib
 
   # Install LLVM
   # Note: LLVM distributed by conda is too old
