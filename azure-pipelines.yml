@@ -19,13 +19,14 @@ steps:
       choco install miniconda3 --yes
       $env:PATH = $env:PATH + "C:\tools\miniconda3\Scripts;"
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      conda --version
       
   # Install LLVM
   - powershell: |
       choco install llvm --yes
-      echo $env:PATH
+      $env:PATH = $env:PATH + "C:\Program Files\LLVM\bin;"
+      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
 
   - powershell: |
       choco --version
       conda --version
+      clang-cl --version
