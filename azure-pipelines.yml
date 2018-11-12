@@ -13,20 +13,39 @@ steps:
       Set-ExecutionPolicy Bypass -Scope Process -Force
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+      choco --version
+
   
   # Install Miniconda
   - powershell: |
       choco install miniconda3 --yes
       $env:PATH = $env:PATH + "C:\tools\miniconda3\Scripts;"
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      
+      conda --version
+
   # Install LLVM
   - powershell: |
       choco install llvm --yes
       $env:PATH = $env:PATH + "C:\Program Files\LLVM\bin;"
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-
-  - powershell: |
-      choco --version
-      conda --version
       clang-cl --version
+
+  # Create conda enviroment
+  - powershell: |
+      conda config --set always_yes yes
+      conda create --channel conda-forge
+                   --name build
+                   cmake
+                   deepdiff
+                   intel-openmp=2018.0.3
+                   mkl-devel=2018.0.3
+                   mpmath
+                   networkx
+                   ninja
+                   numpy
+                   pybind11
+                   pytest
+                   python=3.6
+                   activate base
+      activate build
+      conda list
