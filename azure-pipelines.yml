@@ -15,9 +15,11 @@ steps:
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       Get-ChildItem Env:
       choco -?
+      $Env:path = $env:path + ";C:\ProgramData\chocolatey\bin"
   
   # Install Miniconda
   - powershell: |
       Get-ChildItem Env:
-      choco install miniconda3
+      dir C:\ProgramData\chocolatey\bin
+      C:\ProgramData\chocolatey\bin\choco install miniconda3
       conda --version
