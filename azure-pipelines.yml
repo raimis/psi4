@@ -42,6 +42,7 @@ steps:
       dir C:\tools\miniconda3
       dir C:\tools\miniconda3\envs
       dir C:\tools\miniconda3\Library
+      dir C:\tools\miniconda3\Library\bin
       dir C:\tools\miniconda3\Lib
 
   # Install LLVM
