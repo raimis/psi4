@@ -25,6 +25,8 @@ steps:
       $env:PATH = "C:\tools\miniconda3\Scripts;" + $env:PATH
       $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+      $env:LIB = "C:\tools\miniconda3\Library\lib;" + $env:LIB
+      Write-Host "##vso[task.setvariable variable=LIB]$env:LIB"
       conda --version
     displayName: "Install Miniconda"
 
@@ -57,15 +59,16 @@ steps:
     displayName: "Install LLVM"
 
   - powershell: |
-      dir
+      dir C:\tools\miniconda3
       python --version
+      C:\tools\miniconda3\python --version
 
   # Configure
   - powershell: |
       dir
       cmake -G Ninja `
-            -DCMAKE_C_COMPILER=clang-cl
-            -DCMAKE_CXX_COMPILER=clang-cl
+            -DCMAKE_C_COMPILER=clang-cl `
+            -DCMAKE_CXX_COMPILER=clang-cl `
             $(Build.SourcesDirectory)
     displayName: "Configure Psi4"
     workingDirectory: $(Build.BinariesDirectory)
