@@ -56,7 +56,9 @@ steps:
       choco install llvm --yes
       $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+      dir "C:\Program Files\LLVM\bin"
       clang-cl --version
+      link --version
     displayName: "Install LLVM"
 
   - powershell: |
