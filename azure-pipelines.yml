@@ -18,7 +18,6 @@ steps:
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       choco --version
     displayName: "Install Chocolatey"
-
   
   # Install Miniconda
   - powershell: |
@@ -60,9 +59,8 @@ steps:
   # Configure
   - powershell: |
       dir
-      cmake ${Build.SourcesDirectory}
-    workingDirectory: ${Build.BinariesDirectory}
-    
+      cmake $(Build.SourcesDirectory)
+    workingDirectory: $(Build.BinariesDirectory)
 
   # Build
   
