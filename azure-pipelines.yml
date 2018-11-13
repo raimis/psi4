@@ -27,9 +27,10 @@ steps:
       $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       conda --version
+    displayName: "Install Miniconda"
 
   # Create conda enviroment
-  # Note: conda doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
+  # Note: conda activate/deactive doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
   - powershell: |
       conda config --set always_yes yes 
       conda install --channel conda-forge `
@@ -45,11 +46,7 @@ steps:
                     pytest `
                     python=3.6
       conda list
-      dir C:\tools\miniconda3
-      dir C:\tools\miniconda3\envs
-      dir C:\tools\miniconda3\Library
-      dir C:\tools\miniconda3\Library\bin
-      dir C:\tools\miniconda3\Lib
+    displayName: "Install conda packages"
 
   # Install LLVM
   # Note: LLVM distributed by conda is too old
@@ -58,13 +55,14 @@ steps:
       $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       clang-cl --version
+    displayName: "Install LLVM"
 
   # Configure
   - powershell: |
       dir
-      cmake --version
-      ninja --version
-      cl-clang --version
+      cmake ${Build.SourcesDirectory}
+    workingDirectory: ${Build.BinariesDirectory}
+    
 
   # Build
   
