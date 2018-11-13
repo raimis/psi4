@@ -10,7 +10,7 @@ trigger:
   - master
 
 steps:
- 
+
   # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
   - powershell: |
       Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -56,10 +56,18 @@ steps:
       clang-cl --version
     displayName: "Install LLVM"
 
+  - powershell: |
+      dir
+      python --version
+
   # Configure
   - powershell: |
       dir
-      cmake $(Build.SourcesDirectory)
+      cmake -G Ninja `
+            -DCMAKE_C_COMPILER=clang-cl
+            -DCMAKE_CXX_COMPILER=clang-cl
+            $(Build.SourcesDirectory)
+    displayName: "Configure Psi4"
     workingDirectory: $(Build.BinariesDirectory)
 
   # Build
