@@ -18,7 +18,8 @@ steps:
   # Install Miniconda
   - powershell: |
       choco install miniconda3 --yes
-      $env:PATH = $env:PATH + "C:\tools\miniconda3\Scripts;"
+      $env:PATH = "C:\tools\miniconda3\Scripts;" + $env:PATH
+      $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       conda --version
 
@@ -49,7 +50,7 @@ steps:
   # Note: LLVM distributed by conda is too old
   - powershell: |
       choco install llvm --yes
-      $env:PATH = $env:PATH + "C:\Program Files\LLVM\bin;"
+      $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       clang-cl --version
 
