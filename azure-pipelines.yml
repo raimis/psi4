@@ -22,6 +22,7 @@ steps:
   # Install Miniconda
   - powershell: |
       choco install miniconda3 --yes
+      $env:PATH = "C:\tools\miniconda3;" + $env:PATH
       $env:PATH = "C:\tools\miniconda3\Scripts;" + $env:PATH
       $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
@@ -66,9 +67,15 @@ steps:
   # Configure
   - powershell: |
       dir
+      mkdir build
+      cd build
       cmake -G Ninja `
+            -DCMAKE_BUILD_TYPE=Debug `
+            -DCMAKE_INSTALL_PREFIX=../install `
             -DCMAKE_C_COMPILER=clang-cl `
             -DCMAKE_CXX_COMPILER=clang-cl `
+            -DENABLE_XHOST=OFF `
+            -DMAX_AM_ERI=5 `
             $(Build.SourcesDirectory)
     displayName: "Configure Psi4"
     workingDirectory: $(Build.BinariesDirectory)
