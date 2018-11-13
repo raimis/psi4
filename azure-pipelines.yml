@@ -6,6 +6,9 @@
 pool:
   vmImage: 'vs2015-win2012r2'
 
+trigger:
+  - master
+
 steps:
  
   # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
@@ -14,6 +17,8 @@ steps:
       iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
       choco --version
+    displayName: "Install Chocolatey"
+
   
   # Install Miniconda
   - powershell: |
@@ -59,6 +64,7 @@ steps:
       dir
       cmake --version
       ninja --version
+      cl-clang --version
 
   # Build
   
