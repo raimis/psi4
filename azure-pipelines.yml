@@ -71,7 +71,7 @@ steps:
       dir
       mkdir build
       cd build
-      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+      & "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
       cmake -G Ninja `
             -DCMAKE_BUILD_TYPE=Debug `
             -DCMAKE_INSTALL_PREFIX=../install `
