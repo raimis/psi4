@@ -74,7 +74,6 @@ steps:
       clang-cl --version
       link --version
       dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
-      & "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
       cmake -G Ninja `
             -DCMAKE_BUILD_TYPE=Debug `
             -DCMAKE_INSTALL_PREFIX=../install `
