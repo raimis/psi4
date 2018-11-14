@@ -56,23 +56,13 @@ steps:
       choco install llvm --yes
       $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
       Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      dir "C:\Program Files\LLVM\bin"
       clang-cl --version
-      link --version
     displayName: "Install LLVM"
-
-  - powershell: |
-      dir C:\tools\miniconda3
-      python --version
-      C:\tools\miniconda3\python --version
 
   # Configure
   - script: |
       call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      mkdir build
-      cd build
-      clang-cl --version
-      link --version
+      mkdir build & cd build
       cmake -G Ninja ^
             -DCMAKE_BUILD_TYPE=Debug ^
             -DCMAKE_INSTALL_PREFIX=../install ^
@@ -85,6 +75,16 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
 
   # Build
+  - script: |
+      dir
+      set
+      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+      set
+      cmake --build .
+            --config Debug
+            -- -j %NUMBER_OF_PROCESSORS%
+    displayName: "Build Psi4"
+    workingDirectory: $(Build.BinariesDirectory)\build
   
   # Install
   
