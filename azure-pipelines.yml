@@ -71,12 +71,16 @@ steps:
       dir
       mkdir build
       cd build
+      clang-cl --version
+      link --version
+      dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
       & "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
       cmake -G Ninja `
             -DCMAKE_BUILD_TYPE=Debug `
             -DCMAKE_INSTALL_PREFIX=../install `
             -DCMAKE_C_COMPILER=clang-cl `
             -DCMAKE_CXX_COMPILER=clang-cl `
+            -DCMAKE_LINKER=lld-link `
             -DENABLE_XHOST=OFF `
             -DMAX_AM_ERI=5 `
             $(Build.SourcesDirectory)
