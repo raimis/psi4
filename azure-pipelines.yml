@@ -73,7 +73,7 @@ steps:
       cd build
       clang-cl --version
       link --version
-      dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
+      dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC"
       cmake -G Ninja `
             -DCMAKE_BUILD_TYPE=Debug `
             -DCMAKE_INSTALL_PREFIX=../install `
