@@ -96,11 +96,11 @@ steps:
   
   # Test (ctest)
   - script: |
-    call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-    ctest --build-config Debug ^
-          --label-regex quick ^
-          --output-on-failure ^
-          --parallel %NUMBER_OF_PROCESSORS%
+      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+      ctest --build-config Debug ^
+            --label-regex quick ^
+            --output-on-failure ^
+            --parallel %NUMBER_OF_PROCESSORS%
     displayName: "Test Psi4 (ctest)"
     workingDirectory: $(Build.BinariesDirectory)/build
 
