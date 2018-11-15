@@ -76,12 +76,11 @@ steps:
 
   # Build
   - script: |
-      dir
       set
       call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
       set
-      cmake --build .
-            --config Debug
+      cmake --build . ^
+            --config Debug ^
             -- -j %NUMBER_OF_PROCESSORS%
     displayName: "Build Psi4"
     workingDirectory: $(Build.BinariesDirectory)\build
