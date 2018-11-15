@@ -170,8 +170,8 @@ sys.path.insert(1, lib_dir)
 import psi4
 
 if args["version"]:
-    print(psi4.__version__)
-    sys.exit()
+    retcode = print(psi4.__version__)
+    sys.exit(retcode)
 
 # Prevents a poor option combination
 if args['plugin_template'] and (not args['plugin_name']):
