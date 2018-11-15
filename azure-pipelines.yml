@@ -70,7 +70,7 @@ steps:
             -DCMAKE_C_COMPILER=clang-cl ^
             -DCMAKE_CXX_COMPILER=clang-cl ^
             -DENABLE_XHOST=OFF ^
-            -DMAX_AM_ERI=5 ^
+            -DMAX_AM_ERI=6 ^
             $(Build.SourcesDirectory)
     displayName: "Configure Psi4"
     workingDirectory: $(Build.BinariesDirectory)
