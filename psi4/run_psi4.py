@@ -170,8 +170,8 @@ sys.path.insert(1, lib_dir)
 import psi4
 
 if args["version"]:
-    retcode = print(psi4.__version__)
-    sys.exit(retcode)
+    print(psi4.__version__)
+    sys.exit()
 
 # Prevents a poor option combination
 if args['plugin_template'] and (not args['plugin_name']):
@@ -189,8 +189,8 @@ if args['plugin_name']:
     sys.exit()
 
 if args["test"]:
-    psi4.test()
-    sys.exit()
+    retcode = psi4.test()
+    sys.exit(retcode)
 
 if not os.path.isfile(args["input"]):
     raise KeyError("The file %s does not exist." % args["input"])
