@@ -9,6 +9,8 @@ pool:
 trigger:
   - master
 
+timeoutInMinutes: 90
+
 steps:
 
   # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
