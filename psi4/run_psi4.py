@@ -189,7 +189,7 @@ if args['plugin_name']:
     sys.exit()
 
 if args["test"]:
-    retcode = psi4.test()
+    retcode = psi4.test('smoke')
     sys.exit(retcode)
 
 if not os.path.isfile(args["input"]):
