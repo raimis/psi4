@@ -3,115 +3,115 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-pool:
-  vmImage: 'vs2015-win2012r2'
-
 trigger:
   - master
 
-timeoutInMinutes: 90
+jobs:
 
-steps:
+  # Configure, build, install, and test
+  - job: 'build'
+    pool:
+      vmImage: 'vs2015-win2012r2'
+    timeoutInMinutes: 90
+    steps:
 
-  # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
-  - powershell: |
-      Set-ExecutionPolicy Bypass -Scope Process -Force
-      iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      choco --version
-    displayName: "Install Chocolatey"
+      # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
+      - powershell: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+          Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+          choco --version
+        displayName: "Install Chocolatey"
   
-  # Install Miniconda
-  - powershell: |
-      choco install miniconda3 --yes
-      $env:PATH = "C:\tools\miniconda3;" + $env:PATH
-      $env:PATH = "C:\tools\miniconda3\Scripts;" + $env:PATH
-      $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
-      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      $env:LIB = "C:\tools\miniconda3\Library\lib;" + $env:LIB
-      Write-Host "##vso[task.setvariable variable=LIB]$env:LIB"
-      conda --version
-    displayName: "Install Miniconda"
+      # Install Miniconda
+      - powershell: |
+          choco install miniconda3 --yes
+          $env:PATH = "C:\tools\miniconda3;" + $env:PATH
+          $env:PATH = "C:\tools\miniconda3\Scripts;" + $env:PATH
+          $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
+          Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+          $env:LIB = "C:\tools\miniconda3\Library\lib;" + $env:LIB
+          Write-Host "##vso[task.setvariable variable=LIB]$env:LIB"
+          conda --version
+        displayName: "Install Miniconda"
 
-  # Create conda enviroment
-  # Note: conda activate/deactive doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
-  - powershell: |
-      conda config --set always_yes yes 
-      conda install --channel conda-forge `
-                    cmake `
-                    deepdiff `
-                    intel-openmp=2018.0.3 `
-                    mkl-devel=2018.0.3 `
-                    mpmath `
-                    networkx `
-                    ninja `
-                    numpy `
-                    pint `
-                    pybind11 `
-                    pytest `
-                    python=3.6
-      conda list
-    displayName: "Install conda packages"
+      # Create conda enviroment
+      # Note: conda activate/deactive doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
+      - powershell: |
+          conda config --set always_yes yes 
+          conda install --channel conda-forge `
+                        cmake `
+                        deepdiff `
+                        intel-openmp=2018.0.3 `
+                        mkl-devel=2018.0.3 `
+                        mpmath `
+                        networkx `
+                        ninja `
+                        numpy `
+                        pint `
+                        pybind11 `
+                        pytest `
+                        python=3.6
+          conda list
+        displayName: "Install conda packages"
 
-  # Install LLVM
-  # Note: LLVM distributed by conda is too old
-  - powershell: |
-      choco install llvm --yes
-      $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
-      Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-      clang-cl --version
-    displayName: "Install LLVM"
+      # Install LLVM
+      # Note: LLVM distributed by conda is too old
+      - powershell: |
+          choco install llvm --yes
+          $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
+          Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+          clang-cl --version
+        displayName: "Install LLVM"
 
-  # Configure
-  - script: |
-      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      mkdir build & cd build
-      cmake -G Ninja ^
-            -DCMAKE_BUILD_TYPE=Debug ^
-            -DCMAKE_INSTALL_PREFIX=../install ^
-            -DCMAKE_C_COMPILER=clang-cl ^
-            -DCMAKE_CXX_COMPILER=clang-cl ^
-            -DENABLE_XHOST=OFF ^
-            -DMAX_AM_ERI=6 ^
-            $(Build.SourcesDirectory)
-    displayName: "Configure Psi4"
-    workingDirectory: $(Build.BinariesDirectory)
+      # Configure
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          mkdir build & cd build
+          cmake -G Ninja ^
+                -DCMAKE_BUILD_TYPE=Debug ^
+                -DCMAKE_INSTALL_PREFIX=../install ^
+                -DCMAKE_C_COMPILER=clang-cl ^
+                -DCMAKE_CXX_COMPILER=clang-cl ^
+                -DENABLE_XHOST=OFF ^
+                -DMAX_AM_ERI=6 ^
+                $(Build.SourcesDirectory)
+        displayName: "Configure Psi4"
+        workingDirectory: $(Build.BinariesDirectory)
 
-  # Build
-  - script: |
-      set
-      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      cmake --build . ^
-            --config Debug ^
-            -- -j %NUMBER_OF_PROCESSORS%
-    displayName: "Build Psi4"
-    workingDirectory: $(Build.BinariesDirectory)/build
+      # Build
+      - script: |
+          set
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          cmake --build . ^
+                --config Debug ^
+                -- -j %NUMBER_OF_PROCESSORS%
+        displayName: "Build Psi4"
+        workingDirectory: $(Build.BinariesDirectory)/build
   
-  # Install
-  - script: |
-      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      cmake --build . ^
-            --config Debug ^
-            --target install ^
-            -- -j %NUMBER_OF_PROCESSORS%
-    displayName: "Install Psi4"
-    workingDirectory: $(Build.BinariesDirectory)/build
+      # Install
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          cmake --build . ^
+                --config Debug ^
+                --target install ^
+                -- -j %NUMBER_OF_PROCESSORS%
+        displayName: "Install Psi4"
+        workingDirectory: $(Build.BinariesDirectory)/build
   
-  # Test (ctest)
-  - script: |
-      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      ctest --build-config Debug ^
-            --label-regex quick ^
-            --output-on-failure ^
-            --parallel %NUMBER_OF_PROCESSORS%
-    displayName: "Test Psi4 (ctest)"
-    workingDirectory: $(Build.BinariesDirectory)/build
+      # Test (ctest)
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Debug ^
+                --label-regex quick ^
+                --output-on-failure ^
+                --parallel %NUMBER_OF_PROCESSORS%
+        displayName: "Test Psi4 (ctest)"
+        workingDirectory: $(Build.BinariesDirectory)/build
 
-  # Test (built-in)
-  - script: |
-      call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      python psi4 --test
-    displayName: "Test Psi4 (bullt-in)"
-    workingDirectory: $(Build.BinariesDirectory)/install/bin
-
-  # Package
+      # Test (built-in)
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          python psi4 --test
+        displayName: "Test Psi4 (bullt-in)"
+        workingDirectory: $(Build.BinariesDirectory)/install/bin
