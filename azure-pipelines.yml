@@ -37,20 +37,20 @@ jobs:
 
       # Create conda enviroment
       # Note: conda activate/deactive doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
-      - powershell: |
+      - shell: |
           conda config --set always_yes yes 
-          conda install --channel conda-forge `
-                        cmake `
-                        deepdiff `
-                        intel-openmp=2018.0.3 `
-                        mkl-devel=2018.0.3 `
-                        mpmath `
-                        networkx `
-                        ninja `
-                        numpy `
-                        pint `
-                        pybind11 `
-                        pytest `
+          conda install --channel conda-forge ^
+                        cmake ^
+                        deepdiff ^
+                        intel-openmp=2018.0.3 ^
+                        mkl-devel=2018.0.3 ^
+                        mpmath ^
+                        networkx ^
+                        ninja ^
+                        numpy ^
+                        pint ^
+                        pybind11 ^
+                        pytest ^
                         python=3.6
           conda list
         displayName: "Install conda packages"
@@ -59,7 +59,8 @@ jobs:
       # Note: LLVM distributed by conda is too old
       - script: |
           choco install llvm --yes
-          echo "##vso[task.setvariable variable=PATH]C:\Program Files\LLVM\bin;%PATH%"
+          set PATH = C:\Program Files\LLVM\bin;%PATH%
+          echo '##vso[task.setvariable variable=PATH]%PATH%'
           clang-cl --version
         displayName: "Install LLVM"
 
