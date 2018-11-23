@@ -37,7 +37,7 @@ jobs:
 
       # Create conda enviroment
       # Note: conda activate/deactive doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
-      - shell: |
+      - script: |
           conda config --set always_yes yes 
           conda install --channel conda-forge ^
                         cmake ^
