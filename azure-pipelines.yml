@@ -65,6 +65,7 @@ jobs:
 
       # Configure
       - script: |
+          echo %PATH%
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
           cmake -G Ninja ^
@@ -80,7 +81,6 @@ jobs:
 
       # Build
       - script: |
-          set
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
                 --config Debug ^
