@@ -24,21 +24,21 @@ jobs:
         displayName: "Install Chocolatey"
   
       # Install Miniconda
-      - powershell: |
+      - scirpt: |
           choco install miniconda3 --yes
-          $env:PATH = "C:\tools\miniconda3;" + $env:PATH
-          $env:PATH = "C:\tools\miniconda3\Scripts;" + $env:PATH
-          $env:PATH = "C:\tools\miniconda3\Library\bin;" + $env:PATH
-          Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
-          $env:LIB = "C:\tools\miniconda3\Library\lib;" + $env:LIB
-          Write-Host "##vso[task.setvariable variable=LIB]$env:LIB"
+          set PATH=C:\tools\miniconda3\Scripts;C:\tools\miniconda3;C:\tools\miniconda3\Library\bin;%PATH%
+          echo '##vso[task.setvariable variable=PATH]%PATH%'
+          set LIB=C:\tools\miniconda3\Library\lib;%LIB%
+          echo '##vso[task.setvariable variable=LIB]%LIB%'
           conda --version
         displayName: "Install Miniconda"
 
       # Create conda enviroment
-      # Note: conda activate/deactive doesn't work yet with PowerShell (https://github.com/conda/conda/issues/626)
+      # Note: conda activate/deactive doesn't work
       - script: |
+          dir
           conda config --set always_yes yes 
+          dir
           conda install --channel conda-forge ^
                         cmake ^
                         deepdiff ^
@@ -52,7 +52,9 @@ jobs:
                         pybind11 ^
                         pytest ^
                         python=3.6
+          dir
           conda list
+          ninja --version
         displayName: "Install conda packages"
 
       # Install LLVM
