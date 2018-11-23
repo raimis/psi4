@@ -1,14 +1,11 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Psi4 pipeline
 
 trigger:
   - master
 
 jobs:
 
-  # Configure, build, install, and test
+  # Configure, build, install, and test job
   - job: 'build'
     pool:
       vmImage: 'vs2015-win2012r2'
@@ -34,11 +31,9 @@ jobs:
         displayName: "Install Miniconda"
 
       # Create conda enviroment
-      # Note: conda activate/deactive doesn't work
+      # Note: conda activate doesn't work here, because it creates a new shell!
       - script: |
-          dir
           conda config --set always_yes yes 
-          dir
           conda install --channel conda-forge ^
                         cmake ^
                         deepdiff ^
@@ -52,9 +47,7 @@ jobs:
                         pybind11 ^
                         pytest ^
                         python=3.6
-          dir
           conda list
-          ninja --version
         displayName: "Install conda packages"
 
       # Install LLVM
@@ -68,7 +61,6 @@ jobs:
 
       # Configure
       - script: |
-          echo %PATH%
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
           cmake -G Ninja ^
