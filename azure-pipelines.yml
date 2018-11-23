@@ -57,10 +57,9 @@ jobs:
 
       # Install LLVM
       # Note: LLVM distributed by conda is too old
-      - powershell: |
+      - script: |
           choco install llvm --yes
-          $env:PATH = "C:\Program Files\LLVM\bin;" + $env:PATH
-          Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
+          echo "##vso[task.setvariable variable=PATH]C:\Program Files\LLVM\bin;%PATH%"
           clang-cl --version
         displayName: "Install LLVM"
 
