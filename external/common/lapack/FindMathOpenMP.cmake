@@ -72,7 +72,7 @@ endmacro()
 
 set(PN MathOpenMP)
 
-add_library(tgt::MathOpenMP INTERFACE IMPORTED)
+add_library(tgt::${PN} INTERFACE IMPORTED)
 
 if (${isMKL} MATCHES "MKL")
     if ((CMAKE_C_COMPILER_ID STREQUAL GNU) OR
@@ -85,7 +85,7 @@ if (${isMKL} MATCHES "MKL")
             set(${PN}_LIB_NAMES "iomp5;-Wl,--as-needed")
         endif()
         find_omp_libs("${PN}" ${${PN}_LIB_NAMES})
-        set_property(TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES ${${PN}_LIBRARIES})
+        set_property(TARGET tgt::${PN} PROPERTY INTERFACE_LINK_LIBRARIES ${${PN}_LIBRARIES})
     endif()
 
     if (CMAKE_C_COMPILER_ID STREQUAL Clang)
@@ -104,7 +104,7 @@ if (ENABLE_OPENMP)
     # *not* REQUIRED b/c some compilers don't support OpenMP and -DENABLE_OPENMP isn't a build-or-die-trying
     find_package(TargetOpenMP COMPONENTS ${TargetOpenMP_FIND_COMPONENTS})
     if (TargetOpenMP_FOUND)
-        set_property(TARGET tgt::MathOpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP)
+        set_property(TARGET tgt::${PN} APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP)
     else()
         message(WARNING "${PN} configuration failed! The code will be built without OpenMP.")
     endif()
