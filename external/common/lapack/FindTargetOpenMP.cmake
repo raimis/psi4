@@ -142,6 +142,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(${PN}
                                   REQUIRED_VARS ${PN}_FOUND
                                   HANDLE_COMPONENTS)
+unset(PN)
 
 include(CMakePrintHelpers)
 message("Targets after find_package(TargetOpenMP)")
