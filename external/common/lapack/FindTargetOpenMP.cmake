@@ -62,7 +62,7 @@ else()
     find_package (OpenMP MODULE COMPONENTS ${${PN}_FIND_COMPONENTS})
 
     if(NOT OpenMP_FOUND)
-        message(WARNING "FindOpenMP failed! Trying custom OpenMP configuration...")
+        message(WARNING "FindOpenMP failed! Trying a custom OpenMP configuration...")
     endif()
 
     foreach(_lang ${${PN}_FIND_COMPONENTS})
@@ -131,11 +131,11 @@ cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenM
                        PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
 
 add_library(OpenMP::OpenMP INTERFACE IMPORTED)
-set(${PN}_FOUND 1)
+set(${PN}_FOUND)
 foreach(_lang IN ITEMS C CXX Fortran)
     if(_lang IN_LIST ${PN}_FIND_COMPONENTS)
         if (TARGET OpenMP::OpenMP_${_lang})
-            set(${PN}_${_lang}_FOUND 1)
+            set(${PN}_${_lang}_FOUND)
             set_property(TARGET OpenMP::OpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP_${_lang})
             #target_link_libraries(OpenMP::OpenMP INTERFACE OpenMP::OpenMP_${_lang})
         else()
