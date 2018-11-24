@@ -70,6 +70,7 @@ macro(find_omp_libs _service)
     unset(_service)
 endmacro()
 
+set(PN MathOpenMP)
 
 add_library(tgt::MathOpenMP INTERFACE IMPORTED)
 
@@ -104,12 +105,11 @@ if (ENABLE_OPENMP)
     find_package(TargetOpenMP COMPONENTS ${TargetOpenMP_FIND_COMPONENTS})
     if (TargetOpenMP_FOUND)
         set_property(TARGET tgt::MathOpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP)
-        #target_link_libraries(tgt::MathOpenMP INTERFACE OpenMP::OpenMP)
     else()
-        message(WARNING "OpenMP configuration failed! The code will be built without OpenMP.")
+        message(WARNING "${PN} configuration failed! The code will be built without OpenMP.")
     endif()
 endif()
 
-set(MathOpenMP_FOUND 1)
+set(${PN}_FOUND 1)
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args (MathOpenMP DEFAULT_MSG MathOpenMP_FOUND)
+find_package_handle_standard_args (${PN} DEFAULT_MSG ${PN}_FOUND)
