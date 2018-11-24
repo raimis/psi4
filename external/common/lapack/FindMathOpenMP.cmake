@@ -70,21 +70,22 @@ macro(find_omp_libs _service)
     unset(_service)
 endmacro()
 
+set(PN MathOpenMP)
 
-add_library(tgt::MathOpenMP INTERFACE IMPORTED)
+add_library(tgt::${PN} INTERFACE IMPORTED)
 
 if (${isMKL} MATCHES "MKL")
     if ((CMAKE_C_COMPILER_ID STREQUAL GNU) OR
         (CMAKE_CXX_COMPILER_ID STREQUAL GNU) OR
         (CMAKE_Fortran_COMPILER_ID STREQUAL GNU))
         if (APPLE)
-            set(_MathOpenMP_LIB_NAMES "iomp5")
+            set(_${PN}_LIB_NAMES "iomp5")
         else()
             # https://stackoverflow.com/questions/25986091/telling-gcc-to-not-link-libgomp-so-it-links-libiomp5-instead
-            set(_MathOpenMP_LIB_NAMES "iomp5;-Wl,--as-needed")
+            set(_${PN}_LIB_NAMES "iomp5;-Wl,--as-needed")
         endif()
-        find_omp_libs("MathOpenMP" ${_MathOpenMP_LIB_NAMES})
-        set_property(TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES "${MathOpenMP_LIBRARIES}")
+        find_omp_libs("${PN}" ${_${PN}_LIB_NAMES})
+        set_property(TARGET tgt::${PN} PROPERTY INTERFACE_LINK_LIBRARIES ${${PN}_LIBRARIES})
     endif()
 
     if (CMAKE_C_COMPILER_ID STREQUAL Clang)
@@ -102,14 +103,13 @@ endif()
 if (ENABLE_OPENMP)
     # *not* REQUIRED b/c some compilers don't support OpenMP and -DENABLE_OPENMP isn't a build-or-die-trying
     find_package(TargetOpenMP COMPONENTS ${TargetOpenMP_FIND_COMPONENTS})
-    if (TargetOpenMP_FOUND)
-        set_property(TARGET tgt::MathOpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP)
-        #target_link_libraries(tgt::MathOpenMP INTERFACE OpenMP::OpenMP)
+    if(TargetOpenMP_FOUND)
+        set_property(TARGET tgt::${PN} APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP)
     else()
         message(WARNING "OpenMP configuration failed! The code will be built without OpenMP.")
     endif()
 endif()
 
-set(MathOpenMP_FOUND 1)
+set(${PN}_FOUND 1)
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args (MathOpenMP DEFAULT_MSG MathOpenMP_FOUND)
+find_package_handle_standard_args (${PN} DEFAULT_MSG ${PN}_FOUND)
