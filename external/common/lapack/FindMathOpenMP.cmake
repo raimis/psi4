@@ -102,7 +102,7 @@ endif()
 if (ENABLE_OPENMP)
     # *not* REQUIRED b/c some compilers don't support OpenMP and -DENABLE_OPENMP isn't a build-or-die-trying
     find_package(TargetOpenMP COMPONENTS ${TargetOpenMP_FIND_COMPONENTS})
-    if (TARGET OpenMP::OpenMP)
+    if (TargetOpenMP_FOUND)
         target_link_libraries(tgt::MathOpenMP INTERFACE OpenMP::OpenMP)
     else()
         message(WARNING "OpenMP configuration failed! The code will be built without OpenMP.")
