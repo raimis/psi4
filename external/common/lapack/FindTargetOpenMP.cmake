@@ -130,7 +130,7 @@ message("Targets after find_package(TargetOpenMP)")
 cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran OpenMP::OpenMP
                        PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
 
-add_library (OpenMP::OpenMP INTERFACE IMPORTED)
+add_library (OpenMP::OpenMP UNKNOWN IMPORTED)
 set(${PN}_FOUND 1)
 foreach(_lang IN ITEMS C CXX Fortran)
     if(_lang IN_LIST ${PN}_FIND_COMPONENTS)
