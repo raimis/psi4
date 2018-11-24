@@ -110,9 +110,6 @@ if (ENABLE_OPENMP)
     endif()
 endif()
 
-set(PN MathOpenMP)
-get_property (_ill TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES)
-set (${PN}_MESSAGE "${_ill}")
-
+set(MathOpenMP_FOUND 1)
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args (${PN} DEFAULT_MSG ${PN}_MESSAGE)
+find_package_handle_standard_args (MathOpenMP DEFAULT_MSG MathOpenMP_FOUND)
