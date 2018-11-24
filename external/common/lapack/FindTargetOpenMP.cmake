@@ -131,11 +131,11 @@ cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenM
                        PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
 
 add_library(OpenMP::OpenMP INTERFACE IMPORTED)
-set(${PN}_FOUND)
+set(${PN}_FOUND 1)
 foreach(_lang IN ITEMS C CXX Fortran)
     if(_lang IN_LIST ${PN}_FIND_COMPONENTS)
         if (TARGET OpenMP::OpenMP_${_lang})
-            set(${PN}_${_lang}_FOUND)
+            set(${PN}_${_lang}_FOUND 1)
             set_property(TARGET OpenMP::OpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP_${_lang})
             #target_link_libraries(OpenMP::OpenMP INTERFACE OpenMP::OpenMP_${_lang})
         else()
