@@ -107,7 +107,7 @@ artifacts:
   - path: build\tests
     name: tests
 
-branches:
-  only:
-    - master
+#branches:
+#  only:
+#    - master
     # - 1.3.x
