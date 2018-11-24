@@ -143,8 +143,8 @@ find_package_handle_standard_args(${PN}
                                   REQUIRED_VARS ${PN}_FOUND
                                   HANDLE_COMPONENTS)
 
-include(CMakePrintHelpers)
-message("Targets after find_package(TargetOpenMP)")
-cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran OpenMP::OpenMP
-                       PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
+#include(CMakePrintHelpers)
+#message("Targets after find_package(TargetOpenMP)")
+#cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran OpenMP::OpenMP
+#                       PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
 cmake_policy(POP)
