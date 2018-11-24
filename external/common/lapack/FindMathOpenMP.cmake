@@ -79,13 +79,13 @@ if (${isMKL} MATCHES "MKL")
         (CMAKE_CXX_COMPILER_ID STREQUAL GNU) OR
         (CMAKE_Fortran_COMPILER_ID STREQUAL GNU))
         if (APPLE)
-            set(_MathOpenMP_LIB_NAMES "iomp5")
+            set(${PN}_LIB_NAMES "iomp5")
         else()
             # https://stackoverflow.com/questions/25986091/telling-gcc-to-not-link-libgomp-so-it-links-libiomp5-instead
-            set(_MathOpenMP_LIB_NAMES "iomp5;-Wl,--as-needed")
+            set(${PN}_LIB_NAMES "iomp5;-Wl,--as-needed")
         endif()
-        find_omp_libs("MathOpenMP" ${_MathOpenMP_LIB_NAMES})
-        set_property(TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES "${MathOpenMP_LIBRARIES}")
+        find_omp_libs("${PN}" ${${PN}_LIB_NAMES})
+        set_property(TARGET tgt::MathOpenMP PROPERTY INTERFACE_LINK_LIBRARIES ${${PN}_LIBRARIES})
     endif()
 
     if (CMAKE_C_COMPILER_ID STREQUAL Clang)
