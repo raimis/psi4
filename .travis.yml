@@ -188,9 +188,9 @@ script:
 - PYTHONPATH=stage/lib/ pytest -v -rws --durations=5 stage/lib/psi4/tests/
 
 # safelist
-branches:
-  only:
-  - master
-  - 1.2.x
-  - 1.1.x
-  - 1.0.x
+#branches:
+#  only:
+#  - master
+#  - 1.2.x
+#  - 1.1.x
+#  - 1.0.x
