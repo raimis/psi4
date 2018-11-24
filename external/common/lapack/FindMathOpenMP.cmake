@@ -71,7 +71,6 @@ macro(find_omp_libs _service)
 endmacro()
 
 set(PN MathOpenMP)
-
 add_library(tgt::${PN} INTERFACE IMPORTED)
 
 if (${isMKL} MATCHES "MKL")
@@ -110,7 +109,7 @@ if (ENABLE_OPENMP)
     endif()
 endif()
 
+set(PN MathOpenMP)
 set(${PN}_FOUND 1)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args (${PN} DEFAULT_MSG ${PN}_FOUND)
-unset(PN)
