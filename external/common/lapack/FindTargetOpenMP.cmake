@@ -59,7 +59,11 @@ if (OpenMP_LIBRARIES AND OpenMP_FLAGS)
     target_link_libraries(OpenMP::OpenMP INTERFACE ${OpenMP_LIBRARIES})
 else()
     # 2nd precedence - target from modern FindOpenMP.cmake
-    find_package (OpenMP QUIET MODULE COMPONENTS ${${PN}_FIND_COMPONENTS})
+    find_package (OpenMP MODULE COMPONENTS ${${PN}_FIND_COMPONENTS})
+
+    if(NOT OpenMP_FOUND)
+        message(WARNING "FindOpenMP failed! Trying custom OpenMP configuration...")
+    endif()
 
     foreach(_lang ${${PN}_FIND_COMPONENTS})
         if (NOT TARGET OpenMP::OpenMP_${_lang})
@@ -139,8 +143,8 @@ find_package_handle_standard_args(${PN}
                                   REQUIRED_VARS ${PN}_FOUND
                                   HANDLE_COMPONENTS)
 
-#include(CMakePrintHelpers)
-#message("Targets after find_package(TargetOpenMP)")
-#cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran OpenMP::OpenMP
-#                       PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
+include(CMakePrintHelpers)
+message("Targets after find_package(TargetOpenMP)")
+cmake_print_properties(TARGETS OpenMP::OpenMP_C OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran OpenMP::OpenMP
+                       PROPERTIES INTERFACE_COMPILE_DEFINITIONS INTERFACE_COMPILE_OPTIONS INTERFACE_INCLUDE_DIRS INTERFACE_LINK_LIBRARIES)
 cmake_policy(POP)
