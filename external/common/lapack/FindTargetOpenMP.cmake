@@ -77,7 +77,7 @@ else()
 
                 # Check if clang-cl is used
                 if(CMAKE_${_lang}_COMPILER_ID STREQUAL Clang)
-                    set(_CLANG_CL_FLAG "-Xclang -fopenmp")
+                    set(_CLANG_CL_FLAG "-Xclang;-fopenmp")
                     unset(USE_CLANG_CL_${_lang} CACHE)
                     if(${_lang} STREQUAL C)
                         check_c_compiler_flag(${_CLANG_CL_FLAG} USE_CLANG_CL_${_lang})
