@@ -64,7 +64,7 @@ else()
         message(WARNING "FindOpenMP failed! Trying a custom OpenMP configuration...")
     endif()
 
-    foreach(_lang IN LISTS {_${PN}_FIND_LIST)
+    foreach(_lang IN LISTS _${PN}_FIND_LIST)
         if (NOT TARGET OpenMP::OpenMP_${_lang})
             # 3rd precedence - construct a target
 

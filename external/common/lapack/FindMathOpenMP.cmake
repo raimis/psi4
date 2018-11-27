@@ -110,6 +110,5 @@ if (ENABLE_OPENMP)
 endif()
 
 set(_${PN}_REQUIRED 1)
-message(STATUS "_${PN}_REQUIRED ${_${PN}_REQUIRED}")
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args (${PN} DEFAULT_MSG _${PN}_REQUIRED)
