@@ -36,7 +36,7 @@
 set(_TargetOpenMP_PN ${PN})
 set(PN TargetOpenMP)
 
-if(${PN}_FIND_COMPONENTS)
+if(DEFINED ${PN}_FIND_COMPONENTS)
     set(${PN}_FIND_LIST ${PN}_FIND_COMPONENTS)
 else()
     set(${PN}_FIND_LIST C CXX Fortran)
