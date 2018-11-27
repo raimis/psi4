@@ -58,7 +58,7 @@ if (OpenMP_LIBRARIES AND OpenMP_FLAGS)
     target_link_libraries(OpenMP::OpenMP INTERFACE ${OpenMP_LIBRARIES})
 else()
     # 2nd precedence - target from modern FindOpenMP.cmake
-    find_package (OpenMP MODULE COMPONENTS ${${PN}_FIND_LIST})
+    find_package (OpenMP MODULE COMPONENTS ${PN}_FIND_COMPONENTS)
 
     if(NOT OpenMP_FOUND)
         message(WARNING "FindOpenMP failed! Trying a custom OpenMP configuration...")
