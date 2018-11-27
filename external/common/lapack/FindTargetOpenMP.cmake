@@ -36,15 +36,15 @@
 set(_TargetOpenMP_PN ${PN})
 set(PN TargetOpenMP)
 
-if(DEFINED ${PN}_FIND_COMPONENTS)
-    set(${PN}_FIND_LIST ${${PN}_FIND_COMPONENTS})
+if(${PN}_FIND_COMPONENTS)
+    set(_${PN}_FIND_LIST ${${PN}_FIND_COMPONENTS})
 else()
-    set(${PN}_FIND_LIST C CXX Fortran)
+    set(_${PN}_FIND_LIST C CXX Fortran)
 endif()
-separate_arguments(${PN}_FIND_LIST)
+separate_arguments(_${PN}_FIND_LIST)
 
 if (NOT ${PN}_FIND_QUIETLY)
-    message(STATUS "Detecting MathOpenMP -- ?OpenMP=${ENABLE_OPENMP}, ?MKL=${isMKL}, LANG=${${PN}_FIND_LIST}, C/CXX/Fortran=${CMAKE_C_COMPILER_ID}/${CMAKE_CXX_COMPILER_ID}/${CMAKE_Fortran_COMPILER_ID}")
+    message(STATUS "Detecting MathOpenMP -- ?OpenMP=${ENABLE_OPENMP}, ?MKL=${isMKL}, LANG=${_${PN}_FIND_LIST}, C/CXX/Fortran=${CMAKE_C_COMPILER_ID}/${CMAKE_CXX_COMPILER_ID}/${CMAKE_Fortran_COMPILER_ID}")
 endif()
 
 # 1st precedence - libraries passed in through -DOpenMP_LIBRARIES
@@ -64,7 +64,7 @@ else()
         message(WARNING "FindOpenMP failed! Trying a custom OpenMP configuration...")
     endif()
 
-    foreach(_lang ${${PN}_FIND_LIST})
+    foreach(_lang IN LISTS {_${PN}_FIND_LIST)
         if (NOT TARGET OpenMP::OpenMP_${_lang})
             # 3rd precedence - construct a target
 
@@ -126,7 +126,7 @@ endif()
 
 add_library(OpenMP::OpenMP INTERFACE IMPORTED)
 set(_${PN}_REQUIRED 1)
-foreach(_lang ${${PN}_FIND_LIST})
+foreach(_lang IN LISTS _${PN}_FIND_LIST)
     if (TARGET OpenMP::OpenMP_${_lang})
         set(${PN}_${_lang}_FOUND 1)
         set_property(TARGET OpenMP::OpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP_${_lang})
@@ -139,6 +139,8 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(${PN}
                                   REQUIRED_VARS _${PN}_REQUIRED
                                   HANDLE_COMPONENTS)
+
+unset(_${PN}_FIND_LIST)
 
 set(PN ${_TargetOpenMP_PN})
 unset(_TargetOpenMP_PN)
