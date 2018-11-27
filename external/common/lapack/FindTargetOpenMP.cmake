@@ -76,10 +76,10 @@ else()
                 # Note: FindOpenMP doesn't yet support clang-cl, so the config has to be done manually.
 
                 # Check if clang-cl is used
-                if(CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-                    unset(USE_CLANG_CL CACHE)
-                    check_cxx_compiler_flag("-Xclang -fopenmp" USE_CLANG_CL)
-                    if(NOT USE_CLANG_CL)
+                if(CMAKE_${_lang}_COMPILER_ID STREQUAL Clang)
+                    unset(USE_CLANG_CL_${_lang} CACHE)
+                    check_${_lang}_compiler_flag("-Xclang -fopenmp" USE_CLANG_CL_${_lang})
+                    if(NOT USE_CLANG_CL_${_lang})
                         message(FATAL_ERROR "clang-cl (MSVC compatability wrapper) is required, if Clang is used")
                     endif()
                 else()
