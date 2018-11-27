@@ -36,13 +36,15 @@
 set(_TargetOpenMP_PN ${PN})
 set(PN TargetOpenMP)
 
-if(NOT ${PN}_FIND_COMPONENTS)
-    set(${PN}_FIND_COMPONENTS C CXX Fortran)
+if(${PN}_FIND_COMPONENTS)
+    set(${PN}_FIND_LIST ${PN}_FIND_COMPONENTS)
+else()
+    set(${PN}_FIND_LIST C CXX Fortran)
 endif()
-separate_arguments(${PN}_FIND_COMPONENTS)
+separate_arguments(${PN}_FIND_LIST)
 
 if (NOT ${PN}_FIND_QUIETLY)
-    message(STATUS "Detecting MathOpenMP -- ?OpenMP=${ENABLE_OPENMP}, ?MKL=${isMKL}, LANG=${${PN}_FIND_COMPONENTS}, C/CXX/Fortran=${CMAKE_C_COMPILER_ID}/${CMAKE_CXX_COMPILER_ID}/${CMAKE_Fortran_COMPILER_ID}")
+    message(STATUS "Detecting MathOpenMP -- ?OpenMP=${ENABLE_OPENMP}, ?MKL=${isMKL}, LANG=${${PN}_FIND_LIST}, C/CXX/Fortran=${CMAKE_C_COMPILER_ID}/${CMAKE_CXX_COMPILER_ID}/${CMAKE_Fortran_COMPILER_ID}")
 endif()
 
 # 1st precedence - libraries passed in through -DOpenMP_LIBRARIES
@@ -56,13 +58,13 @@ if (OpenMP_LIBRARIES AND OpenMP_FLAGS)
     target_link_libraries(OpenMP::OpenMP INTERFACE ${OpenMP_LIBRARIES})
 else()
     # 2nd precedence - target from modern FindOpenMP.cmake
-    find_package (OpenMP MODULE COMPONENTS ${${PN}_FIND_COMPONENTS})
+    find_package (OpenMP MODULE COMPONENTS ${${PN}_FIND_LIST})
 
     if(NOT OpenMP_FOUND)
         message(WARNING "FindOpenMP failed! Trying a custom OpenMP configuration...")
     endif()
 
-    foreach(_lang ${${PN}_FIND_COMPONENTS})
+    foreach(_lang ${${PN}_FIND_LIST})
         if (NOT TARGET OpenMP::OpenMP_${_lang})
             # 3rd precedence - construct a target
 
@@ -124,7 +126,7 @@ endif()
 
 add_library(OpenMP::OpenMP INTERFACE IMPORTED)
 set(_${PN}_REQUIRED 1)
-foreach(_lang ${${PN}_FIND_COMPONENTS})
+foreach(_lang ${${PN}_FIND_LIST})
     if (TARGET OpenMP::OpenMP_${_lang})
         set(${PN}_${_lang}_FOUND 1)
         set_property(TARGET OpenMP::OpenMP APPEND PROPERTY INTERFACE_LINK_LIBRARIES OpenMP::OpenMP_${_lang})
