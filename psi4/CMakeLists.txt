@@ -170,7 +170,7 @@ if(MSVC)
 endif()
 
 add_compile_options("-Xclang")
-add_compile_options("-std=c++11")
+add_compile_options("-std=c++14")
 
 include_directories(include)
 include_directories(src)
