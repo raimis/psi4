@@ -169,6 +169,8 @@ if(MSVC)
     add_definitions("/EHsc")
 endif()
 
+add_compile_options("/std:c++14")
+
 include_directories(include)
 include_directories(src)
 add_subdirectory(src)
