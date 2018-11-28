@@ -169,7 +169,7 @@ if(MSVC)
     add_definitions("/EHsc")
 endif()
 
-add_compile_options("/std:c++14")
+add_compile_options("-Xclang -std=c++11")
 
 include_directories(include)
 include_directories(src)
