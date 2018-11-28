@@ -52,6 +52,8 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
         message(FATAL_ERROR "CLANG version must be at least 3.6!")
     endif()
 
+    set(psi4_CXX_STANDARD 14)
+
 elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     # As for MSVC 14.0, it is not possible to set anything bellow C++14
     # FIXME Remove following line when we switch to C++14
