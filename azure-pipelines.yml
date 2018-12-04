@@ -156,3 +156,9 @@ jobs:
                       --python 3.6 ^
                       conda\win
         displayName: "Build conda package"
+
+      # Publish the conda package
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: C:\tools\miniconda3\conda-bld\win-64
+          artifactName: conda_package
