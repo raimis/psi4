@@ -155,10 +155,10 @@ jobs:
           conda build --channel conda-forge ^
                       --python 3.6 ^
                       conda\win
+          copy /y C:\tools\miniconda3\conda-bld\win-64\psi4-*.bz2 $(Build.ArtifactStagingDirectory)
         displayName: "Build conda package"
 
       # Publish the conda package
       - task: PublishBuildArtifacts@1
         inputs:
-          pathtoPublish: C:\tools\miniconda3\conda-bld\win-64
           artifactName: conda_package
