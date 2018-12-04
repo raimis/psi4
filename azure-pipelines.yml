@@ -104,16 +104,35 @@ jobs:
       # Test (ctest)
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          # Run quick ctests
+          # Exclude failing tests:
+          #   - ci-property
           ctest --build-config Debug ^
                 --exclude-regex "^(ci-property)$" ^
                 --label-regex quick ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
+        displayName: "Test Psi4 (ctest)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      # Test (ctest; failing)
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          # Run all known failing ctests
+          #   - cbs-parser
+          #   - ci-property
+          #   - cc46
+          #   - cc47
+          #   - cc53
+          #   - fci-tdm
+          #   - fci-tdm-2
+          #   - psimrcc-fd-freq2
+          #   - psithon2
           ctest --build-config Debug ^
-                --tests-regex "^(ci-property)$" ^
+                --tests-regex "^(cbs-parser|ci-property|cc46|cc47|cc53|fci-tdm|fci-tdm-2|psimrcc-fd-freq2|psithon2)$" ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS% & exit 0
-        displayName: "Test Psi4 (ctest)"
+        displayName: "Test Psi4 (ctest; failing)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (built-in)
