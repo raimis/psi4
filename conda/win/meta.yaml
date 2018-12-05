@@ -9,11 +9,11 @@ requirements:
   run:
     - deepdiff
     - intel-openmp=2018.0.3
-    - mkl-devel=2018.0.3
+    - mkl=2018.0.3
+    - networkx
     - numpy
     - pytest
     - qcelemental
-    - vc
 
 build:
   number: 0
@@ -31,5 +31,4 @@ build:
 test:
   commands:
     - python -c "import psi4; print(psi4)"
-    #- pytest -v %CONDA_PREFIX%\Lib\site-packages\psi4\tests\test_psi4.py
-    #- python -c "import psi4; psi4.test()"
+    - python -c "import psi4; psi4.test()"
