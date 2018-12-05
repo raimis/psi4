@@ -12,6 +12,7 @@ requirements:
     - mkl-devel=2018.0.3
     - numpy
     - pytest
+    - qcelemental
     - vc
 
 build:
