@@ -144,13 +144,14 @@ jobs:
       #   displayName: "Test Psi4 (bullt-in)"
       #   workingDirectory: $(Build.BinariesDirectory)/install/bin
 
-      # Install conda-build
+      # Install conda build tools
       # Note: conda-build 3.17.0 is broken
       - script: |
           conda config --set always_yes yes
-          conda install conda-build==3.16.3
+          conda install conda-build==3.16.3 ^
+                        conda-verify
           conda list
-        displayName: "Install conda-build"
+        displayName: "Install conda build tools"
 
       # Build conda package
       - script: |

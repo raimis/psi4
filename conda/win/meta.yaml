@@ -22,7 +22,7 @@ build:
     # TODO find a better place for Psi4 data
     - xcopy /f /i /s share\psi4\basis %PREFIX%\Lib\share\psi4\basis
     - xcopy /f /i /s share\psi4\plugin %PREFIX%\Lib\share\psi4\plugin
-    #- xcopy /f /i /s share\psi4\basis %PREFIX%\Lib\share\psi4\quadratures
+    - xcopy /f /i /s share\psi4\basis %PREFIX%\Lib\share\psi4\quadratures
     - copy /y C:\Windows\System32\msvcp140d.dll %PREFIX%
     - copy /y C:\Windows\System32\vcomp140d.dll %PREFIX%
     - copy /y C:\Windows\System32\vcruntime140d.dll %PREFIX%
@@ -31,4 +31,4 @@ build:
 test:
   commands:
     - python -c "import psi4; print(psi4)"
-    - python -c "import psi4; psi4.test()"
+    - python -c "import psi4; assert psi4.test() == 0"
