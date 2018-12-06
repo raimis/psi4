@@ -2,7 +2,9 @@
 
 package:
   name: psi4
-  version: {{ data.get('version') }}
+  #version: {{ data.get('version') }}
+  version: '0.0.0'
+
 
 source:
   #path: {{ INSTALL_DIR }}
@@ -10,17 +12,19 @@ source:
 
 requirements:
   run:
-    - deepdiff
-    - mkl
-    - networkx
-    - numpy
-    - pytest
-    - python=3.6
+#    - deepdiff
+#    - mkl
+#    - networkx
+#    - numpy
+#    - pytest
+#    - python=3.6
 #    - qcelemental
 
 build:
   number: 0
   script:
+    - git tag
+    - python psi4\versioner.py
     - dir
     # - xcopy /f /i /s /exclude:%RECIPE_DIR%\exclude.txt lib\psi4 %SP_DIR%\psi4
     # # TODO find a better place for Psi4 data
