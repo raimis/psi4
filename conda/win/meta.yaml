@@ -6,7 +6,7 @@ package:
 
 source:
   #path: {{ INSTALL_DIR }}
-  path: .
+  path: ../..
 
 requirements:
   run:
@@ -16,7 +16,7 @@ requirements:
    - numpy
    - pytest
    - python=3.6
-#    - qcelemental
+   - qcelemental
 
 build:
   number: 0
