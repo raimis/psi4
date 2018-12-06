@@ -5,7 +5,6 @@ package:
   version: {{ data.get('version') }}
 
 source:
-  #path: {{ INSTALL_DIR }}
   path: ../..
 
 requirements:
@@ -22,15 +21,14 @@ build:
   number: 0
   script:
     - dir
-    # - xcopy /f /i /s /exclude:%RECIPE_DIR%\exclude.txt lib\psi4 %SP_DIR%\psi4
-    # # TODO find a better place for Psi4 data
-    # - xcopy /f /i /s share\psi4\basis %PREFIX%\Lib\share\psi4\basis
-    # - xcopy /f /i /s share\psi4\plugin %PREFIX%\Lib\share\psi4\plugin
-    # - xcopy /f /i /s share\psi4\quadratures %PREFIX%\Lib\share\psi4\quadratures
-    # - copy /y C:\Windows\System32\msvcp140d.dll %PREFIX%
-    # - copy /y C:\Windows\System32\vcomp140d.dll %PREFIX%
-    # - copy /y C:\Windows\System32\vcruntime140d.dll %PREFIX%
-    # - copy /y C:\Windows\System32\ucrtbased.dll %PREFIX%
+    # - xcopy /f /i /s /exclude:%RECIPE_DIR%\exclude.txt {{ INSTALL_DIR }}\lib\psi4 %SP_DIR%\psi4
+    # - xcopy /f /i /s {{ INSTALL_DIR }}\share\psi4\basis %PREFIX%\Lib\share\psi4\basis
+    # - xcopy /f /i /s {{ INSTALL_DIR }}\share\psi4\plugin %PREFIX%\Lib\share\psi4\plugin
+    # - xcopy /f /i /s {{ INSTALL_DIR }}\share\psi4\quadratures %PREFIX%\Lib\share\psi4\quadratures
+    # - copy /y {{ SYSTEMROOT }}\System32\msvcp140d.dll %PREFIX%
+    # - copy /y {{ SYSTEMROOT }}\System32\vcomp140d.dll %PREFIX%
+    # - copy /y {{ SYSTEMROOT }}\System32\vcruntime140d.dll %PREFIX%
+    # - copy /y {{ SYSTEMROOT }}\System32\ucrtbased.dll %PREFIX%
 
 # test:
 #   commands:
