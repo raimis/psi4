@@ -24,7 +24,6 @@ jobs:
       - script: |
           choco install miniconda3 --yes
           set PATH=C:\tools\miniconda3\Scripts;C:\tools\miniconda3;C:\tools\miniconda3\Library\bin;%PATH%
-          call C:\tools\miniconda3\Scripts\activate.bat base
           echo '##vso[task.setvariable variable=PATH]%PATH%'
           set LIB=C:\tools\miniconda3\Library\lib;%LIB%
           echo '##vso[task.setvariable variable=LIB]%LIB%'
@@ -151,7 +150,6 @@ jobs:
 
       # Install conda build tools
       - script: |
-          conda config --set always_yes yes
           conda install conda-build ^
                         conda-verify
           conda list
