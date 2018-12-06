@@ -6,7 +6,7 @@ package:
 
 source:
   path: {{ INSTALL_DIR }}
-  path: tests
+  path: ../../tests
 
 requirements:
   run:
