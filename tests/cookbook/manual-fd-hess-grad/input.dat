@@ -44,7 +44,7 @@ def process_displacement(method, molecule, displacement, n, ndisp, **kwargs):
 
     # Perform the energy calculation
     derivative, wfn = gradient(method, return_wfn=True, molecule=molecule, **kwargs)
-    displacement["energy"] = core.get_variable('CURRENT ENERGY')
+    displacement["energy"] = core.variable('CURRENT ENERGY')
     displacement["gradient"] = wfn.gradient().np.ravel().tolist()
 
     # clean may be necessary when changing irreps of displacements
@@ -59,7 +59,7 @@ wfn = process_displacement(method, h2o, findif_meta_dict["reference"], ndisp, nd
 
 
 # Compute the hessian of the h2o molecule from the gradients, for all symmetry blocks
-H = driver_findif.compute_hessian_from_gradient(findif_meta_dict, -1)
+H = driver_findif.compute_hessian_from_gradients(findif_meta_dict, -1)
 
 wfn = core.Wavefunction.build(h2o, core.get_global_option('BASIS'))
 wfn.set_hessian(core.Matrix.from_array(H))
