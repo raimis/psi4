@@ -5,8 +5,8 @@ package:
   version: {{ data.get('version') }}
 
 source:
-  path: {{ INSTALL_DIR }}
-  path: ../../tests
+  #path: {{ INSTALL_DIR }}
+  path: ../..
 
 requirements:
   run:
