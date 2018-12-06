@@ -1,6 +1,8 @@
+{% set data = load_setup_py_data(setup_file='conda/_conda_vers.py') %}
+
 package:
   name: psi4
-  version: 0.0.0
+  version: {{ data.get('version') }}
 
 source:
   path: {{ INSTALL_DIR }}
@@ -13,22 +15,23 @@ requirements:
     - numpy
     - pytest
     - python=3.6
-    - qcelemental
+#    - qcelemental
 
 build:
   number: 0
   script:
-    - xcopy /f /i /s /exclude:%RECIPE_DIR%\exclude.txt lib\psi4 %SP_DIR%\psi4
-    # TODO find a better place for Psi4 data
-    - xcopy /f /i /s share\psi4\basis %PREFIX%\Lib\share\psi4\basis
-    - xcopy /f /i /s share\psi4\plugin %PREFIX%\Lib\share\psi4\plugin
-    - xcopy /f /i /s share\psi4\quadratures %PREFIX%\Lib\share\psi4\quadratures
-    - copy /y C:\Windows\System32\msvcp140d.dll %PREFIX%
-    - copy /y C:\Windows\System32\vcomp140d.dll %PREFIX%
-    - copy /y C:\Windows\System32\vcruntime140d.dll %PREFIX%
-    - copy /y C:\Windows\System32\ucrtbased.dll %PREFIX%
+    - dir
+    # - xcopy /f /i /s /exclude:%RECIPE_DIR%\exclude.txt lib\psi4 %SP_DIR%\psi4
+    # # TODO find a better place for Psi4 data
+    # - xcopy /f /i /s share\psi4\basis %PREFIX%\Lib\share\psi4\basis
+    # - xcopy /f /i /s share\psi4\plugin %PREFIX%\Lib\share\psi4\plugin
+    # - xcopy /f /i /s share\psi4\quadratures %PREFIX%\Lib\share\psi4\quadratures
+    # - copy /y C:\Windows\System32\msvcp140d.dll %PREFIX%
+    # - copy /y C:\Windows\System32\vcomp140d.dll %PREFIX%
+    # - copy /y C:\Windows\System32\vcruntime140d.dll %PREFIX%
+    # - copy /y C:\Windows\System32\ucrtbased.dll %PREFIX%
 
-test:
-  commands:
-    - python -c "import psi4; print(psi4)"
-    - python -c "import psi4; assert psi4.test() == 0"
+# test:
+#   commands:
+#     - python -c "import psi4; print(psi4)"
+#     - python -c "import psi4; assert psi4.test() == 0"
