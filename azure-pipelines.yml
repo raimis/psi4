@@ -34,7 +34,7 @@ jobs:
         displayName: "Install Miniconda"
 
       # Configure Miniconda
-      - script |
+      - script: |
           conda config --set always_yes yes
           conda config --append channels conda-forge
           conda config --append channels psi4
