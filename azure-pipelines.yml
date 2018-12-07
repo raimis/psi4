@@ -42,6 +42,8 @@ jobs:
       # Note: conda activate doesn't work here, because it creates a new shell!
       - script: |
           conda install cmake ^
+                        conda-build ^
+                        conda-verify ^
                         deepdiff ^
                         mkl-devel ^
                         mpmath ^
@@ -100,68 +102,61 @@ jobs:
         workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (OpenMP)
-      # - script: |
-      #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      #     # Check if OpenMP config hadn't failed silently
-      #     python -c "from psi4 import core; core.set_num_threads(42); assert core.get_num_threads() == 42"
-      #   displayName: "Test Psi4 (OpenMP)"
-      #   workingDirectory: $(Build.BinariesDirectory)/install/lib
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          # Check if OpenMP config hadn't failed silently
+          python -c "from psi4 import core; core.set_num_threads(42); assert core.get_num_threads() == 42"
+        displayName: "Test Psi4 (OpenMP)"
+        workingDirectory: $(Build.BinariesDirectory)/install/lib
 
       # Test (ctest)
-      # - script: |
-      #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      #     # Run quick ctests
-      #     # Exclude failing tests:
-      #     #   - ci-property
-      #     ctest --build-config Debug ^
-      #           --exclude-regex "^(ci-property)$" ^
-      #           --label-regex quick ^
-      #           --output-on-failure ^
-      #           --parallel %NUMBER_OF_PROCESSORS%
-      #   displayName: "Test Psi4 (ctest)"
-      #   workingDirectory: $(Build.BinariesDirectory)/build
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          # Run quick ctests
+          # Exclude failing tests:
+          #   - ci-property
+          ctest --build-config Debug ^
+                --exclude-regex "^(ci-property)$" ^
+                --label-regex quick ^
+                --output-on-failure ^
+                --parallel %NUMBER_OF_PROCESSORS%
+        displayName: "Test Psi4 (ctest)"
+        workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (ctest; failing)
-      # - script: |
-      #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      #     # Run all known failing ctests
-      #     #   - cbs-parser
-      #     #   - ci-property
-      #     #   - cc46
-      #     #   - cc47
-      #     #   - cc53
-      #     #   - fci-tdm
-      #     #   - fci-tdm-2
-      #     #   - psimrcc-fd-freq2
-      #     #   - psithon2
-      #     ctest --build-config Debug ^
-      #           --tests-regex "^(cbs-parser|ci-property|cc46|cc47|cc53|fci-tdm|fci-tdm-2|psimrcc-fd-freq2|psithon2)$" ^
-      #           --output-on-failure ^
-      #           --parallel %NUMBER_OF_PROCESSORS% & exit 0
-      #   displayName: "Test Psi4 (ctest; failing)"
-      #   workingDirectory: $(Build.BinariesDirectory)/build
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          # Run all known failing ctests
+          #   - cbs-parser
+          #   - ci-property
+          #   - cc46
+          #   - cc47
+          #   - cc53
+          #   - fci-tdm
+          #   - fci-tdm-2
+          #   - psimrcc-fd-freq2
+          #   - psithon2
+          ctest --build-config Debug ^
+                --tests-regex "^(cbs-parser|ci-property|cc46|cc47|cc53|fci-tdm|fci-tdm-2|psimrcc-fd-freq2|psithon2)$" ^
+                --output-on-failure ^
+                --parallel %NUMBER_OF_PROCESSORS% & exit 0
+        displayName: "Test Psi4 (ctest; failing)"
+        workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (built-in)
-      # - script: |
-      #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      #     python psi4 --test
-      #   displayName: "Test Psi4 (bullt-in)"
-      #   workingDirectory: $(Build.BinariesDirectory)/install/bin
-
-      # Install conda build tools
       - script: |
-          conda install conda-build ^
-                        conda-verify
-          conda list
-        displayName: "Install conda build tools"
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          python psi4 --test
+        displayName: "Test Psi4 (bullt-in)"
+        workingDirectory: $(Build.BinariesDirectory)/install/bin
 
-      # Build conda package
+      # Package Psi4
       - script: |
           set INSTALL_DIR=$(Build.BinariesDirectory)\install
           conda build --python 3.6 ^
                       conda\win
           copy /y C:\tools\miniconda3\conda-bld\win-64\psi4-*.bz2 $(Build.ArtifactStagingDirectory)
-        displayName: "Build conda package"
+        displayName: "Package Psi4"
 
       # Publish conda package
       - task: PublishBuildArtifacts@1
