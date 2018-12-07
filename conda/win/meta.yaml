@@ -10,6 +10,7 @@ source:
 requirements:
   run:
    - deepdiff
+   - intel-openmp=2018.0.3
    - mkl
    - networkx
    - numpy

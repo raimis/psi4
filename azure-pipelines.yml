@@ -45,6 +45,7 @@ jobs:
                         conda-build ^
                         conda-verify ^
                         deepdiff ^
+                        intel-openmp=2018.0.3 ^
                         mkl-devel ^
                         mpmath ^
                         networkx ^
