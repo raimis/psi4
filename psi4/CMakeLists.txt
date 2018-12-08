@@ -196,7 +196,7 @@ if(WIN32)
     configure_file(run_psi4.bat psi4.bat @ONLY)
     install(PROGRAMS ${CMAKE_BINARY_DIR}/psi4.bat
             DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
-end()
+endif()
 
     # <<<  install lib/  >>>
 install(DIRECTORY share/psi4/
