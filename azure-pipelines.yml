@@ -64,11 +64,11 @@ jobs:
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
           cmake -G Ninja ^
-                -DCMAKE_BUILD_TYPE=Debug ^
+                -DCMAKE_BUILD_TYPE=Release ^
                 -DCMAKE_INSTALL_PREFIX=../install ^
                 -DCMAKE_C_COMPILER=clang-cl ^
                 -DCMAKE_CXX_COMPILER=clang-cl ^
-                -DENABLE_XHOST=OFF ^
+                -DENABLE_XHOST=ON ^
                 -DMAX_AM_ERI=6 ^
                 $(Build.SourcesDirectory)
         displayName: "Configure Psi4"
@@ -78,7 +78,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config Release ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Build Psi4"
         workingDirectory: $(Build.BinariesDirectory)/build
@@ -87,7 +87,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config Release ^
                 --target install ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Install Psi4"
@@ -96,12 +96,12 @@ jobs:
       # Test (ctest)
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Debug ^
+          ctest --build-config Release ^
                 --exclude-regex "^(ci-property)$" ^
                 --label-regex quick ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
-          ctest --build-config Debug ^
+          ctest --build-config Release ^
                 --tests-regex "^(ci-property)$" ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS% & exit 0
