@@ -249,7 +249,7 @@ class MaxIterationsExceeded : public LimitExceeded<T> {
     */
     MaxIterationsExceeded(std::string routine_name, T max, const char *file, int line) noexcept;
 
-    ~MaxIterationsExceeded() noexcept;
+    ~MaxIterationsExceeded() noexcept override;
 };
 
 /**
