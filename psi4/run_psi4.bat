@@ -30,5 +30,7 @@ echo "psi4.bat"
 dir
 echo %0
 echo %~dp0
+echo %~dp0psi4
+echo %~dp0\psi4
 echo %*
-@PYTHON_EXECUTABLE@ %~dp0\psi4 %*
+@PYTHON_EXECUTABLE@ %~dp0psi4 %*
