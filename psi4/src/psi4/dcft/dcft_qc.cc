@@ -198,7 +198,7 @@ void DCFTSolver::run_qc_dcft() {
     }
 
     if (!orbitalsDone_ || !cumulantDone_ || !densityConverged_ || !energyConverged_)
-        throw ConvergenceError("DCFT", maxiter_, cumulant_threshold_, cumulant_convergence_, __FILE__, __LINE__);
+        throw ConvergenceError<>("DCFT", maxiter_, cumulant_threshold_, cumulant_convergence_, __FILE__, __LINE__);
 }
 
 void DCFTSolver::compute_orbital_gradient() {
