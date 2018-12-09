@@ -29,11 +29,9 @@
 #ifndef _psi4_exception_h_
 #define _psi4_exception_h_
 
-#include <cctype>
-#include <exception>
-#include <stdexcept>
-#include <sstream>
 #include <cstring>
+#include <sstream>
+#include <stdexcept>
 
 #if defined(__GNUC__) || (defined(__ICC) && (__ICC >= 600))
 #define PSI4_CURRENT_FUNCTION __PRETTY_FUNCTION__
