@@ -209,7 +209,7 @@ void CCEnergyWavefunction::lmp2() {
 
     if (!conv) {
         outfile->Printf("\n    LMP2 Iterative procedure failed.\n");
-        throw ConvergenceError<>("LMP2 interative procedure failed.", lmp2_maxiter, params_.convergence, rms,
+        throw ConvergenceError<int>("LMP2 interative procedure failed.", lmp2_maxiter, params_.convergence, rms,
                                     __FILE__, __LINE__);
     }
 

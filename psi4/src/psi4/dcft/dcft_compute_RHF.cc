@@ -114,7 +114,7 @@ double DCFTSolver::compute_energy_RHF() {
 
     // If not converged -> Break
     if (!orbitalsDone_ || !cumulantDone_ || !densityConverged_)
-        throw ConvergenceError<>("DCFT", maxiter_, cumulant_threshold_, cumulant_convergence_, __FILE__, __LINE__);
+        throw ConvergenceError<int>("DCFT", maxiter_, cumulant_threshold_, cumulant_convergence_, __FILE__, __LINE__);
 
     std::string prefix = options_.get_str("DCFT_TYPE") == "DF" ? "DF-" : " ";
 
