@@ -272,8 +272,8 @@ class ConvergenceError : public MaxIterationsExceeded<T> {
         std::stringstream sstr;
         sstr << "could not converge " << routine_name << ".  desired " << desired_accuracy << " but got "
              << actual_accuracy << "\n";
-        sstr << LimitExceeded<T>::description();
-        PsiException::rewrite_msg(sstr.str());
+        sstr << ConvergenceError<T>::description();
+        ConvergenceError<T>::rewrite_msg(sstr.str());
     }
 
     /** Accessor method
