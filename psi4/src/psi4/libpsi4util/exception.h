@@ -267,11 +267,10 @@ class ConvergenceError : public MaxIterationsExceeded<T> {
     ConvergenceError(std::string routine_name, T max, double desired_accuracy, double actual_accuracy, const char *file,
                      int line) noexcept
         : MaxIterationsExceeded<T>(routine_name + " iterations", max, file, line),
-          desired_acc_(desired_accuracy),
-          actual_acc_(actual_accuracy) {
+          desired_acc_(desired_accuracy), actual_acc_(actual_accuracy) {
         std::stringstream sstr;
-        sstr << "could not converge " << routine_name << ".  desired " << desired_accuracy << " but got "
-             << actual_accuracy << "\n";
+        sstr << "could not converge " << routine_name << ".  desired " << desired_acc_ << " but got "
+             << actual_acc_ << "\n";
         sstr << ConvergenceError<T>::description();
         ConvergenceError<T>::rewrite_msg(sstr.str());
     }
