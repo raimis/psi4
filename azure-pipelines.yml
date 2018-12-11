@@ -9,7 +9,7 @@ jobs:
   - job: 'build'
     pool:
       vmImage: 'vs2015-win2012r2'
-    timeoutInMinutes: 90
+    timeoutInMinutes: 120
     steps:
 
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
