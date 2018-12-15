@@ -1567,10 +1567,11 @@ def cbs(func, label, **kwargs):
         exec(cbsbanners)
 
         # Build string of molecule and commands that are dependent on the database
+        f_basis =  mc['f_basis'].lower().replace('*', 's')
         commands = '\n'
         commands += """\ncore.set_global_option('BASIS', '%s')\n""" % (mc['f_basis'])
         commands += """core.set_global_option('WRITER_FILE_LABEL', '%s')\n""" % \
-            (user_writer_file_label + ('' if user_writer_file_label == '' else '-') + mc['f_wfn'].lower() + '-' + mc['f_basis'].lower())
+            (user_writer_file_label + ('' if user_writer_file_label == '' else '-') + mc['f_wfn'].lower() + '-' + f_basis)
         exec(commands)
 
         # Stash and set options if any
