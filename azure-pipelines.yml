@@ -9,7 +9,7 @@ jobs:
   - job: 'build'
     pool:
       vmImage: 'vs2015-win2012r2'
-    timeoutInMinutes: 90
+    timeoutInMinutes: 360
     steps:
 
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
@@ -101,14 +101,12 @@ jobs:
         displayName: "Test Psi4 (OpenMP)"
         workingDirectory: $(Build.BinariesDirectory)/install/lib
 
-      # Test (quick ctest)
+      # Test (ctest)
       - script: |
           ctest --build-config Debug ^
-                --exclude-regex "^(ci-property)$" ^
-                --label-regex quick ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
-        displayName: "Test Psi4 (quick ctest)"
+        displayName: "Test Psi4 (ctest)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (failing ctest)
@@ -124,24 +122,24 @@ jobs:
       #   - psimrcc-fd-freq2
       #   - psithon2
       #
-      - script: |
-          ctest --build-config Debug ^
-                --tests-regex "^(cbs-parser|cc46|cc47|cc53|fci-tdm|fci-tdm-2|psimrcc-fd-freq2|psithon2)$" ^
-                --output-on-failure ^
-                --parallel %NUMBER_OF_PROCESSORS%
-          ctest --build-config Debug ^
-                --tests-regex "^ci-property$" ^
-                --output-on-failure ^
-                --repeat-until-fail 10 ^
-                --parallel %NUMBER_OF_PROCESSORS%
-          exit 0
-        displayName: "Test Psi4 (failing ctest)"
-        workingDirectory: $(Build.BinariesDirectory)/build
+      # - script: |
+      #     ctest --build-config Debug ^
+      #           --tests-regex "^(cbs-parser|cc46|cc47|cc53|fci-tdm|fci-tdm-2|psimrcc-fd-freq2|psithon2)$" ^
+      #           --output-on-failure ^
+      #           --parallel %NUMBER_OF_PROCESSORS%
+      #     ctest --build-config Debug ^
+      #           --tests-regex "^ci-property$" ^
+      #           --output-on-failure ^
+      #           --repeat-until-fail 10 ^
+      #           --parallel %NUMBER_OF_PROCESSORS%
+      #     exit 0
+      #   displayName: "Test Psi4 (failing ctest)"
+      #   workingDirectory: $(Build.BinariesDirectory)/build
 
-      # Test (quick pytest)
+      # Test (pytest full)
       - script: |
           set PATH=$(Build.BinariesDirectory)\install\bin;%PATH%
           set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
-          psi4 --test quick
-        displayName: "Test Psi4 (quick pytest)"
-        workingDirectory: $(Build.BinariesDirectory)
+          python psi4 --test full
+        displayName: "Test Psi4 (pytest full)"
+        workingDirectory: $(Build.BinariesDirectory)/install/bin
