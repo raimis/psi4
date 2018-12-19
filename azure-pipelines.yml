@@ -139,27 +139,17 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           ctest --build-config Debug ^
-                --tests-regex "^(ci-property)$" ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 1000 ^
-                --parallel %NUMBER_OF_PROCESSORS% & exit 0
-        displayName: "Test Psi4 (failing ctest)"
-        workingDirectory: $(Build.BinariesDirectory)/build
-
-      - script: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Debug ^
-                --tests-regex "^(mp2-property)$" ^
-                --output-on-failure ^
-                --repeat-until-fail 1000 ^
-                --parallel %NUMBER_OF_PROCESSORS% & exit 0
+                --parallel 1 & exit 0
         displayName: "Test Psi4 (failing ctest)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (quick pytest)
-      - script: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
-          python psi4 --test quick
-        displayName: "Test Psi4 (full pytest)"
-        workingDirectory: $(Build.BinariesDirectory)/install/bin
+      # - script: |
+      #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+      #     set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
+      #     python psi4 --test quick
+      #   displayName: "Test Psi4 (full pytest)"
+      #   workingDirectory: $(Build.BinariesDirectory)/install/bin
