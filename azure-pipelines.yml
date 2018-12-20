@@ -135,13 +135,13 @@ jobs:
           ctest --build-config Release ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
-                --repeat-until-fail 100 ^
+                --repeat-until-fail 10 ^
                 --parallel %NUMBER_OF_PROCESSORS%
           dir tests\ci-property
           type tests\ci-property\output.dat
           dir tests\mp2-property
           type tests\mp2-property\output.dat
-        displayName: "Test Psi4 (failing ctest)"
+        displayName: "Test Psi4 (2 1)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
       - script: |
@@ -149,13 +149,125 @@ jobs:
           ctest --build-config Release ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
-                --repeat-until-fail 100 ^
+                --repeat-until-fail 10 ^
+                --parallel %NUMBER_OF_PROCESSORS%
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (2 2)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel %NUMBER_OF_PROCESSORS%
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (2 3)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel %NUMBER_OF_PROCESSORS%
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (2 4)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel %NUMBER_OF_PROCESSORS%
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (2 5)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
                 --parallel 1
           dir tests\ci-property
           type tests\ci-property\output.dat
           dir tests\mp2-property
           type tests\mp2-property\output.dat
-        displayName: "Test Psi4 (failing ctest)"
+        displayName: "Test Psi4 (1 1)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel 1
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (1 2)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel 1
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (1 3)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel 1
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (1 4)"
+        workingDirectory: $(Build.BinariesDirectory)/build
+
+      - script: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+          ctest --build-config Release ^
+                --tests-regex "^(ci-property|mp2-property)$" ^
+                --output-on-failure ^
+                --repeat-until-fail 10 ^
+                --parallel 1
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
+        displayName: "Test Psi4 (1 5)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (quick pytest)
