@@ -151,6 +151,7 @@ void Prop::set_Cb(SharedMatrix C) {
 }
 void Prop::set_Da_ao(SharedMatrix D, int symm) {
     Da_so_ = std::make_shared<Matrix>("Da_so", Ca_so_->rowspi(), Ca_so_->rowspi(), symm);
+
     std::vector<double> temp(AO2USO_->max_ncol() * AO2USO_->max_nrow());
     double* temp_ptr = temp.data();
     for (int h = 0; h < AO2USO_->nirrep(); ++h) {
@@ -1432,6 +1433,10 @@ void OEProp::compute_mo_extents() {
 }
 
 std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_output) {
+
+    outfile->Printf("compute_mo_extents 1\n");
+    outfile->stream()->flush();
+
     std::shared_ptr<Molecule> mol = basisset_->molecule();
     SharedMatrix Ca;
     SharedMatrix Cb;
@@ -1444,11 +1449,17 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
         Cb = Cb_ao();
     }
 
+    outfile->Printf("compute_mo_extents 2\n");
+    outfile->stream()->flush();
+
     std::vector<SharedVector> mo_es;
     mo_es.push_back(SharedVector(new Vector("<x^2>", basisset_->nbf())));
     mo_es.push_back(SharedVector(new Vector("<y^2>", basisset_->nbf())));
     mo_es.push_back(SharedVector(new Vector("<z^2>", basisset_->nbf())));
     mo_es.push_back(SharedVector(new Vector("<r^2>", basisset_->nbf())));
+
+    outfile->Printf("compute_mo_extents 3\n");
+    outfile->stream()->flush();
 
     // Create a vector of matrices with the proper symmetry
     std::vector<SharedMatrix> ao_Dpole;
@@ -1465,6 +1476,9 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     ao_Qpole.push_back(std::make_shared<Matrix>("Quadrupole YZ", basisset_->nbf(), basisset_->nbf()));
     ao_Qpole.push_back(std::make_shared<Matrix>("Quadrupole ZZ", basisset_->nbf(), basisset_->nbf()));
 
+    outfile->Printf("compute_mo_extents 4\n");
+    outfile->stream()->flush();
+
     // Form the one-electron integral objects from the integral factory
     std::shared_ptr<OneBodyAOInt> aodOBI(integral_->ao_dipole());
     std::shared_ptr<OneBodyAOInt> aoqOBI(integral_->ao_quadrupole());
@@ -1479,6 +1493,9 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     aodOBI.reset();
     aoqOBI.reset();
 
+    outfile->Printf("compute_mo_extents 5\n");
+    outfile->stream()->flush();
+
     std::vector<SharedVector> dipole;
     dipole.push_back(std::make_shared<Vector>("Orbital Dipole X", Ca->ncol()));
     dipole.push_back(std::make_shared<Vector>("Orbital Dipole Y", Ca->ncol()));
@@ -1488,6 +1505,9 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     quadrupole.push_back(std::make_shared<Vector>("Orbital Quadrupole XX", Ca->ncol()));
     quadrupole.push_back(std::make_shared<Vector>("Orbital Quadrupole YY", Ca->ncol()));
     quadrupole.push_back(std::make_shared<Vector>("Orbital Quadrupole ZZ", Ca->ncol()));
+
+    outfile->Printf("compute_mo_extents 6\n");
+    outfile->stream()->flush();
 
     auto temp = std::make_shared<Matrix>("Temp", Ca->nrow(), Ca->ncol());
 
@@ -1511,6 +1531,10 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
         for (int i = 0; i < nmo; i++) {
             dipole[2]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
         }
+
+        outfile->Printf("compute_mo_extents 7\n");
+        outfile->stream()->flush();
+
 // Quadrupoles
 #if 0
         C_DGEMM('T','N',nmo,nao,nao,1.0,Ca->pointer()[0],nmo,ao_Qpole[0]->pointer()[0],nao,0.0,temp->pointer()[0],nao);
@@ -1542,6 +1566,10 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
             quadrupole[2]->set(0, i, std::fabs(sumz));
         }
 #endif
+
+        outfile->Printf("compute_mo_extents 8\n");
+        outfile->stream()->flush();
+
         std::vector<std::string> labels = basisset_->molecule()->irrep_labels();
         std::vector<std::tuple<double, int, int>> metric;
         for (int h = 0; h < epsilon_a_->nirrep(); h++) {
@@ -1549,6 +1577,10 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
                 metric.push_back(std::tuple<double, int, int>(epsilon_a_->get(h, i), i, h));
             }
         }
+
+        outfile->Printf("compute_mo_extents 9\n");
+        outfile->stream()->flush();
+
         std::sort(metric.begin(), metric.end());
         if (print_output) {
             outfile->Printf("\n  Orbital extents (a.u.):\n");
@@ -1578,6 +1610,10 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
         // TODO: Both alpha and beta orbitals are reported separately
         // This helps identify symmetry breaking
     }
+
+    outfile->Printf("compute_mo_extents 10\n");
+    outfile->stream()->flush();
+
     return mo_es;
 }
 
