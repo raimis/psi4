@@ -58,6 +58,8 @@ jobs:
           set PATH=C:\Program Files\LLVM\bin;%PATH%
           echo '##vso[task.setvariable variable=PATH]%PATH%'
           clang-cl --version
+          dir C:\Program Files\LLVM
+          dir C:\Program Files\LLVM\bin
         displayName: "Install LLVM"
 
       # Configure
@@ -65,7 +67,7 @@ jobs:
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
           cmake -G Ninja ^
-                -DCMAKE_BUILD_TYPE=Debug ^
+                -DCMAKE_BUILD_TYPE=Release ^
                 -DCMAKE_INSTALL_PREFIX=../install ^
                 -DCMAKE_C_COMPILER=clang-cl ^
                 -DCMAKE_CXX_COMPILER=clang-cl ^
@@ -80,7 +82,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config Release ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Build Psi4"
         workingDirectory: $(Build.BinariesDirectory)/build
@@ -89,7 +91,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config Release ^
                 --target install ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Install Psi4"
@@ -129,7 +131,7 @@ jobs:
       #
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Debug ^
+          ctest --build-config Release ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 100 ^
@@ -139,7 +141,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Debug ^
+          ctest --build-config Release ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 100 ^
