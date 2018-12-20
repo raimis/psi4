@@ -136,7 +136,7 @@ jobs:
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 100 ^
-                --parallel %NUMBER_OF_PROCESSORS% & exit 0
+                --parallel %NUMBER_OF_PROCESSORS%
           dir tests\ci-property
           type tests\ci-property\output.dat
           dir tests\mp2-property
@@ -150,7 +150,7 @@ jobs:
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 100 ^
-                --parallel 1 & exit 0
+                --parallel 1
           dir tests\ci-property
           type tests\ci-property\output.dat
           dir tests\mp2-property
