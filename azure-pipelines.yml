@@ -58,8 +58,8 @@ jobs:
           set PATH=C:\Program Files\LLVM\bin;%PATH%
           echo '##vso[task.setvariable variable=PATH]%PATH%'
           clang-cl --version
-          dir C:\Program Files\LLVM
-          dir C:\Program Files\LLVM\bin
+          dir "C:\Program Files\LLVM"
+          dir "C:\Program Files\LLVM\bin"
         displayName: "Install LLVM"
 
       # Configure
