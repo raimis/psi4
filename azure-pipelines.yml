@@ -68,7 +68,7 @@ jobs:
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
           cmake -G Ninja ^
-                -DCMAKE_BUILD_TYPE=Release ^
+                -DCMAKE_BUILD_TYPE=Debug ^
                 -DCMAKE_INSTALL_PREFIX=../install ^
                 -DCMAKE_C_COMPILER=clang-cl ^
                 -DCMAKE_CXX_COMPILER=clang-cl ^
@@ -83,7 +83,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Release ^
+                --config Debug ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Build Psi4"
         workingDirectory: $(Build.BinariesDirectory)/build
@@ -92,7 +92,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Release ^
+                --config Debug ^
                 --target install ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Install Psi4"
@@ -132,7 +132,7 @@ jobs:
       #
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -146,7 +146,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -160,7 +160,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -174,7 +174,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -188,7 +188,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -202,7 +202,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -216,7 +216,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -230,7 +230,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -244,7 +244,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
@@ -258,7 +258,7 @@ jobs:
 
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-          ctest --build-config Release ^
+          ctest --build-config Debug ^
                 --tests-regex "^(ci-property|mp2-property)$" ^
                 --output-on-failure ^
                 --repeat-until-fail 10 ^
