@@ -60,6 +60,7 @@ jobs:
           clang-cl --version
           dir "C:\Program Files\LLVM"
           dir "C:\Program Files\LLVM\bin"
+          dir "C:\Program Files\LLVM\lib"
         displayName: "Install LLVM"
 
       # Configure
@@ -73,10 +74,10 @@ jobs:
                 -DCMAKE_CXX_COMPILER=clang-cl ^
                 -DENABLE_XHOST=OFF ^
                 -DMAX_AM_ERI=6 ^
-                -DCMAKE_CXX_FLAGS="-fsanitize=address" ^
                 $(Build.SourcesDirectory)
         displayName: "Configure Psi4"
         workingDirectory: $(Build.BinariesDirectory)
+                # -DCMAKE_CXX_FLAGS="-fsanitize=address" ^
 
       # Build
       - script: |
@@ -136,6 +137,10 @@ jobs:
                 --output-on-failure ^
                 --repeat-until-fail 100 ^
                 --parallel %NUMBER_OF_PROCESSORS% & exit 0
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
         displayName: "Test Psi4 (failing ctest)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
@@ -146,6 +151,10 @@ jobs:
                 --output-on-failure ^
                 --repeat-until-fail 100 ^
                 --parallel 1 & exit 0
+          dir tests\ci-property
+          type tests\ci-property\output.dat
+          dir tests\mp2-property
+          type tests\mp2-property\output.dat
         displayName: "Test Psi4 (failing ctest)"
         workingDirectory: $(Build.BinariesDirectory)/build
 
