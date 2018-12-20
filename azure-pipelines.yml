@@ -71,7 +71,7 @@ jobs:
                 -DCMAKE_CXX_COMPILER=clang-cl ^
                 -DENABLE_XHOST=OFF ^
                 -DMAX_AM_ERI=6 ^
-                -DCMAKE_CXX_FLAGS="-fsanitize=address"
+                -DCMAKE_CXX_FLAGS="-fsanitize=address" ^
                 $(Build.SourcesDirectory)
         displayName: "Configure Psi4"
         workingDirectory: $(Build.BinariesDirectory)
