@@ -1516,18 +1516,42 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
 
     if (same_orbs_) {
         // Dipoles
+
+        outfile->Printf("compute_mo_extents 6.0\n");
+        outfile->stream()->flush();
+
         C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[0]->pointer()[0], nao, 0.0,
                 temp->pointer()[0], nao);
+
+        outfile->Printf("compute_mo_extents 6.1\n");
+        outfile->stream()->flush();
+
         for (int i = 0; i < nmo; i++) {
             dipole[0]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
         }
+
+        outfile->Printf("compute_mo_extents 6.2\n");
+        outfile->stream()->flush();
+
         C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[1]->pointer()[0], nao, 0.0,
                 temp->pointer()[0], nao);
+
+        outfile->Printf("compute_mo_extents 6.3\n");
+        outfile->stream()->flush();
+
         for (int i = 0; i < nmo; i++) {
             dipole[1]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
         }
+
+        outfile->Printf("compute_mo_extents 6.4\n");
+        outfile->stream()->flush();
+
         C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[2]->pointer()[0], nao, 0.0,
                 temp->pointer()[0], nao);
+
+        outfile->Printf("compute_mo_extents 6.5\n");
+        outfile->stream()->flush();
+
         for (int i = 0; i < nmo; i++) {
             dipole[2]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
         }
