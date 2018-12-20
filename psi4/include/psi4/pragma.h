@@ -28,8 +28,8 @@
 
 /// File is stolen from pulsar all thanks to bennyp
 
-#ifndef PULSAR_GUARD_PULSAR__PRAGMA_H_
-#define PULSAR_GUARD_PULSAR__PRAGMA_H_
+#ifndef PSI_PRAGMA_H_
+#define PSI_PRAGMA_H_
 
 // clang-format off
 #if defined(__ICC) || defined(__INTEL_COMPILER)

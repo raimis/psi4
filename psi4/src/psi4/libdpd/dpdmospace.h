@@ -56,7 +56,6 @@ class DPDMOSpace {
     DPDMOSpace(const char label, const std::string &indices, std::vector<int> orbspi);
     DPDMOSpace(const char label, const std::string &indices, Dimension orbspi);
     DPDMOSpace();
-    ~DPDMOSpace();
 
     char label() { return label_; }
     std::vector<std::string> indices() { return indices_; }

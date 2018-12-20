@@ -58,8 +58,6 @@ DPDMOSpace::DPDMOSpace(const char label, const string &indices, Dimension orbspi
 
 DPDMOSpace::DPDMOSpace() {}
 
-DPDMOSpace::~DPDMOSpace() {}
-
 bool DPDMOSpace::operator==(const char *c) {
     for (int iter = 0; iter < this->indices_.size(); iter++)
         if (c == this->indices_[iter]) return true;
