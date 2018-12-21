@@ -1437,16 +1437,16 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     outfile->Printf("compute_mo_extents 1\n");
     outfile->stream()->flush();
 
-    std::shared_ptr<Molecule> mol = basisset_->molecule();
+    // std::shared_ptr<Molecule> mol = basisset_->molecule();
     SharedMatrix Ca;
-    SharedMatrix Cb;
+    // SharedMatrix Cb;
 
     if (same_orbs_) {
         Ca = Ca_ao();
-        Cb = Ca;
+        // Cb = Ca;
     } else {
         Ca = Ca_ao();
-        Cb = Cb_ao();
+        // Cb = Cb_ao();
     }
 
     outfile->Printf("compute_mo_extents 2\n");
@@ -1462,12 +1462,12 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     outfile->stream()->flush();
 
     // Create a vector of matrices with the proper symmetry
-    std::vector<SharedMatrix> ao_Dpole;
+    // std::vector<SharedMatrix> ao_Dpole;
     std::vector<SharedMatrix> ao_Qpole;
 
-    ao_Dpole.push_back(std::make_shared<Matrix>("Dipole X", basisset_->nbf(), basisset_->nbf()));
-    ao_Dpole.push_back(std::make_shared<Matrix>("Dipole Y", basisset_->nbf(), basisset_->nbf()));
-    ao_Dpole.push_back(std::make_shared<Matrix>("Dipole Z", basisset_->nbf(), basisset_->nbf()));
+    // ao_Dpole.push_back(std::make_shared<Matrix>("Dipole X", basisset_->nbf(), basisset_->nbf()));
+    // ao_Dpole.push_back(std::make_shared<Matrix>("Dipole Y", basisset_->nbf(), basisset_->nbf()));
+    // ao_Dpole.push_back(std::make_shared<Matrix>("Dipole Z", basisset_->nbf(), basisset_->nbf()));
 
     ao_Qpole.push_back(std::make_shared<Matrix>("Quadrupole XX", basisset_->nbf(), basisset_->nbf()));
     ao_Qpole.push_back(std::make_shared<Matrix>("Quadrupole XY", basisset_->nbf(), basisset_->nbf()));
@@ -1480,26 +1480,26 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     outfile->stream()->flush();
 
     // Form the one-electron integral objects from the integral factory
-    std::shared_ptr<OneBodyAOInt> aodOBI(integral_->ao_dipole());
+    // std::shared_ptr<OneBodyAOInt> aodOBI(integral_->ao_dipole());
     std::shared_ptr<OneBodyAOInt> aoqOBI(integral_->ao_quadrupole());
 
-    aodOBI->set_origin(origin_);
+    // aodOBI->set_origin(origin_);
     aoqOBI->set_origin(origin_);
 
     // Compute multipole moment integrals
-    aodOBI->compute(ao_Dpole);
+    // aodOBI->compute(ao_Dpole);
     aoqOBI->compute(ao_Qpole);
 
-    aodOBI.reset();
+    // aodOBI.reset();
     aoqOBI.reset();
 
     outfile->Printf("compute_mo_extents 5\n");
     outfile->stream()->flush();
 
-    std::vector<SharedVector> dipole;
-    dipole.push_back(std::make_shared<Vector>("Orbital Dipole X", Ca->ncol()));
-    dipole.push_back(std::make_shared<Vector>("Orbital Dipole Y", Ca->ncol()));
-    dipole.push_back(std::make_shared<Vector>("Orbital Dipole Z", Ca->ncol()));
+    // std::vector<SharedVector> dipole;
+    // dipole.push_back(std::make_shared<Vector>("Orbital Dipole X", Ca->ncol()));
+    // dipole.push_back(std::make_shared<Vector>("Orbital Dipole Y", Ca->ncol()));
+    // dipole.push_back(std::make_shared<Vector>("Orbital Dipole Z", Ca->ncol()));
 
     std::vector<SharedVector> quadrupole;
     quadrupole.push_back(std::make_shared<Vector>("Orbital Quadrupole XX", Ca->ncol()));
@@ -1509,7 +1509,7 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     outfile->Printf("compute_mo_extents 6\n");
     outfile->stream()->flush();
 
-    auto temp = std::make_shared<Matrix>("Temp", Ca->nrow(), Ca->ncol());
+    // auto temp = std::make_shared<Matrix>("Temp", Ca->nrow(), Ca->ncol());
 
     int nao = Ca->nrow();
     int nmo = Ca->ncol();
@@ -1517,47 +1517,59 @@ std::vector<SharedVector> MultipolePropCalc::compute_mo_extents(bool print_outpu
     if (same_orbs_) {
         // Dipoles
 
-        outfile->Printf("compute_mo_extents 6.0\n");
-        outfile->stream()->flush();
+        // outfile->Printf("compute_mo_extents 6.0\n");
+        // outfile->stream()->flush();
 
-        C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[0]->pointer()[0], nao, 0.0,
-                temp->pointer()[0], nao);
+        // C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[0]->pointer()[0], nao, 0.0,
+        //         temp->pointer()[0], nao);
 
-        outfile->Printf("compute_mo_extents 6.1\n");
-        outfile->stream()->flush();
+        // outfile->Printf("compute_mo_extents 6.1\n");
+        // outfile->stream()->flush();
 
-        for (int i = 0; i < nmo; i++) {
-            dipole[0]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
-        }
+        // for (int i = 0; i < nmo; i++) {
+        //     outfile->Printf("compute_mo_extents 6.1.1: %d\n", i);
+        //     outfile->stream()->flush();
 
-        outfile->Printf("compute_mo_extents 6.2\n");
-        outfile->stream()->flush();
+        //     double val = C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1);
 
-        C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[1]->pointer()[0], nao, 0.0,
-                temp->pointer()[0], nao);
+        //     outfile->Printf("compute_mo_extents 6.1.2: %d\n", i);
+        //     outfile->stream()->flush();
 
-        outfile->Printf("compute_mo_extents 6.3\n");
-        outfile->stream()->flush();
+        //     dipole[0]->set(0, i, val);
 
-        for (int i = 0; i < nmo; i++) {
-            dipole[1]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
-        }
+        //     outfile->Printf("compute_mo_extents 6.1.3: %d\n", i);
+        //     outfile->stream()->flush();
 
-        outfile->Printf("compute_mo_extents 6.4\n");
-        outfile->stream()->flush();
+        // }
 
-        C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[2]->pointer()[0], nao, 0.0,
-                temp->pointer()[0], nao);
+        // outfile->Printf("compute_mo_extents 6.2\n");
+        // outfile->stream()->flush();
 
-        outfile->Printf("compute_mo_extents 6.5\n");
-        outfile->stream()->flush();
+        // C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[1]->pointer()[0], nao, 0.0,
+        //         temp->pointer()[0], nao);
 
-        for (int i = 0; i < nmo; i++) {
-            dipole[2]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
-        }
+        // outfile->Printf("compute_mo_extents 6.3\n");
+        // outfile->stream()->flush();
 
-        outfile->Printf("compute_mo_extents 7\n");
-        outfile->stream()->flush();
+        // for (int i = 0; i < nmo; i++) {
+        //     dipole[1]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
+        // }
+
+        // outfile->Printf("compute_mo_extents 6.4\n");
+        // outfile->stream()->flush();
+
+        // C_DGEMM('T', 'N', nmo, nao, nao, 1.0, Ca->pointer()[0], nmo, ao_Dpole[2]->pointer()[0], nao, 0.0,
+        //         temp->pointer()[0], nao);
+
+        // outfile->Printf("compute_mo_extents 6.5\n");
+        // outfile->stream()->flush();
+
+        // for (int i = 0; i < nmo; i++) {
+        //     dipole[2]->set(0, i, C_DDOT(nao, Ca->pointer()[i], nmo, temp->pointer()[i], 1));
+        // }
+
+        // outfile->Printf("compute_mo_extents 7\n");
+        // outfile->stream()->flush();
 
 // Quadrupoles
 #if 0
