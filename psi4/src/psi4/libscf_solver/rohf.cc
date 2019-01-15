@@ -72,6 +72,7 @@ ROHF::ROHF(SharedWavefunction ref_wfn, std::shared_ptr<SuperFunctional> func, Op
 ROHF::~ROHF() {}
 
 void ROHF::common_init() {
+    name_ = "ROHF";
     Fa_ = SharedMatrix(factory_->create_matrix("Alpha Fock Matrix"));
     Fb_ = SharedMatrix(factory_->create_matrix("Beta Fock Matrix"));
     moFeff_ = SharedMatrix(factory_->create_matrix("F effective (MO basis)"));
@@ -327,7 +328,6 @@ double ROHF::compute_orbital_gradient(bool save_diis, int max_diis_vectors) {
 
     // Back transform MOgradient
     SharedMatrix gradient = Matrix::triplet(Cia, MOgradient, Cav, false, false, true);
-    double Drms = gradient->rms();
 
     if (save_diis) {
         if (initialized_diis_manager_ == false) {
@@ -339,15 +339,23 @@ double ROHF::compute_orbital_gradient(bool save_diis, int max_diis_vectors) {
         }
         diis_manager_->add_entry(2, gradient.get(), soFeff_.get());
     }
-    return Drms;
+
+    if (options_.get_bool("DIIS_RMS_ERROR")) {
+        return gradient->rms();
+    } else {
+        return gradient->absmax();
+    }
 }
 
 bool ROHF::diis() { return diis_manager_->extrapolate(1, soFeff_.get()); }
 
-void ROHF::form_initialF() {
+void ROHF::form_initial_F() {
     // Form the initial Fock matrix, closed and open variants
     Fa_->copy(H_);
-    Fa_->transform(X_);
+    Fa_->add(Ga_);
+    for (const auto& Vext : external_potentials_) {
+        Fa_->add(Vext);
+    }
     Fb_->copy(Fa_);
 
     if (debug_) {
@@ -462,7 +470,13 @@ void ROHF::form_initial_C() {
     // Form C = XC'
     Ca_->gemm(false, false, 1.0, X_, Ct_, 0.0);
 
-    if (print_ > 3) Ca_->print("outfile", "initial C");
+    find_occupation();
+
+    if (debug_) {
+        Ca_->print("outfile");
+        outfile->Printf("In ROHF::form_initial_C:\n");
+        Ct_->eivprint(epsilon_a_);
+    }
 }
 
 void ROHF::form_D() {
@@ -870,7 +884,7 @@ int ROHF::soscf_update(double soscf_conv, int soscf_min_iter, int soscf_max_iter
     if (grad_rms < 1.e-14) {
         grad_rms = 1.e-14;  // Prevent rel denom from being too small
     }
-    double rms = sqrt(rconv / grad_rms);
+    double rms = std::sqrt(rconv / grad_rms);
     stop = std::time(nullptr);
     if (soscf_print) {
         outfile->Printf("    %-5s %11.3E %10ld\n", "Guess", rms, stop - start);
@@ -901,7 +915,7 @@ int ROHF::soscf_update(double soscf_conv, int soscf_min_iter, int soscf_max_iter
 
         // Get residual
         double rconv = r->sum_of_squares();
-        double rms = sqrt(rconv / grad_rms);
+        double rms = std::sqrt(rconv / grad_rms);
         stop = std::time(nullptr);
         if (soscf_print) {
             outfile->Printf("    %-5d %11.3E %10ld\n", cg_iter, rms, stop - start);

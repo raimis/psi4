@@ -183,13 +183,13 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
     /*- Write all the MOs to the MOLDEN file (true) or discard the unoccupied MOs (false). -*/
     options.add_bool("MOLDEN_WITH_VIRTUAL", true);
 
-// CDS-TODO: We should go through and check that the user hasn't done
-// something silly like specify frozen_docc in DETCI but not in TRANSQT.
-// That would create problems.  (This was formerly checked in DETCI
-// itself, but I don't think DETCI will have the info available to check
-// this anymore).  This problem has affected users in the past.
-// Same goes for restricted_docc, restricted_uocc, ras1, ras2, ras3,
-// frozen_uocc.
+    // CDS-TODO: We should go through and check that the user hasn't done
+    // something silly like specify frozen_docc in DETCI but not in TRANSQT.
+    // That would create problems.  (This was formerly checked in DETCI
+    // itself, but I don't think DETCI will have the info available to check
+    // this anymore).  This problem has affected users in the past.
+    // Same goes for restricted_docc, restricted_uocc, ras1, ras2, ras3,
+    // frozen_uocc.
 
 #ifdef USING_dkh
     /*- Relativistic Hamiltonian type !expert -*/
@@ -1294,6 +1294,8 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
         set. A value of ``TRUE`` turns on density fitting with the
         default basis, otherwise the specified basis is used. -*/
         options.add_str("DF_BASIS_GUESS", "FALSE", "");
+        /*- Use RMS error instead of the more robust absolute error? -*/
+        options.add_bool("DIIS_RMS_ERROR", true);
         /*- The minimum iteration to start storing DIIS vectors -*/
         options.add_int("DIIS_START", 1);
         /*- Minimum number of error vectors stored for DIIS extrapolation -*/
@@ -1433,6 +1435,8 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
         options.add_str("SAD_SCF_TYPE", "DF", "DIRECT DF");
         /*- Do force an even distribution of occupations across the last partially occupied orbital shell? !expert -*/
         options.add_bool("SAD_FRAC_OCC", false);
+        /*- Do use spin-restricted occupations in fractional SAD? !expert -*/
+        options.add_bool("SAD_FRAC_SR_OCC", false);
         /*- Auxiliary basis for the SAD guess !expert -*/
         options.add_double("SAD_CHOL_TOLERANCE", 1E-7);
 

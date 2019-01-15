@@ -71,6 +71,9 @@
 #endif
 
 using namespace psi;
+namespace py = pybind11;
+using namespace pybind11::literals;
+
 void export_wavefunction(py::module& m) {
     typedef void (Wavefunction::*take_sharedwfn)(SharedWavefunction);
     py::class_<Wavefunction, std::shared_ptr<Wavefunction>>(m, "Wavefunction", "docstring", py::dynamic_attr())
@@ -87,7 +90,7 @@ void export_wavefunction(py::module& m) {
         .def("c1_deep_copy", &Wavefunction::c1_deep_copy,
              "Returns a new wavefunction with internal data converted to C_1 symmetry, using pre-c1-constructed "
              "BasisSet `basis`",
-             py::arg("basis"))
+             "basis"_a)
         .def("same_a_b_orbs", &Wavefunction::same_a_b_orbs, "Returns true if the alpha and beta orbitals are the same.")
         .def("same_a_b_dens", &Wavefunction::same_a_b_dens,
              "Returns true if the alpha and beta densities are the same.")
@@ -128,14 +131,14 @@ void export_wavefunction(py::module& m) {
         .def("sobasisset", &Wavefunction::sobasisset, "Returns the symmetry orbitals basis.")
         .def("get_basisset", &Wavefunction::get_basisset, "Returns the requested auxiliary basis.")
         .def("set_basisset", &Wavefunction::set_basisset, "Sets the requested auxiliary basis.")
-        .def("energy", &Wavefunction::reference_energy, "Returns the Wavefunction's energy.")
+        .def("energy", &Wavefunction::energy, "Returns the Wavefunction's energy.")
         .def("set_energy", &Wavefunction::set_energy, "Sets the Wavefunction's energy.")
         .def("gradient", &Wavefunction::gradient, "Returns the Wavefunction's gradient.")
         .def("set_gradient", &Wavefunction::set_gradient, "Sets the Wavefunction's gradient.")
         .def("hessian", &Wavefunction::hessian, "Returns the Wavefunction's Hessian.")
         .def("set_hessian", &Wavefunction::set_hessian, "Sets the Wavefunction's Hessian.")
-        .def("frequencies", &Wavefunction::frequencies, "Returns the frequencies of the Hessian.")
-        .def("set_frequencies", &Wavefunction::set_frequencies, "Sets the frequencies of the Hessian.")
+        .def("legacy_frequencies", &Wavefunction::frequencies, "Returns the frequencies of the Hessian.")
+        .def("set_legacy_frequencies", &Wavefunction::set_frequencies, "Sets the frequencies of the Hessian.")
         .def("esp_at_nuclei", &Wavefunction::get_esp_at_nuclei, "returns electrostatic potentials at nuclei")
         .def("mo_extents", &Wavefunction::get_mo_extents, "returns the wavefunction's electronic orbital extents.")
         .def("no_occupations", &Wavefunction::get_no_occupations,
@@ -179,14 +182,22 @@ void export_wavefunction(py::module& m) {
         .def("compute_gradient", &Wavefunction::compute_gradient, "Computes the gradient of the Wavefunction")
         .def("compute_hessian", &Wavefunction::compute_hessian, "Computes the Hessian of the Wavefunction.")
         .def("set_external_potential", &Wavefunction::set_external_potential, "Sets the requested external potential.")
-        .def("has_scalar_variable", &Wavefunction::has_scalar_variable, "Is the double QC variable (case-insensitive) set?")
-        .def("has_array_variable", &Wavefunction::has_array_variable, "Is the Matrix QC variable (case-insensitive) set?")
-        .def("scalar_variable", &Wavefunction::scalar_variable, "Returns the requested (case-insensitive) double QC variable.")
-        .def("array_variable", &Wavefunction::array_variable, "Returns copy of the requested (case-insensitive) Matrix QC variable.")
-        .def("set_scalar_variable", &Wavefunction::set_scalar_variable, "Sets the requested (case-insensitive) double QC variable.")
-        .def("set_array_variable", &Wavefunction::set_array_variable, "Sets the requested (case-insensitive) Matrix QC variable.")
-        .def("del_scalar_variable", &Wavefunction::del_scalar_variable, "Removes the requested (case-insensitive) double QC variable.")
-        .def("del_array_variable", &Wavefunction::del_array_variable, "Removes the requested (case-insensitive) Matrix QC variable.")
+        .def("has_scalar_variable", &Wavefunction::has_scalar_variable,
+             "Is the double QC variable (case-insensitive) set?")
+        .def("has_array_variable", &Wavefunction::has_array_variable,
+             "Is the Matrix QC variable (case-insensitive) set?")
+        .def("scalar_variable", &Wavefunction::scalar_variable,
+             "Returns the requested (case-insensitive) double QC variable.")
+        .def("array_variable", &Wavefunction::array_variable,
+             "Returns copy of the requested (case-insensitive) Matrix QC variable.")
+        .def("set_scalar_variable", &Wavefunction::set_scalar_variable,
+             "Sets the requested (case-insensitive) double QC variable.")
+        .def("set_array_variable", &Wavefunction::set_array_variable,
+             "Sets the requested (case-insensitive) Matrix QC variable.")
+        .def("del_scalar_variable", &Wavefunction::del_scalar_variable,
+             "Removes the requested (case-insensitive) double QC variable.")
+        .def("del_array_variable", &Wavefunction::del_array_variable,
+             "Removes the requested (case-insensitive) Matrix QC variable.")
         .def("scalar_variables", &Wavefunction::scalar_variables, "Returns the dictionary of all double QC variables.")
         .def("array_variables", &Wavefunction::array_variables, "Returns the dictionary of all Matrix QC variables.")
 
@@ -198,24 +209,28 @@ void export_wavefunction(py::module& m) {
 
     py::class_<scf::HF, std::shared_ptr<scf::HF>, Wavefunction>(m, "HF", "docstring")
         .def("form_C", &scf::HF::form_C, "Forms the Orbital Matrices from the current Fock Matrices.")
+        .def("form_initial_C", &scf::HF::form_initial_C, "Forms the initial Orbital Matrices from the current Fock Matrices.")
         .def("form_D", &scf::HF::form_D, "Forms the Density Matrices from the current Orbitals Matrices")
         .def("form_V", &scf::HF::form_V, "Form the Kohn-Sham Potential Matrices from the current Density Matrices")
         .def("form_G", &scf::HF::form_G, "Forms the G matrix.")
         .def("form_F", &scf::HF::form_F, "Forms the F matrix.")
+        .def("form_initial_F", &scf::HF::form_initial_F, "Forms the initial F matrix.")
         .def("form_H", &scf::HF::form_H, "Forms the core Hamiltonian")
         .def("form_Shalf", &scf::HF::form_Shalf, "Forms the S^1/2 matrix")
         .def("guess", &scf::HF::guess, "Forms the guess (guarantees C, D, and E)")
-        .def("initialize_jk", &scf::HF::initialize_jk, "Sets up the JK object")
+        .def("initialize_gtfock_jk", &scf::HF::initialize_gtfock_jk, "Sets up a GTFock JK object")
         .def("onel_Hx", &scf::HF::onel_Hx, "One-electron Hessian-vector products.")
         .def("twoel_Hx", &scf::HF::twoel_Hx, "Two-electron Hessian-vector products")
         .def("cphf_Hx", &scf::HF::cphf_Hx, "CPHF Hessian-vector prodcuts (4 * J - K - K.T).")
-        .def("cphf_solve", &scf::HF::cphf_solve, py::arg("x_vec"), py::arg("conv_tol"), py::arg("max_iter"),
-             py::arg("print_lvl") = 2, "Solves the CPHF equations for a given set of x vectors.")
+        .def("cphf_solve", &scf::HF::cphf_solve, "x_vec"_a, "conv_tol"_a, "max_iter"_a, "print_lvl"_a = 2,
+             "Solves the CPHF equations for a given set of x vectors.")
         .def("cphf_converged", &scf::HF::cphf_converged, "Adds occupied guess alpha orbitals.")
         .def("guess_Ca", &scf::HF::guess_Ca, "Sets the guess Alpha Orbital Matrix")
         .def("guess_Cb", &scf::HF::guess_Cb, "Sets the guess Beta Orbital Matrix")
         .def_property("reset_occ_", &scf::HF::reset_occ, &scf::HF::set_reset_occ,
                       "Do reset the occupation after the guess to the inital occupation.")
+        .def_property("sad_", &scf::HF::sad, &scf::HF::set_sad,
+                    "Do assume a non-idempotent density matrix and no orbitals after the guess.")
         .def("set_sad_basissets", &scf::HF::set_sad_basissets, "Sets the Superposition of Atomic Densities basisset.")
         .def("set_sad_fitting_basissets", &scf::HF::set_sad_fitting_basissets,
              "Sets the Superposition of Atomic Densities density-fitted basisset.")
@@ -247,7 +262,7 @@ void export_wavefunction(py::module& m) {
         .def("set_energies", &scf::HF::set_energies, "docstring")
         .def("clear_external_potentials", &scf::HF::clear_external_potentials, "Clear private external_potentials list")
         .def("push_back_external_potential", &scf::HF::push_back_external_potential,
-             "Add an external potential to the private external_potentials list", py::arg("V"))
+             "Add an external potential to the private external_potentials list", "V"_a)
         .def("print_preiterations", &scf::HF::print_preiterations, "docstring")
         .def_property("iteration_", &scf::HF::iteration, &scf::HF::set_iteration, "docstring")
         .def_property("diis_enabled_", &scf::HF::diis_enabled, &scf::HF::set_diis_enabled, "docstring")
@@ -271,7 +286,7 @@ void export_wavefunction(py::module& m) {
         .def("c1_deep_copy", &scf::RHF::c1_deep_copy,
              "Returns a new wavefunction with internal data converted to C_1 symmetry, using pre-c1-constructed "
              "BasisSet *basis*",
-             py::arg("basis"));
+             "basis"_a);
 
     py::class_<scf::ROHF, std::shared_ptr<scf::ROHF>, scf::HF>(m, "ROHF", "docstring")
         .def(py::init<std::shared_ptr<Wavefunction>, std::shared_ptr<SuperFunctional>>())
@@ -281,21 +296,21 @@ void export_wavefunction(py::module& m) {
         .def("c1_deep_copy", &scf::ROHF::c1_deep_copy,
              "Returns a new wavefunction with internal data converted to C_1 symmetry, using pre-c1-constructed "
              "BasisSet *basis*",
-             py::arg("basis"));
+             "basis"_a);
 
     py::class_<scf::UHF, std::shared_ptr<scf::UHF>, scf::HF>(m, "UHF", "docstring")
         .def(py::init<std::shared_ptr<Wavefunction>, std::shared_ptr<SuperFunctional>>())
         .def("c1_deep_copy", &scf::UHF::c1_deep_copy,
              "Returns a new wavefunction with internal data converted to C_1 symmetry, using pre-c1-constructed "
              "BasisSet *basis*",
-             py::arg("basis"));
+             "basis"_a);
 
     py::class_<scf::CUHF, std::shared_ptr<scf::CUHF>, scf::HF>(m, "CUHF", "docstring")
         .def(py::init<std::shared_ptr<Wavefunction>, std::shared_ptr<SuperFunctional>>())
         .def("c1_deep_copy", &scf::CUHF::c1_deep_copy,
              "Returns a new wavefunction with internal data converted to C_1 symmetry, using pre-c1-constructed "
              "BasisSet *basis*",
-             py::arg("basis"));
+             "basis"_a);
 
     /// EP2 functions
     py::class_<dfep2::DFEP2Wavefunction, std::shared_ptr<dfep2::DFEP2Wavefunction>, Wavefunction>(

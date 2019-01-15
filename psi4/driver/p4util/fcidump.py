@@ -85,6 +85,12 @@ def fcidump(wfn, fname='INTDUMP', oe_ints=None):
     nbf = active_mopi.sum() if wfn.same_a_b_orbs() else 2 * active_mopi.sum()
     nirrep = wfn.nirrep()
     nelectron = 2 * active_docc.sum() + active_socc.sum()
+    irrep_map = _irrep_map(wfn)
+
+    wfn_irrep = 0
+    for h, n_socc in enumerate(active_socc):
+        if n_socc % 2 == 1:
+            wfn_irrep ^= h
 
     core.print_out('Writing integrals in FCIDUMP format to ' + fname + '\n')
     # Generate FCIDUMP header
@@ -96,10 +102,11 @@ def fcidump(wfn, fname='INTDUMP', oe_ints=None):
     orbsym = ''
     for h in range(active_mopi.n()):
         for n in range(frzcpi[h], frzcpi[h] + active_mopi[h]):
-            orbsym += '{:d},'.format(h + 1)
+            orbsym += '{:d},'.format(irrep_map[h])
             if not wfn.same_a_b_orbs():
-                orbsym += '{:d},'.format(h + 1)
+                orbsym += '{:d},'.format(irrep_map[h])
     header += 'ORBSYM={}\n'.format(orbsym)
+    header += 'ISYM={:d},\n'.format(irrep_map[wfn_irrep])
     header += '&END\n'
     with open(fname, 'w') as intdump:
         intdump.write(header)
@@ -208,6 +215,24 @@ def write_eigenvalues(eigs, mo_idx):
             eigs_dump += '{: 29.20E} {:4d} {:4d} {:4d} {:4d}\n'.format(x, mo_idx(iorb), 0, 0, 0)
             iorb += 1
     return eigs_dump
+
+
+def _irrep_map(wfn):
+    """Returns an array of irrep indices that maps from Psi4's ordering convention to the standard FCIDUMP convention.
+    """
+    symm = wfn.molecule().point_group().symbol()
+    psi2dump = {'c1' : [1],               # A
+                'ci' : [1,2],             # Ag Au
+                'c2' : [1,2],             # A  B
+                'cs' : [1,2],             # A' A"
+                'd2' : [1,4,3,2],         # A  B1  B2  B3
+                'c2v' : [1,4,2,3],        # A1 A2  B1  B2
+                'c2h' : [1,4,2,3],        # Ag Bg  Au  Bu
+                'd2h' : [1,4,6,7,8,5,3,2] # Ag B1g B2g B3g Au B1u B2u B3u
+                }
+
+    irrep_map = psi2dump[symm]
+    return np.array(irrep_map, dtype='int')
 
 
 def fcidump_from_file(fname):
@@ -320,7 +345,9 @@ def compare_fcidumps(expected, computed, label):
     try:
         from deepdiff import DeepDiff
     except ImportError:
-        raise ImportError("""Python module deepdiff not found. Solve by installing it: `conda install deepdiff -c conda-forge` or `pip install deepdiff`""")
+        raise ImportError(
+            """Python module deepdiff not found. Solve by installing it: `conda install deepdiff -c conda-forge` or `pip install deepdiff`"""
+        )
 
     # Grab expected header and integrals
     ref_intdump = fcidump_from_file(expected)
@@ -336,13 +363,17 @@ def compare_fcidumps(expected, computed, label):
         message = ("\tComputed FCIDUMP file header does not match expected header.\n")
         raise TestComparisonError(header_diff)
 
-    ref_energies = _energies_from_fcidump(ref_intdump)
-    energies = _energies_from_fcidump(intdump)
+    ref_energies = energies_from_fcidump(ref_intdump)
+    energies = energies_from_fcidump(intdump)
 
-    pass_1el = compare_values(ref_energies['ONE-ELECTRON ENERGY'], energies['ONE-ELECTRON ENERGY'], 7, label + '. 1-electron energy')
-    pass_2el = compare_values(ref_energies['TWO-ELECTRON ENERGY'], energies['TWO-ELECTRON ENERGY'], 7, label + '. 2-electron energy')
-    pass_scf = compare_values(ref_energies['SCF TOTAL ENERGY'], energies['SCF TOTAL ENERGY'], 10, label + '. SCF total energy')
-    pass_mp2 = compare_values(ref_energies['MP2 CORRELATION ENERGY'], energies['MP2 CORRELATION ENERGY'], 10, label + '. MP2 correlation energy')
+    pass_1el = compare_values(ref_energies['ONE-ELECTRON ENERGY'], energies['ONE-ELECTRON ENERGY'], 7,
+                              label + '. 1-electron energy')
+    pass_2el = compare_values(ref_energies['TWO-ELECTRON ENERGY'], energies['TWO-ELECTRON ENERGY'], 7,
+                              label + '. 2-electron energy')
+    pass_scf = compare_values(ref_energies['SCF TOTAL ENERGY'], energies['SCF TOTAL ENERGY'], 10,
+                              label + '. SCF total energy')
+    pass_mp2 = compare_values(ref_energies['MP2 CORRELATION ENERGY'], energies['MP2 CORRELATION ENERGY'], 10,
+                              label + '. MP2 correlation energy')
 
     if (pass_1el and pass_2el and pass_scf and pass_mp2):
         success(label)
@@ -350,7 +381,7 @@ def compare_fcidumps(expected, computed, label):
     return True
 
 
-def _energies_from_fcidump(intdump):
+def energies_from_fcidump(intdump):
     energies = {}
     energies['NUCLEAR REPULSION ENERGY'] = intdump['enuc']
     epsilon = intdump['epsilon']

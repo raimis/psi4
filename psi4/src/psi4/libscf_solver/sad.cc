@@ -146,7 +146,7 @@ void SADGuess::form_C() {
     } else {
         Cb_ = SharedMatrix(Ca_->clone());
         Cb_->set_name("Cb SAD");
-        Cb_->scale(sqrt(((double)nbeta_) / ((double)nalpha_)));
+        Cb_->scale(std::sqrt(((double)nbeta_) / ((double)nalpha_)));
     }
 
     if (debug_) {
@@ -358,61 +358,77 @@ void SADGuess::get_uhf_atomic_density(std::shared_ptr<BasisSet> bas, std::shared
     SharedMatrix Fa(mat.create_matrix("Fa"));
     SharedMatrix Fb(mat.create_matrix("Fb"));
 
-    // Factional occupation
+    // Fractional occupation
     SharedVector occ_a, occ_b;
-    if (options_.get_bool("SAD_FRAC_OCC")) {
-        int nfzc = 0, nact = 0;
-        if (Z <= 2) {
+    // Number of partially or fully occupied orbitals
+    int nocc_a, nocc_b;
+    if (options_.get_bool("SAD_FRAC_OCC") || options_.get_bool("SAD_FRAC_SR_OCC")) {
+        // The density is spread over the whole of the possible valence shell.
+        // Only the noble gas core is doubly occupied
+        static const std::vector<int> magic_values = {0, 2, 10, 18, 36, 54, 86, 118};
+        // Find the noble gas core.
+        auto imagic = std::lower_bound(magic_values.begin(), magic_values.end(), Z);
+        if (imagic == magic_values.end()) {
+            throw PSIEXCEPTION("SAD: Fractional occupations are not supported beyond Oganesson");
+        }
+        // lower_bound gives a value that is equal or greater than the
+        // wanted value, which is handled next.
+        if (*imagic > Z) imagic--;
+
+        // Number of frozen and active orbitals
+        int nfzc, nact;
+        if ((*imagic) == Z) {
+            // Special case: we can hit the boundary at the end of the array
             nfzc = 0;
-            nact = 1;
-        } else if (Z <= 4) {
-            nfzc = 1;
-            nact = 1;
-        } else if (Z <= 10) {
-            nfzc = 2;
-            nact = 3;
-        } else if (Z <= 18) {
-            nfzc = 5;
-            nact = 4;
-        } else if (Z <= 36) {
-            nfzc = 9;
-            nact = 9;
-        } else if (Z <= 54) {
-            nfzc = 18;
-            nact = 9;
-        } else if (Z <= 54) {
-            nfzc = 18;
-            nact = 9;
-        } else if (Z <= 86) {
-            nfzc = 27;
-            nact = 16;
+            nact = (*imagic) / 2;
         } else {
-            throw PSIEXCEPTION("SAD: Fractional occupations are not supported beyond Radon");
+            nfzc = (*imagic) / 2;
+            nact = (*(++imagic)) / 2 - nfzc;
         }
 
-        nalpha = nfzc + nact;
-        nbeta = nalpha;
-        double frac_act = std::pow(((double)(Z - nfzc * 2)) / ((double)nact * 2), 0.5);
+        // Number of occupied orbitals is
+        nocc_a = nocc_b = nfzc + nact;
+        // Fractional alpha and beta occupation.
+        double frac_a, frac_b;
 
-        occ_a = std::make_shared<Vector>("Alpha fractional occupation", nalpha);
+        if (options_.get_bool("SAD_FRAC_SR_OCC")) {
+            // Spin-restricted occupations
+            frac_a = frac_b = (Z - 2.0 * nfzc) / (2.0 * nact);
+        } else {
+            // Normal occupations
+            frac_a = (double)(nalpha - nfzc) / nact;
+            frac_b = (double)(nbeta - nfzc) / nact;
+        }
+
+        // Occupations are squared in the density calculation, so take the root
+        frac_a = std::sqrt(frac_a);
+        frac_b = std::sqrt(frac_b);
+
+        occ_a = std::make_shared<Vector>("Alpha fractional occupation", nocc_a);
         for (size_t x = 0; x < nfzc; x++) occ_a->set(x, 1.0);
-        for (size_t x = nfzc; x < nalpha; x++) occ_a->set(x, frac_act);
-        occ_b = std::shared_ptr<Vector>(occ_a->clone());
+        for (size_t x = nfzc; x < nocc_a; x++) occ_a->set(x, frac_a);
+
+        occ_b = std::make_shared<Vector>("Beta fractional occupation", nocc_b);
+        for (size_t x = 0; x < nfzc; x++) occ_b->set(x, 1.0);
+        for (size_t x = nfzc; x < nocc_b; x++) occ_b->set(x, frac_b);
 
     } else {
         // Conventional occupations
+        nocc_a = nalpha;
         occ_a = std::make_shared<Vector>("Alpha occupation", nalpha);
         for (size_t x = 0; x < nalpha; x++) occ_a->set(x, 1.0);
+
+        nocc_b = nbeta;
         occ_b = std::make_shared<Vector>("Beta occupation", nbeta);
         for (size_t x = 0; x < nbeta; x++) occ_b->set(x, 1.0);
     }
 
-    auto Ca_occ = std::make_shared<Matrix>("Ca occupied", norbs, nalpha);
-    auto Cb_occ = std::make_shared<Matrix>("Cb occupied", norbs, nbeta);
+    auto Ca_occ = std::make_shared<Matrix>("Ca occupied", norbs, nocc_a);
+    auto Cb_occ = std::make_shared<Matrix>("Cb occupied", norbs, nocc_b);
 
     // Compute initial Cx, Dx, and D from core guess
-    form_C_and_D(nalpha, norbs, X, H, Ca, Ca_occ, occ_a, Da);
-    form_C_and_D(nbeta, norbs, X, H, Cb, Cb_occ, occ_b, Db);
+    form_C_and_D(X, H, Ca, Ca_occ, occ_a, Da);
+    form_C_and_D(X, H, Cb, Cb_occ, occ_b, Db);
 
     D->zero();
     D->add(Da);
@@ -435,6 +451,7 @@ void SADGuess::get_uhf_atomic_density(std::shared_ptr<BasisSet> bas, std::shared
     double E_tol = options_.get_double("SAD_E_CONVERGENCE");
     double D_tol = options_.get_double("SAD_D_CONVERGENCE");
     int sad_maxiter = options_.get_int("SAD_MAXITER");
+    bool diis_rms = options_.get_bool("DIIS_RMS_ERROR");
 
     double E_old = E;
     int iteration = 0;
@@ -479,9 +496,9 @@ void SADGuess::get_uhf_atomic_density(std::shared_ptr<BasisSet> bas, std::shared
     // Print a header
     bool converged = false;
     if (print_ > 1) {
+        std::string measure = diis_rms ? "RMS |[F,P]|  " : "MAX |[F,P]|  ";
         outfile->Printf("\n  Initial Atomic UHF Energy:    %14.10f\n\n", E);
-        outfile->Printf(
-            "                                         Total Energy            Delta E              Density RMS\n\n");
+        outfile->Printf("  %33s %20s    %20s %20s\n", "","Total Energy   ","Delta E   ",measure.c_str());
     }
 
     // Run the iterations
@@ -513,17 +530,18 @@ void SADGuess::get_uhf_atomic_density(std::shared_ptr<BasisSet> bas, std::shared
         double deltaE = std::fabs(E - E_old);
 
         // Build Gradient
-        form_gradient(norbs, gradient_a, Fa, Da, S, X);
-        form_gradient(norbs, gradient_b, Fb, Db, S, X);
-        double Drms = 0.5 * (gradient_a->rms() + gradient_b->rms());
+        form_gradient(gradient_a, Fa, Da, S, X);
+        form_gradient(gradient_b, Fb, Db, S, X);
+        double Dnorm = diis_rms ? std::sqrt(0.5 * (std::pow(gradient_a->rms(), 2) + std::pow(gradient_b->rms(), 2)))
+                                : std::max(gradient_a->absmax(), gradient_b->absmax());
 
         // Add and extrapolate DIIS
         diis_manager.add_entry(4, gradient_a.get(), gradient_b.get(), Fa.get(), Fb.get());
         diis_manager.extrapolate(2, Fa.get(), Fb.get());
 
         // Diagonalize Fa and Fb to from Ca and Cb and Da and Db
-        form_C_and_D(nalpha, norbs, X, Fa, Ca, Ca_occ, occ_a, Da);
-        form_C_and_D(nbeta, norbs, X, Fb, Cb, Cb_occ, occ_b, Db);
+        form_C_and_D(X, Fa, Ca, Ca_occ, occ_a, Da);
+        form_C_and_D(X, Fb, Cb, Cb_occ, occ_b, Db);
 
         // Form D
         D->copy(Da);
@@ -541,10 +559,12 @@ void SADGuess::get_uhf_atomic_density(std::shared_ptr<BasisSet> bas, std::shared
         }
         if (print_ > 1)
             outfile->Printf("  @Atomic UHF iteration %3d energy: %20.14f    %20.14f %20.14f\n", iteration, E, E - E_old,
-                            Drms);
+                            Dnorm);
 
         // Check convergence
-        if (iteration > 1 && deltaE < E_tol && Drms < D_tol) converged = true;
+        if (iteration > 1) {
+            converged = (deltaE < E_tol && Dnorm < D_tol);
+        }
 
         if (iteration > sad_maxiter) {
             outfile->Printf(
@@ -557,8 +577,8 @@ void SADGuess::get_uhf_atomic_density(std::shared_ptr<BasisSet> bas, std::shared
     if (converged && print_ > 1)
         outfile->Printf("  @Atomic UHF Final Energy for atom %s: %20.14f\n", mol->symbol(0).c_str(), E);
 }
-void SADGuess::form_gradient(int norbs, SharedMatrix grad, SharedMatrix F, SharedMatrix D, SharedMatrix S,
-                             SharedMatrix X) {
+void SADGuess::form_gradient(SharedMatrix grad, SharedMatrix F, SharedMatrix D, SharedMatrix S, SharedMatrix X) {
+    int norbs = X->rowdim();
     auto Scratch1 = std::make_shared<Matrix>("Scratch1", norbs, norbs);
     auto Scratch2 = std::make_shared<Matrix>("Scratch2", norbs, norbs);
 
@@ -582,8 +602,10 @@ void SADGuess::form_gradient(int norbs, SharedMatrix grad, SharedMatrix F, Share
     Scratch2.reset();
 }
 
-void SADGuess::form_C_and_D(int nocc, int norbs, SharedMatrix X, SharedMatrix F, SharedMatrix C, SharedMatrix Cocc,
-                            SharedVector occ, SharedMatrix D) {
+void SADGuess::form_C_and_D(SharedMatrix X, SharedMatrix F, SharedMatrix C, SharedMatrix Cocc, SharedVector occ,
+                            SharedMatrix D) {
+    int norbs = X->rowdim();
+    int nocc = occ->dim();
     if (nocc == 0) return;
 
     // Forms C in the AO basis for SAD Guesses
@@ -608,7 +630,7 @@ void SADGuess::form_C_and_D(int nocc, int norbs, SharedMatrix X, SharedMatrix F,
     }
     // Scale by occ
     for (int i = 0; i < nocc; i++) {
-        C_DSCAL(norbs, occ->get(i), &Cp[0][i], nocc);
+        C_DSCAL(norbs, occ->get(i), &Coccp[0][i], nocc);
     }
     // Form D = Cocc*Cocc'
     D->gemm(false, true, 1.0, Cocc, Cocc, 0.0);

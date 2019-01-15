@@ -42,6 +42,8 @@
 #include "psi4/libscf_solver/sad.h"
 
 using namespace psi;
+namespace py = pybind11;
+using namespace pybind11::literals;
 
 void export_fock(py::module &m) {
     py::class_<JK, std::shared_ptr<JK>>(m, "JK", "docstring")
@@ -49,8 +51,15 @@ void export_fock(py::module &m) {
                     [](std::shared_ptr<BasisSet> basis, std::shared_ptr<BasisSet> aux) {
                         return JK::build_JK(basis, aux, Process::environment.options);
                     })
+        .def_static("build_JK",
+                    [](std::shared_ptr<BasisSet> basis, std::shared_ptr<BasisSet> aux, bool do_wK, size_t doubles) {
+                        return JK::build_JK(basis, aux, Process::environment.options, do_wK, doubles);
+                    })
+        .def("name", &JK::name)
+        .def("memory_estimate", &JK::memory_estimate)
         .def("initialize", &JK::initialize)
         .def("basisset", &JK::basisset)
+        .def("set_print", &JK::set_print)
         .def("set_cutoff", &JK::set_cutoff)
         .def("set_memory", &JK::set_memory)
         .def("set_omp_nthread", &JK::set_omp_nthread)
@@ -77,6 +86,9 @@ void export_fock(py::module &m) {
         .def("wK", &JK::wK, py::return_value_policy::reference_internal)
         .def("D", &JK::D, py::return_value_policy::reference_internal)
         .def("print_header", &JK::print_header, "docstring");
+
+    py::class_<MemDFJK, std::shared_ptr<MemDFJK>, JK>(m, "MemDFJK", "docstring")
+        .def("dfh", &MemDFJK::dfh, "Return the DFHelper object.");
 
     py::class_<LaplaceDenominator, std::shared_ptr<LaplaceDenominator>>(m, "LaplaceDenominator", "docstring")
         .def(py::init<std::shared_ptr<Vector>, std::shared_ptr<Vector>, double>())
@@ -110,7 +122,7 @@ void export_fock(py::module &m) {
     py::class_<SOMCSCF, std::shared_ptr<SOMCSCF>>(m, "SOMCSCF", "docstring")
         // .def(init<std::shared_ptr<JK>, SharedMatrix, SharedMatrix >())
         .def("Ck", &SOMCSCF::Ck)
-        .def("form_rotation_matrix", &SOMCSCF::form_rotation_matrix, py::arg("x"), py::arg("order") = 2)
+        .def("form_rotation_matrix", &SOMCSCF::form_rotation_matrix, "x"_a, "order"_a = 2)
         .def("rhf_energy", &SOMCSCF::rhf_energy)
         .def("update", &SOMCSCF::update)
         .def("approx_solve", &SOMCSCF::approx_solve)
@@ -155,8 +167,7 @@ void export_fock(py::module &m) {
         .def("add_space", &DFHelper::add_space)
         .def("initialize", &DFHelper::initialize)
         .def("print_header", &DFHelper::print_header)
-        .def("add_transformation", &DFHelper::add_transformation, py::arg("name"), py::arg("key1"), py::arg("key2"),
-             py::arg("order") = "Qpq")
+        .def("add_transformation", &DFHelper::add_transformation, "name"_a, "key1"_a, "key2"_a, "order"_a = "Qpq")
         .def("transform", &DFHelper::transform)
         .def("clear_spaces", &DFHelper::clear_spaces)
         .def("clear_all", &DFHelper::clear_all)
