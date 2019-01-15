@@ -192,6 +192,13 @@ configure_file(run_psi4.py psi4 @ONLY)
 install(PROGRAMS ${CMAKE_BINARY_DIR}/psi4
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
 
+if(WIN32)
+    # Generate a batch script, which wraps "bin/psi4" script to "python bin/psi4"
+    configure_file(psi4.bat psi4.bat @ONLY)
+    install(PROGRAMS ${CMAKE_BINARY_DIR}/psi4.bat
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
+endif()
+
     # <<<  install lib/  >>>
 install(DIRECTORY share/psi4/
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/psi4
@@ -221,7 +228,10 @@ install(FILES ../tests/pytest/conftest.py
               ../tests/pytest/test_molecule_to_string.py
               ../tests/pytest/test_matrix.py
               ../tests/pytest/test_qcvars.py
+              ../tests/pytest/test_dft_benchmarks.py
               ../tests/pytest/test_vibanalysis.py
+              ../tests/pytest/test_dftd3.py
+              ../tests/pytest/test_fcidump_energy.py
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}${PYMOD_INSTALL_LIBDIR}/psi4/tests/)
 
     # <<<  install psi4 share/ & include/  >>>

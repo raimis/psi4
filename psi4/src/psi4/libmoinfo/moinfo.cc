@@ -113,7 +113,7 @@ void MOInfo::read_info() {
     read_data();
     nmo = ref_wfn.nmo();
     compute_number_of_electrons();
-    scf_energy = ref_wfn.reference_energy();
+    scf_energy = ref_wfn.energy();
     mopi = convert_int_array_to_vector(nirreps, ref_wfn.nmopi());
     SharedMatrix matCa = ref_wfn.Ca();
     scf = block_matrix(nso, nmo);
@@ -254,9 +254,9 @@ void MOInfo::read_mo_spaces() {
         intvec fvir_ref;
         //        intvec actv_docc_ref;
 
-        focc_ref = convert_int_array_to_vector(nirreps, ref_wfn.frzcpi());
-        docc_ref = convert_int_array_to_vector(nirreps, ref_wfn.doccpi());
-        actv_ref = convert_int_array_to_vector(nirreps, ref_wfn.soccpi());
+        focc_ref = convert_int_array_to_vector(nirreps_ref, ref_wfn.frzcpi());
+        docc_ref = convert_int_array_to_vector(nirreps_ref, ref_wfn.doccpi());
+        actv_ref = convert_int_array_to_vector(nirreps_ref, ref_wfn.soccpi());
         fvir_ref.assign(nirreps_ref, 0);
         //        actv_docc_ref.assign(nirreps_ref,0);
 

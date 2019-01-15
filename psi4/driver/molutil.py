@@ -26,7 +26,6 @@
 # @END LICENSE
 #
 """Module with utility functions that act on molecule objects."""
-from __future__ import absolute_import
 
 import numpy as np
 import qcelemental as qcel
@@ -114,6 +113,9 @@ def molecule_from_arrays(cls,
                          fragment_multiplicities=None,
                          molecular_charge=None,
                          molecular_multiplicity=None,
+                         comment=None,
+                         provenance=None,
+                         connectivity=None,
                          missing_enabled_return='error',
                          tooclose=0.1,
                          zero_ghost_fragments=False,
@@ -156,6 +158,9 @@ def molecule_from_arrays(cls,
         fragment_multiplicities=fragment_multiplicities,
         molecular_charge=molecular_charge,
         molecular_multiplicity=molecular_multiplicity,
+        comment=comment,
+        provenance=provenance,
+        connectivity=connectivity,
         domain='qm',
         missing_enabled_return=missing_enabled_return,
         tooclose=tooclose,

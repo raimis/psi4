@@ -89,6 +89,7 @@ void HF::common_init() {
     attempt_number_ = 1;
     ref_C_ = false;
     reset_occ_ = false;
+    sad_ = false;
 
     // This quantity is needed fairly soon
     nirrep_ = factory_->nirrep();
@@ -256,8 +257,6 @@ void HF::common_init() {
         potential_ = nullptr;
     }
 
-
-
     // -D is zero by default
     set_scalar_variable("-D Energy", 0.0);
     energies_["-D"] = 0.0;
@@ -343,45 +342,20 @@ void HF::rotate_orbitals(SharedMatrix C, const SharedMatrix x) {
     U.reset();
     tmp.reset();
 }
-void HF::initialize_jk(size_t effective_memory_doubles) {
-    if (print_) outfile->Printf("  ==> Integral Setup <==\n\n");
-
+void HF::initialize_gtfock_jk() {
     // Build the JK from options, symmetric type
-    if (options_.get_str("SCF_TYPE") == "GTFOCK") {
 #ifdef HAVE_JK_FACTORY
-        // DGAS is adding to the ghetto, this Python -> C++ -> C -> C++ -> back to C is FUBAR
-        std::shared_ptr<Molecule> other_legacy = Process::environment.legacy_molecule();
-        Process::environment.set_legacy_molecule(molecule_);
-        if (options_.get_bool("SOSCF"))
-            jk_ = std::make_shared<GTFockJK>(basisset_, 2, false);
-        else
-            jk_ = std::make_shared<GTFockJK>(basisset_, 2, true);
-        Process::environment.set_legacy_molecule(other_legacy);
+    // DGAS is adding to the ghetto, this Python -> C++ -> C -> C++ -> back to C is FUBAR
+    std::shared_ptr<Molecule> other_legacy = Process::environment.legacy_molecule();
+    Process::environment.set_legacy_molecule(molecule_);
+    if (options_.get_bool("SOSCF"))
+        jk_ = std::make_shared<GTFockJK>(basisset_, 2, false);
+    else
+        jk_ = std::make_shared<GTFockJK>(basisset_, 2, true);
+    Process::environment.set_legacy_molecule(other_legacy);
 #else
-        throw PSIEXCEPTION("GTFock was not compiled in this version.\n");
+    throw PSIEXCEPTION("GTFock was not compiled in this version.\n");
 #endif
-    } else {
-        jk_ = JK::build_JK(get_basisset("ORBITAL"), get_basisset("DF_BASIS_SCF"), options_, functional_->is_x_lrc(),
-                           effective_memory_doubles);
-    }
-
-    // Tell the JK to print
-    jk_->set_print(print_);
-    // Give the JK 75% of the memory
-    jk_->set_memory(effective_memory_doubles);
-
-    // DFT sometimes needs custom stuff
-    // K matrices
-    jk_->set_do_K(functional_->is_x_hybrid());
-    // wK matrices
-    jk_->set_do_wK(functional_->is_x_lrc());
-    // w Value
-    jk_->set_omega(functional_->x_omega());
-
-    // Initialize
-    jk_->initialize();
-    // Print the header
-    jk_->print_header();
 }
 
 void HF::finalize() {
@@ -504,8 +478,8 @@ void HF::print_header() {
     outfile->Printf("\n");
     outfile->Printf("         ---------------------------------------------------------\n");
     outfile->Printf("                                   SCF\n");
-    outfile->Printf("            by Justin Turney, Rob Parrish, Andy Simmonett\n");
-    outfile->Printf("                             and Daniel Smith\n");
+    outfile->Printf("               by Justin Turney, Rob Parrish, Andy Simmonett\n");
+    outfile->Printf("                          and Daniel G. A. Smith\n");
     outfile->Printf("                             %4s Reference\n", options_.get_str("REFERENCE").c_str());
     outfile->Printf("                      %3d Threads, %6ld MiB Core\n", nthread, memory_ / 1048576L);
     outfile->Printf("         ---------------------------------------------------------\n");
@@ -743,7 +717,7 @@ void HF::form_Shalf() {
     for (int h = 0; h < nirrep_; ++h) {
         for (int i = 0; i < dimpi[h]; ++i) {
             if (min_S > eigval->get(h, i)) min_S = eigval->get(h, i);
-            double scale = 1.0 / sqrt(eigval->get(h, i));
+            double scale = 1.0 / std::sqrt(eigval->get(h, i));
             eigval->set(h, i, scale);
         }
     }
@@ -773,7 +747,7 @@ void HF::form_Shalf() {
             int start_index = 0;
             for (int i = 0; i < dimpi[h]; ++i) {
                 if (S_cutoff < eigval->get(h, i)) {
-                    double scale = 1.0 / sqrt(eigval->get(h, i));
+                    double scale = 1.0 / std::sqrt(eigval->get(h, i));
                     eigvec->scale_column(h, i, scale);
                 } else {
                     start_index++;
@@ -1015,14 +989,9 @@ void HF::guess() {
     // ref_C_-C matrices were detected in the incoming wavefunction
     // "CORE"-CORE Hamiltonain
     // "GWH"-Generalized Wolfsberg-Helmholtz
-    // "SAD"-Superposition of Atomic Denisties
+    // "SAD"-Superposition of Atomic Densities
     std::string guess_type = options_.get_str("GUESS");
 
-    // DGAS broke SAD
-    // if (guess_type == "SAD"){
-    //     outfile->Printf("\nWarning! SAD is temporarily broken, switching to CORE!\n\n");
-    //     guess_type = "CORE";
-    // }
     // Take care of options that should be overridden
     if (guess_type == "AUTO") {
         outfile->Printf("\nWarning! Guess was AUTO, switching to CORE!\n\n");
@@ -1089,17 +1058,29 @@ void HF::guess() {
         format_guess();
         form_D();
 
-        // This is a guess iteration similar to SAD
+        // This is a guess iteration: orbital occupations may be reset in SCF
         iteration_ = -1;
         guess_E = compute_initial_E();
 
     } else if (guess_type == "SAD") {
         if (print_) outfile->Printf("  SCF Guess: Superposition of Atomic Densities via on-the-fly atomic UHF.\n\n");
 
-        // Superposition of Atomic Density
-        iteration_ = -1;
-        reset_occ_ = true;
+        // Superposition of Atomic Density. Modified by Susi Lehtola
+        // 2018-12-15 to work also for ROHF, as well as to allow using
+        // SAD with predefined orbital occupations. The algorithm is
+        // the same as in van Lenthe et al, "Starting SCF Calculations
+        // by Superposition of Atomic Densities", J Comput Chem 27,
+        // 926 (2006).
+
+        // Build non-idempotent, spin-restricted SAD density matrix
         compute_SAD_guess();
+
+        // This is a guess iteration: orbital occupations must be
+        // reset in SCF.
+        iteration_ = -1;
+        // SAD doesn't yield orbitals so also the SCF logic is
+        // slightly different for the first iteration.
+        sad_ = true;
         guess_E = compute_initial_E();
 
     } else if (guess_type == "GWH") {
@@ -1121,7 +1102,6 @@ void HF::guess() {
         }
         Fb_->copy(Fa_);
         form_initial_C();
-        find_occupation();
         form_D();
         guess_E = compute_initial_E();
 
@@ -1132,7 +1112,6 @@ void HF::guess() {
         Fb_->copy(H_);
 
         form_initial_C();
-        find_occupation();
         form_D();
         guess_E = compute_initial_E();
     } else {

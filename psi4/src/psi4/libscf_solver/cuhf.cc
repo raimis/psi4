@@ -68,7 +68,7 @@ CUHF::CUHF(SharedWavefunction ref_wfn, std::shared_ptr<SuperFunctional> func, Op
 CUHF::~CUHF() {}
 
 void CUHF::common_init() {
-    Drms_ = 0.0;
+    name_ = "CUHF";
 
     Fa_ = SharedMatrix(factory_->create_matrix("F alpha"));
     Fb_ = SharedMatrix(factory_->create_matrix("F beta"));
@@ -202,9 +202,22 @@ void CUHF::compute_spin_contamination() {
     outfile->Printf("  @S^2 Observed:              %8.5F\n", S2 + dS);
 }
 
-void CUHF::form_initialF() {
+void CUHF::form_initial_F() {
+    // Form the initial Fock matrix to get initial orbitals
+    Fp_->copy(J_);
+    Fp_->scale(2.0);
+    Fp_->subtract(Ka_);
+    Fp_->subtract(Kb_);
+    Fp_->scale(0.5);
+
     Fa_->copy(H_);
-    Fb_->copy(H_);
+    for (const auto& Vext : external_potentials_) {
+        Fa_->add(Vext);
+    }
+    Fa_->add(Fp_);
+
+    // Just reuse alpha for beta
+    Fb_->copy(Fa_);
 
     if (debug_) {
         outfile->Printf("Initial Fock alpha matrix:\n");
@@ -277,10 +290,16 @@ void CUHF::form_F() {
 
     // Build the modified alpha and beta Fock matrices
     Fa_->copy(H_);
+    for (const auto& Vext : external_potentials_) {
+        Fa_->add(Vext);
+    }
     Fa_->add(Fp_);
     Fa_->add(Fm_);
 
     Fb_->copy(H_);
+    for (const auto& Vext : external_potentials_) {
+        Fb_->add(Vext);
+    }
     Fb_->add(Fp_);
     Fb_->subtract(Fm_);
 
@@ -358,9 +377,6 @@ double CUHF::compute_orbital_gradient(bool save_diis, int max_diis_vectors) {
     SharedMatrix grad_a = form_FDSmSDF(Fa_, Da_);
     SharedMatrix grad_b = form_FDSmSDF(Fb_, Db_);
 
-    // Store the RMS gradient for convergence checking
-    double Drms = 0.5 * (grad_a->rms() + grad_b->rms());
-
     if (save_diis) {
         if (initialized_diis_manager_ == false) {
             diis_manager_ = std::make_shared<DIISManager>(max_diis_vectors, "HF DIIS vector", DIISManager::LargestError,
@@ -372,7 +388,11 @@ double CUHF::compute_orbital_gradient(bool save_diis, int max_diis_vectors) {
 
         diis_manager_->add_entry(4, grad_a.get(), grad_b.get(), Fa_.get(), Fb_.get());
     }
-    return Drms;
+
+    if (options_.get_bool("DIIS_RMS_ERROR"))
+        return std::sqrt(0.5 * (std::pow(grad_a->rms(), 2) + std::pow(grad_b->rms(), 2)));
+    else
+        return std::max(grad_a->absmax(), grad_b->absmax());
 }
 
 bool CUHF::diis() { return diis_manager_->extrapolate(2, Fa_.get(), Fb_.get()); }
