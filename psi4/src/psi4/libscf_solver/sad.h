@@ -47,9 +47,6 @@ class SADGuess {
     std::vector<std::shared_ptr<BasisSet>> atomic_fit_bases_;
     SharedMatrix AO2SO_;
 
-    int nalpha_;
-    int nbeta_;
-
     Options& options_;
 
     SharedMatrix Da_;
@@ -62,16 +59,15 @@ class SADGuess {
     SharedMatrix form_D_AO();
     void form_gradient(SharedMatrix grad, SharedMatrix F, SharedMatrix D, SharedMatrix S, SharedMatrix X);
     void get_uhf_atomic_density(std::shared_ptr<BasisSet> atomic_basis, std::shared_ptr<BasisSet> fit_basis,
-                                int n_electrons, int multiplicity, SharedMatrix D);
-    void form_C_and_D(SharedMatrix X, SharedMatrix F, SharedMatrix C, SharedMatrix Cocc,
-                      SharedVector occ, SharedMatrix D);
+                                SharedVector occ_a, SharedVector occ_b, SharedMatrix D);
+    void form_C_and_D(SharedMatrix X, SharedMatrix F, SharedMatrix C, SharedMatrix Cocc, SharedVector occ,
+                      SharedMatrix D);
 
     void form_D();
     void form_C();
 
    public:
-    SADGuess(std::shared_ptr<BasisSet> basis, std::vector<std::shared_ptr<BasisSet>> atomic_bases, int nalpha,
-             int nbeta, Options& options);
+    SADGuess(std::shared_ptr<BasisSet> basis, std::vector<std::shared_ptr<BasisSet>> atomic_bases, Options& options);
     virtual ~SADGuess();
 
     void compute_guess();
