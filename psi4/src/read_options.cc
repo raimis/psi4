@@ -101,15 +101,19 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
     options.add("ACTIVE", new ArrayType());
 
     /*- Specifies how many core orbitals to freeze in correlated computations.
-    ``TRUE`` will default to freezing the standard default number of core
-    orbitals.  For PSI, the standard number of core orbitals is the
-    number of orbitals in the nearest previous noble gas atom.
-    More precise control over the number of frozen orbitals can be attained
-    by using the keywords |globals__num_frozen_docc| (gives the total number
-    of orbitals to freeze, program picks the lowest-energy orbitals)
-    or |globals__frozen_docc| (gives the number of orbitals to freeze per
-    irreducible representation) -*/
-    options.add_str("FREEZE_CORE", "FALSE", "FALSE TRUE");
+    ``TRUE`` or ``1`` will default to freezing the previous noble gas shell
+    on each atom. In case of positive charges on fragments, an additional 
+    shell may be unfrozen, to ensure there are valence electrons in each 
+    fragment. With ``FALSE`` or ``0``, no electrons are frozen (with the 
+    exception of electrons treated by an ECP). With ``-1``, ``-2``, and ``-3``,
+    the user might request strict freezing of the previous first/second/third
+    noble gas shell on every atom. In this case, when there are no valence 
+    electrons, the code raises an exception. More precise control over the 
+    number of frozen orbitals can be attained by using the keywords 
+    |globals__num_frozen_docc| (gives the total number of orbitals to freeze,
+    program picks the lowest-energy orbitals) or |globals__frozen_docc| (gives
+    the number of orbitals to freeze per irreducible representation) -*/
+    options.add_str("FREEZE_CORE", "FALSE", "FALSE TRUE 1 0 -1 -2 -3");
 
     options.add("NUM_GPUS", 1);
     /*- Do use pure angular momentum basis functions?
@@ -1224,8 +1228,7 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
         options.add_double("SCF_MEM_SAFETY_FACTOR", 0.75);
         /*- SO orthogonalization: symmetric or canonical? -*/
         options.add_str("S_ORTHOGONALIZATION", "SYMMETRIC", "SYMMETRIC CANONICAL");
-        /*- Minimum S matrix eigenvalue to be used before compensating for linear
-        dependencies. -*/
+        /*- Minimum S matrix eigenvalue to allow before linear dependencies are removed. -*/
         options.add_double("S_TOLERANCE", 1E-7);
         /*- Minimum absolute value below which TEI are neglected. -*/
         options.add_double("INTS_TOLERANCE", 0.0);
@@ -1406,8 +1409,8 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
         options.add_int("DF_INTS_NUM_THREADS", 0);
         /*- IO caching for CP corrections, etc !expert -*/
         options.add_str("DF_INTS_IO", "NONE", "NONE SAVE LOAD");
-        /*- Fitting Condition !expert -*/
-        options.add_double("DF_FITTING_CONDITION", 1.0E-12);
+        /*- Fitting Condition, i.e. eigenvalue threshold for RI basis. Analogous to S_TOLERANCE !expert -*/
+        options.add_double("DF_FITTING_CONDITION", 1.0E-10);
         /*- FastDF Fitting Metric -*/
         options.add_str("DF_METRIC", "COULOMB", "COULOMB EWALD OVERLAP");
         /*- FastDF SR Ewald metric range separation parameter -*/
@@ -1434,9 +1437,9 @@ int read_options(const std::string &name, Options &options, bool suppress_printi
         /*- SCF type of SAD guess !expert -*/
         options.add_str("SAD_SCF_TYPE", "DF", "DIRECT DF");
         /*- Do force an even distribution of occupations across the last partially occupied orbital shell? !expert -*/
-        options.add_bool("SAD_FRAC_OCC", false);
-        /*- Do use spin-restricted occupations in fractional SAD? !expert -*/
-        options.add_bool("SAD_FRAC_SR_OCC", false);
+        options.add_bool("SAD_FRAC_OCC", true);
+        /*- Do use spin-averaged occupations instead of atomic ground spin state in fractional SAD? !expert -*/
+        options.add_bool("SAD_SPIN_AVERAGE", true);
         /*- Auxiliary basis for the SAD guess !expert -*/
         options.add_double("SAD_CHOL_TOLERANCE", 1E-7);
 

@@ -114,7 +114,7 @@ void ROHF::format_guess() {
 
         // Symmetric Orthogonalization
     } else {
-        Ct_ = Matrix::triplet(X_, S_, Ca_);
+        Ct_ = linalg::triplet(X_, S_, Ca_);
     }
 }
 
@@ -327,7 +327,7 @@ double ROHF::compute_orbital_gradient(bool save_diis, int max_diis_vectors) {
     SharedMatrix Cav = Ct_->get_block({dim_zero, nmopi_}, {doccpi_, doccpi_ + virpi});
 
     // Back transform MOgradient
-    SharedMatrix gradient = Matrix::triplet(Cia, MOgradient, Cav, false, false, true);
+    SharedMatrix gradient = linalg::triplet(Cia, MOgradient, Cav, false, false, true);
 
     if (save_diis) {
         if (initialized_diis_manager_ == false) {
@@ -584,15 +584,16 @@ void ROHF::Hx(SharedMatrix x, SharedMatrix ret) {
         // right_ov -= Fb_oi x_iv
         C_DGEMM('N', 'N', occpi[h], virpi[h], doccpi_[h], -0.5, Fbp[0], nmopi_[h], xp[0], virpi[h], 1.0, rightp[0],
                 virpi[h]);
+        if(soccpi_[h]){
+            // Socc terms
+            // left_av += 0.5 * x_oa.T Fb_ov
+            C_DGEMM('T', 'N', soccpi_[h], virpi[h], occpi[h], 0.5, xp[0], virpi[h], (Fbp[0] + doccpi_[h]), nmopi_[h], 1.0,
+                    leftp[doccpi_[h]], virpi[h]);
 
-        // Socc terms
-        // left_av += 0.5 * x_oa.T Fb_ov
-        C_DGEMM('T', 'N', soccpi_[h], virpi[h], occpi[h], 0.5, xp[0], virpi[h], (Fbp[0] + doccpi_[h]), nmopi_[h], 1.0,
-                leftp[doccpi_[h]], virpi[h]);
-
-        // right_oa += 0.5 * Fb_op x_ap.T
-        C_DGEMM('N', 'T', occpi[h], soccpi_[h], pvir[h], 0.5, (Fbp[0] + occpi[h]), nmopi_[h],
-                (xp[doccpi_[h]] + soccpi_[h]), virpi[h], 1.0, rightp[0], virpi[h]);
+            // right_oa += 0.5 * Fb_op x_ap.T
+            C_DGEMM('N', 'T', occpi[h], soccpi_[h], pvir[h], 0.5, (Fbp[0] + occpi[h]), nmopi_[h],
+                    (xp[doccpi_[h]] + soccpi_[h]), virpi[h], 1.0, rightp[0], virpi[h]);
+        }
     }
 
     // => Two electron part <= //
@@ -1013,7 +1014,7 @@ bool ROHF::stability_analysis() {
         std::vector<SharedMatrix> virandsoc;
         virandsoc.push_back(Ca_->get_block({zero, nsopi_}, {nalphapi_, nmopi_}));
         virandsoc.push_back(Ca_->get_block({zero, nsopi_}, {doccpi_, nalphapi_}));
-        SharedMatrix Cvir = Matrix::horzcat(virandsoc);
+        SharedMatrix Cvir = linalg::horzcat(virandsoc);
         FIJ->transform(Fa_, Cocc);
         Fij->transform(Fb_, Cocc);
 

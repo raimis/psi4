@@ -27,7 +27,7 @@
  */
 
 #include "dcft.h"
-#include "defines.h"
+#include "psi4/psifiles.h"
 #include <vector>
 #include <cmath>
 #include "psi4/liboptions/liboptions.h"
@@ -79,6 +79,14 @@ DCFTSolver::DCFTSolver(SharedWavefunction ref_wfn, Options &options) : Wavefunct
     if (options.get_str("DCFT_FUNCTIONAL") == "ODC-06" || options.get_str("DCFT_FUNCTIONAL") == "ODC-12" ||
         options.get_str("DCFT_FUNCTIONAL") == "ODC-13")
         orbital_optimized_ = true;
+
+    if (ref_wfn->same_a_b_dens())
+        name_ = "R" + options.get_str("DCFT_FUNCTIONAL");
+    else {
+        // ROHF references may have the same orbitals, if not semicanonicalized
+        same_a_b_orbs_ = false;
+        name_ = "U" + options.get_str("DCFT_FUNCTIONAL");
+    }
 
     // Sets up the memory, and orbital info
     init();
