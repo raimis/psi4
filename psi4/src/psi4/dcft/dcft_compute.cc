@@ -27,7 +27,7 @@
  */
 
 #include "dcft.h"
-#include "defines.h"
+#include "psi4/psifiles.h"
 
 #include "psi4/libdpd/dpd.h"
 #include "psi4/libpsi4util/process.h"
@@ -66,15 +66,13 @@ double DCFTSolver::compute_energy() {
         }
     }
 
-    if (options_.get_str("REFERENCE") == "RHF")
+    if (same_a_b_orbs_ == true)
         total_energy = compute_energy_RHF();
-    else if (options_.get_str("REFERENCE") == "UHF")
+    else {
+        if (reference_wavefunction_->name() == "ROHF")
+            outfile->Printf("\n\n\t**** Warning: ROHF reference, then unrestricted DCFT ****\n");
         total_energy = compute_energy_UHF();
-    else if (options_.get_str("REFERENCE") == "ROHF") {
-        outfile->Printf("\n\n\t**** Warning: ROHF reference, then unrestricted DCFT ****\n");
-        total_energy = compute_energy_UHF();
-    } else
-        throw PSIEXCEPTION("Unknown DCFT reference.");
+    }
 
     // Compute the analytic gradients, if requested
     if (options_.get_str("DERTYPE") == "FIRST") {

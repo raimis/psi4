@@ -84,6 +84,7 @@ IntegralTransform::IntegralTransform(std::shared_ptr<Wavefunction> wfn, SpaceVec
       keepDpdMoTpdm_(true),
       keepHtInts_(true),
       keepHtTpdm_(true),
+      buildMOFock_(true),
       tpdmAlreadyPresorted_(false),
       soIntTEIFile_(PSIF_SO_TEI) {
     // Implement set/get functions to customize any of this stuff.  Delayed initialization
@@ -160,6 +161,7 @@ IntegralTransform::IntegralTransform(SharedMatrix H, SharedMatrix c, SharedMatri
       keepDpdMoTpdm_(true),
       keepHtInts_(true),
       keepHtTpdm_(true),
+      buildMOFock_(true),
       tpdmAlreadyPresorted_(false),
       soIntTEIFile_(PSIF_SO_TEI) {
     memory_ = Process::environment.get_memory();
@@ -183,7 +185,7 @@ IntegralTransform::IntegralTransform(SharedMatrix H, SharedMatrix c, SharedMatri
     Cs.push_back(i);
     Cs.push_back(a);
     Cs.push_back(v);
-    Ca_ = Matrix::horzcat(Cs);
+    Ca_ = linalg::horzcat(Cs);
     Cb_ = Ca_;
     H_ = H;
 

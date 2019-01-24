@@ -47,6 +47,7 @@ void IntegralTransform::common_initialize() {
     bbIntName_ = "";
 
     keepHtInts_ = false;
+    buildMOFock_ = true;
 
     nTriSo_ = nso_ * (nso_ + 1) / 2;
     nTriMo_ = nmo_ * (nmo_ + 1) / 2;
@@ -635,7 +636,7 @@ void IntegralTransform::process_eigenvectors() {
                 std::vector<SharedMatrix> virandsoc;
                 virandsoc.push_back(Ca_->get_block({zero, sopi_}, {nalphapi_, nalphapi_ + avir}));
                 virandsoc.push_back(Ca_->get_block({zero, sopi_}, {clsdpi_, clsdpi_ + openpi_}));
-                Ca = Matrix::horzcat(virandsoc);
+                Ca = linalg::horzcat(virandsoc);
                 Ca->set_name("Alpha virtual orbitals");
             } else {
                 Ca = Ca_->get_block({zero, sopi_}, {nalphapi_, nalphapi_ + avir});
