@@ -104,6 +104,7 @@ jobs:
       # Test (ctest)
       - script: |
           ctest --build-config Debug ^
+                --timeout 3000 ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
         displayName: "Test Psi4 (ctest)"
