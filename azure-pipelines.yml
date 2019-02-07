@@ -19,10 +19,10 @@ jobs:
             echo Define pipeline variable "ctest.full" with default value "false".
             exit 1)
           echo ctest.full: %CTEST_FULL%
-          if not defined PYTEST_FULL (
-            echo Define pipeline variable "pytest.full" with default value "false".
+          if not defined PYTEST_TEST (
+            echo Define pipeline variable "pytest.test" with default value "quick".
             exit 1)
-          echo pytest.full: %PYTEST_FULL%
+          echo pytest.type: %PYTEST_TYPE%
         displayName: "Check configuration"
 
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
@@ -133,20 +133,10 @@ jobs:
         workingDirectory: $(Build.BinariesDirectory)/build
         condition: and(succeeded(), eq(variables['ctest.full'], 'true'))
 
-      # Test (pytest quick)
+      # Test (pytest)
       - script: |
           set PATH=$(Build.BinariesDirectory)\install\bin;%PATH%
           set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
-          psi4 --test quick
-        displayName: "Test Psi4 (pytest qucik)"
+          psi4 --test %PYTEST_TYPE%
+        displayName: "Test Psi4 (pytest $(pytest.type))"
         workingDirectory: $(Build.BinariesDirectory)
-        condition: and(succeeded(), eq(variables['pytest.full'], 'false'))
-
-      # Test (pytest full)
-      - script: |
-          set PATH=$(Build.BinariesDirectory)\install\bin;%PATH%
-          set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
-          psi4 --test full
-        displayName: "Test Psi4 (pytest full)"
-        workingDirectory: $(Build.BinariesDirectory)
-        condition: and(succeeded(), eq(variables['pytest.full'], 'true'))
