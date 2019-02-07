@@ -15,10 +15,11 @@ jobs:
       # Check pipeline configuration
       - script: |
           if not defined CTEST_FULL (
-            echo Define pipeline variable "ctest.full" with default value "false"
+            echo Define pipeline variable "ctest.full" with default value "false".
             exit 1)
+          echo ctest.full %CTEST_FULL%
           if not defined XXX (
-            echo Define pipeline variable "pytest.full" with default value "false"
+            echo Define pipeline variable "pytest.full" with default value "false".
             exit 1)
         displayName: "Check configuration"
 
