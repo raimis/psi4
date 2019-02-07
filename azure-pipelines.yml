@@ -12,18 +12,36 @@ jobs:
     timeoutInMinutes: 360
     steps:
 
-      # Check pipeline configuration
+      # Check ctest configuration
       - script: |
           echo Pipeline configuration:
-          if not defined CTEST_TYPE (
-            echo Define pipeline variable "ctest.type" with default value "quick".
+          if defined CTEST_TYPE (
+            echo ctest.type: %CTEST_TYPE%
+            set valid=false
+            if %CTEST_TYPE%=="quick" set valid=true
+            if %CTEST_TYPE%=="full" set valid=true
+            if %valid%=="false" (
+              echo ERROR: Allowed "ctest.type" values: "quick" and "full".
+              exit 1)
+          ) else (
+            echo ERROR: Define pipeline variable "ctest.type" with default value "quick".
             exit 1)
-          echo ctest.type: %CTEST_TYPE%
-          if not defined PYTEST_TYPE (
-            echo Define pipeline variable "pytest.type" with default value "quick".
+        displayName: "Check ctest configuration"
+
+      # Check pytest configuration
+      - script: |
+          if defined PYTEST_TYPE (
+            echo pytest.type: %PYTEST_TYPE%
+            set valid=false
+            if %PYTEST_TYPE%=="quick" set valid=true
+            if %PYTEST_TYPE%=="full" set valid=true
+            if %valid%=="false" (
+              echo ERROR: Allowed "pytest.type" values: "quick" and "full".
+              exit 1)
+          ) else (
+            echo ERROR: Define pipeline variable "pytest.type" with default value "quick".
             exit 1)
-          echo pytest.type: %PYTEST_TYPE%
-        displayName: "Check configuration"
+        displayName: "Check pytest configuration"
 
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
       - powershell: |
