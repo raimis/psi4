@@ -19,8 +19,8 @@ jobs:
             echo Define pipeline variable "ctest.full" with default value "false".
             exit 1)
           echo ctest.full: %CTEST_FULL%
-          if not defined PYTEST_TEST (
-            echo Define pipeline variable "pytest.test" with default value "quick".
+          if not defined PYTEST_TYPE (
+            echo Define pipeline variable "pytest.type" with default value "quick".
             exit 1)
           echo pytest.type: %PYTEST_TYPE%
         displayName: "Check configuration"
