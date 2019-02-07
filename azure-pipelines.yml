@@ -121,7 +121,7 @@ jobs:
                 --label-regex "%CTEST_TYPE%" ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
-        displayName: "Test Psi4 (ctest)"
+        displayName: "Test Psi4 (ctest $(ctest.type))"
         workingDirectory: $(Build.BinariesDirectory)/build
         #condition: and(succeeded(), eq(variables['ctest.type'], 'quick'))
 
