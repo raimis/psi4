@@ -12,6 +12,12 @@ jobs:
     timeoutInMinutes: 90
     steps:
 
+      # Check pipeline configuration
+      - script: |
+          :: comment
+          if not defined XXX exit 1
+        displayName: "Check configuration"
+
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
       - powershell: |
           Set-ExecutionPolicy Bypass -Scope Process -Force
