@@ -15,10 +15,10 @@ jobs:
       # Check pipeline configuration
       - script: |
           echo Pipeline configuration:
-          if not defined CTEST_FULL (
-            echo Define pipeline variable "ctest.full" with default value "false".
+          if not defined CTEST_TYPE (
+            echo Define pipeline variable "ctest.type" with default value "quick".
             exit 1)
-          echo ctest.full: %CTEST_FULL%
+          echo ctest.type: %CTEST_TYPE%
           if not defined PYTEST_TYPE (
             echo Define pipeline variable "pytest.type" with default value "quick".
             exit 1)
@@ -114,24 +114,16 @@ jobs:
         displayName: "Test Psi4 (OpenMP)"
         workingDirectory: $(Build.BinariesDirectory)/install/lib
 
-      # Test (ctest quick)
+      # Test (ctest)
       - script: |
+          if %CTEST_TYPE% == "full" set CTEST_TYPE=.*
           ctest --build-config Debug ^
-                --label-regex quick ^
+                --label-regex "%CTEST_TYPE%" ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
-        displayName: "Test Psi4 (ctest quick)"
+        displayName: "Test Psi4 (ctest)"
         workingDirectory: $(Build.BinariesDirectory)/build
-        condition: and(succeeded(), eq(variables['ctest.full'], 'false'))
-
-      # Test (ctest full)
-      - script: |
-          ctest --build-config Debug ^
-                --output-on-failure ^
-                --parallel %NUMBER_OF_PROCESSORS%
-        displayName: "Test Psi4 (ctest full)"
-        workingDirectory: $(Build.BinariesDirectory)/build
-        condition: and(succeeded(), eq(variables['ctest.full'], 'true'))
+        #condition: and(succeeded(), eq(variables['ctest.type'], 'quick'))
 
       # Test (pytest)
       - script: |
