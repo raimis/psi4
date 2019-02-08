@@ -138,7 +138,7 @@ jobs:
       # Test (ctest)
       - script: |
           setlocal EnableDelayedExpansion
-          if %CTEST_TYPE%=="full" set CTEST_TYPE=".*"
+          if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
           echo !CTEST_TYPE!
           echo "!CTEST_TYPE!"
           ctest --build-config Debug ^
