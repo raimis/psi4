@@ -12,10 +12,9 @@ jobs:
     timeoutInMinutes: 360
     steps:
 
-      # Check cmake configuration (build type)
+      # Check cmake configuration
       - script: |
           setlocal EnableDelayedExpansion
-          echo Pipeline configuration:
           if defined CMAKE_BUILD_TYPE (
             echo cmake.build_type: %CMAKE_BUILD_TYPE%
             set VALID=false
@@ -29,7 +28,7 @@ jobs:
             echo ERROR: Pipeline variable "cmake.build_type" is undefined. Define "ctest.type" with default value "Debug".
             exit 1
           )
-        displayName: "Check ctest configuration"
+        displayName: "Check cmake configuration"
 
 
       # Check ctest configuration
