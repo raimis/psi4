@@ -14,6 +14,10 @@ jobs:
 
       # Check ctest configuration
       - script: |
+          if %CTEST_TYPE%=="full" set CTEST_TYPE=.*
+          echo %CTEST_TYPE%
+          echo "%CTEST_TYPE%"
+          echo ""%CTEST_TYPE%""
           echo Pipeline configuration:
           if defined CTEST_TYPE (
             echo ctest.type: %CTEST_TYPE%
@@ -134,7 +138,7 @@ jobs:
 
       # Test (ctest)
       - script: |
-          if %CTEST_TYPE% == "full" set CTEST_TYPE=.*
+          if %CTEST_TYPE%=="full" set CTEST_TYPE=.*
           echo %CTEST_TYPE%
           echo "%CTEST_TYPE%"
           echo ""%CTEST_TYPE%""
