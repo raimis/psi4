@@ -12,6 +12,26 @@ jobs:
     timeoutInMinutes: 360
     steps:
 
+      # Check cmake configuration (build type)
+      - script: |
+          setlocal EnableDelayedExpansion
+          echo Pipeline configuration:
+          if defined CMAKE_BUILD_TYPE (
+            echo cmake.build_type: %CMAKE_BUILD_TYPE%
+            set VALID=false
+            if "%CMAKE_BUILD_TYPE%"=="Debug" set VALID=true
+            if "%CMAKE_BUILD_TYPE%"=="Release" set VALID=true
+            if "!VALID!"=="false" (
+              echo ERROR: Invalid "cmake.build_type" value: "%CMAKE_BUILD_TYPE%". Valid values: "Debug" and "Release".
+              exit 1
+            )
+          ) else (
+            echo ERROR: Pipeline variable "cmake.build_type" is undefined. Define "ctest.type" with default value "Debug".
+            exit 1
+          )
+        displayName: "Check ctest configuration"
+
+
       # Check ctest configuration
       - script: |
           setlocal EnableDelayedExpansion
@@ -100,15 +120,22 @@ jobs:
 
       # Configure
       - script: |
+          setlocal EnableDelayedExpansion
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
+          if "%CMAKE_BUILD_TYPE%"=="Debug" set MAX_AM_ERI=6
+          if "%CMAKE_BUILD_TYPE%"=="Release" set MAX_AM_ERI=8
+          if not defined MAX_AM_ERI exit 1
+          if "%CMAKE_BUILD_TYPE%"=="Debug" set ENABLE_XHOST=OFF
+          if "%CMAKE_BUILD_TYPE%"=="Release" set ENABLE_XHOST=ON
+          if not defined ENABLE_XHOST exit 1
           cmake -G Ninja ^
-                -DCMAKE_BUILD_TYPE=Debug ^
+                -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% ^
                 -DCMAKE_INSTALL_PREFIX=../install ^
                 -DCMAKE_C_COMPILER=clang-cl ^
                 -DCMAKE_CXX_COMPILER=clang-cl ^
-                -DENABLE_XHOST=OFF ^
-                -DMAX_AM_ERI=6 ^
+                -DENABLE_XHOST=!ENABLE_XHOST! ^
+                -DMAX_AM_ERI=!MAX_AM_ERI! ^
                 $(Build.SourcesDirectory)
         displayName: "Configure Psi4"
         workingDirectory: $(Build.BinariesDirectory)
@@ -117,7 +144,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config %CMAKE_BUILD_TYPE% ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Build Psi4"
         workingDirectory: $(Build.BinariesDirectory)/build
@@ -126,7 +153,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config %CMAKE_BUILD_TYPE% ^
                 --target install ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Install Psi4"
