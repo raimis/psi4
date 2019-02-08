@@ -14,6 +14,8 @@ jobs:
 
       # Check ctest configuration
       - script: |
+          echo $(xxx)
+          exit 1
           setlocal EnableDelayedExpansion
           if not defined CTEST_TYPE (
             echo ERROR: Pipeline variable "ctest.type" is undefined. Define "ctest.type" with default value "quick".
