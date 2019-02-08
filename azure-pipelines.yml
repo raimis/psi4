@@ -19,6 +19,9 @@ jobs:
           echo Pipeline configuration
           if defined CTEST_TYPE (
             echo ctest.type %CTEST_TYPE%
+            set TEST_VAR=xxx
+            echo %TEST_VAR
+            echo %TEST_VAR%
             set VALID=false
             echo %VALID%
             echo ctest.type %CTEST_TYPE%
