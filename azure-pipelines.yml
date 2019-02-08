@@ -33,17 +33,21 @@ jobs:
 
       # Check pytest configuration
       - script: |
+          setlocal EnableDelayedExpansion
+          echo Pipeline configuration:
           if defined PYTEST_TYPE (
             echo pytest.type: %PYTEST_TYPE%
-            set valid=false
-            if %PYTEST_TYPE%=="quick" set valid=true
-            if %PYTEST_TYPE%=="full" set valid=true
-            if %valid%=="false" (
-              echo ERROR: Allowed "pytest.type" values: "quick" and "full".
-              exit 1)
+            set VALID=false
+            if "%PYTEST_TYPE%"=="quick" set VALID=true
+            if "%PYTEST_TYPE%"=="full" set VALID=true
+            if "!VALID!"=="false" (
+              echo ERROR: Invalid "pytest.type" value: "%PYTEST_TYPE%". Valid values: "quick" and "full".
+              exit 1
+            )
           ) else (
-            echo ERROR: Define pipeline variable "pytest.type" with default value "quick".
-            exit 1)
+            echo ERROR: Pipeline variable "pytest.type" is undefined. Define "pytest.type" with default value "quick".
+            exit 1
+          )
         displayName: "Check pytest configuration"
 
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
@@ -137,12 +141,10 @@ jobs:
 
       # Test (ctest)
       - script: |
-          if %CTEST_TYPE%=="full" set CTEST_TYPE=.*
-          echo %CTEST_TYPE%
-          echo "%CTEST_TYPE%"
-          echo ""%CTEST_TYPE%""
+          setlocal EnableDelayedExpansion
+          if %CTEST_TYPE%=="full" set CTEST_TYPE=".*"
           ctest --build-config Debug ^
-                --label-regex %CTEST_TYPE% ^
+                --label-regex !CTEST_TYPE! ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
         displayName: "Test Psi4 (ctest $(ctest.type))"
