@@ -20,8 +20,10 @@ jobs:
           if defined CTEST_TYPE (
             echo ctest.type %CTEST_TYPE%
             set valid=false
+            echo %valid%
             if "%CTEST_TYPE%"=="quick" set valid=true
             if "%CTEST_TYPE%"=="full" set valid=true
+            echo %valid%
             if "%valid%"=="false" echo bad
             if "%valid%"=="false" (
               exit 1
