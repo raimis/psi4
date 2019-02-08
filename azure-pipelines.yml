@@ -17,17 +17,17 @@ jobs:
           setlocal EnableDelayedExpansion
           ::if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
           ::echo %CTEST_TYPE%
-          echo Pipeline configuration
+          echo Pipeline configuration:
           if defined CTEST_TYPE (
-            echo ctest.type %CTEST_TYPE%
+            echo ctest.type: %CTEST_TYPE%
             set VALID=false
-            echo !VALID!
-            echo ctest.type %CTEST_TYPE%
             if "%CTEST_TYPE%"=="quick" set VALID=true
             if "%CTEST_TYPE%"=="full" set VALID=true
-            echo !VALID!
-            echo ctest.type %CTEST_TYPE%
             if "!VALID!"=="false" echo bad
+            if "!VALID!"=="false" (
+              echo bad
+              exit 1
+            )
           ) else (
             echo ERROR: Define pipeline variable "ctest.type" with default value "quick".
             exit 1
