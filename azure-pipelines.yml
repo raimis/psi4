@@ -14,8 +14,8 @@ jobs:
 
       # Check ctest configuration
       - script: |
-          if %CTEST_TYPE%=="full" echo Test 0
-          if %CTEST_TYPE%=="full" set CTEST_TYPE=".*"
+          if "%CTEST_TYPE%"=="full" echo Test 0
+          if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
           echo %CTEST_TYPE%
           echo "%CTEST_TYPE%"
           echo ""%CTEST_TYPE%""
@@ -23,17 +23,17 @@ jobs:
           if defined CTEST_TYPE echo Test 1
           if defined CTEST_TYPE (echo Test 2)
           if defined CTEST_TYPE (
-            echo Test 2
+            echo Test 3
           )
           if defined CTEST_TYPE (
             ::echo ctest.type %CTEST_TYPE%
             set valid=false
-            if %CTEST_TYPE%=="quick" set valid=true
-            if %CTEST_TYPE%=="full" set valid=true
-            if %valid%=="false" (
-              echo ERROR: Allowed "ctest.type" values: "quick" and "full".
-              exit 1
-            )
+            if "%CTEST_TYPE%"=="quick" set valid=true
+            if "%CTEST_TYPE%"=="full" set valid=true
+            ::if "%valid%"=="false" (
+            ::  echo ERROR: Allowed "ctest.type" values: "quick" and "full".
+            ::  exit 1
+            ::)
           )
           ::) else (
           ::  echo ERROR: Define pipeline variable "ctest.type" with default value "quick".
