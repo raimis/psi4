@@ -19,12 +19,12 @@ jobs:
           echo Pipeline configuration
           if defined CTEST_TYPE (
             echo ctest.type %CTEST_TYPE%
-            set valid=false
-            echo %valid%
-            if "%CTEST_TYPE%"=="quick" set valid=true
-            if "%CTEST_TYPE%"=="full" set valid=true
-            echo %valid%
-            if "%valid%"=="false" echo bad
+            set VALID=false
+            echo %VALID%
+            if "%CTEST_TYPE%"=="quick" set VALID=true
+            if "%CTEST_TYPE%"=="full" set VALID=true
+            echo %VALID%
+            if "%VALID%"=="false" echo bad
           ) else (
             echo ERROR: Define pipeline variable "ctest.type" with default value "quick".
             exit 1
