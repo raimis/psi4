@@ -14,6 +14,7 @@ jobs:
 
       # Check ctest configuration
       - script: |
+          echo $(Build.SourcesDirectory)
           echo $(xxx)
           exit 1
           setlocal EnableDelayedExpansion
