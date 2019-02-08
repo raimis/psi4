@@ -72,7 +72,7 @@ else()
 endif ()
 
 if(${ENABLE_CheMPS2})
-    find_package(CheMPS2 1.8.3 CONFIG REQUIRED)
+    find_package(CheMPS2 1.8.7 CONFIG REQUIRED)
     get_property(_loc TARGET CheMPS2::chemps2 PROPERTY LOCATION)
     list(APPEND _addons ${_loc})
     message(STATUS "${Cyan}Using CheMPS2${ColourReset}: ${_loc} (version ${CheMPS2_VERSION})")
@@ -152,7 +152,7 @@ else()
     message(STATUS "Disabled simint")
 endif()
 
-find_package(Libxc 4.0.2 CONFIG REQUIRED)
+find_package(Libxc 4.3.0 CONFIG REQUIRED)
 get_property(_loc TARGET Libxc::xc PROPERTY LOCATION)
 list(APPEND _addons ${_loc})
 message(STATUS "${Cyan}Using Libxc${ColourReset}: ${_loc} (version ${Libxc_VERSION})")
@@ -233,6 +233,9 @@ install(FILES ../tests/pytest/conftest.py
               ../tests/pytest/test_vibanalysis.py
               ../tests/pytest/test_dftd3.py
               ../tests/pytest/test_fcidump_energy.py
+              ../tests/pytest/test_solvers.py
+              ../tests/pytest/test_tdscf_products.py
+              ../tests/pytest/test_tdscf_excitations.py
         DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}${PYMOD_INSTALL_LIBDIR}/psi4/tests/)
 
     # <<<  install psi4 share/ & include/  >>>

@@ -3,7 +3,7 @@
 #
 # Psi4: an open-source quantum chemistry software package
 #
-# Copyright (c) 2007-2018 The Psi4 Developers.
+# Copyright (c) 2007-2019 The Psi4 Developers.
 #
 # The copyrights for code used from other parties are included in
 # the corresponding files.
@@ -1638,8 +1638,9 @@ def gdma(wfn, datafile=""):
     if datafile:
         commands = datafile
     else:
-        densname = wfn.name()
-        if densname == "DFT":
+        if wfn.reference_wavefunction():
+            densname = "CC"
+        else:
             densname = "SCF"
         commands = 'psi4_dma_datafile.dma'
         radii = core.get_option('GDMA', 'GDMA_RADIUS')
@@ -1681,6 +1682,12 @@ def fchk(wfn, filename):
 
     :type wfn: :py:class:`~psi4.core.Wavefunction`
     :param wfn: set of molecule, basis, orbitals from which to generate fchk file
+
+    Notes
+    -----
+    * A description of the FCHK format is http://wild.life.nctu.edu.tw/~jsyu/compchem/g09/g09ur/f_formchk.htm
+    * The allowed headers for methods are general and limited, i.e., "Total SCF|MP2|CI|CC Density",
+      so "CC" is always used for the post-HF case.
 
     :examples:
 
@@ -1738,7 +1745,8 @@ def molden(wfn, filename=None, density_a=None, density_b=None, dovirtual=None):
     >>> # [4] This WILL work, note the transformation of Da (SO->MO)
     >>> E, wfn = properties('ccsd', properties=['dipole'], return_wfn=True)
     >>> Da_so = wfn.Da()
-    >>> Da_mo = core.triplet(wfn.Ca(), Da_so, wfn.Ca(), True, False, False)
+    >>> SCa = core.doublet(wfn.S(), wfn.Ca(), False, False)
+    >>> Da_mo = core.triplet(SCa, Da_so, SCa, True, False, False)
     >>> molden(wfn, 'ccsd_no.molden', density_a=Da_mo)
 
     """

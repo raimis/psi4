@@ -3,7 +3,7 @@
  *
  * Psi4: an open-source quantum chemistry software package
  *
- * Copyright (c) 2007-2018 The Psi4 Developers.
+ * Copyright (c) 2007-2019 The Psi4 Developers.
  *
  * The copyrights for code used from other parties are included in
  * the corresponding files.
@@ -201,7 +201,7 @@ void IntegralTransform::process_spaces() {
             for (int h = 0; h < nirreps_; ++h) {
                 for (int n = 0; n < aOrbsPI[h]; ++n) {
                     if (transformationType_ == TransformationType::Restricted) {
-                        aPitzerCount = pitzerOffset + nalphapi_[h];
+                        aPitzerCount = pitzerOffset + nbetapi_[h];
                     } else {
                         aPitzerCount = pitzerOffset + nalphapi_[h];
                     }

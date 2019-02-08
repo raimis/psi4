@@ -3,7 +3,7 @@
  *
  * Psi4: an open-source quantum chemistry software package
  *
- * Copyright (c) 2007-2018 The Psi4 Developers.
+ * Copyright (c) 2007-2019 The Psi4 Developers.
  *
  * The copyrights for code used from other parties are included in
  * the corresponding files.
@@ -250,6 +250,7 @@ void export_wavefunction(py::module& m) {
         .def("reset_occupation", &scf::HF::reset_occupation, "docstring")
         .def("compute_E", &scf::HF::compute_E, "docstring")
         .def("compute_initial_E", &scf::HF::compute_initial_E, "docstring")
+        .def("rotate_orbitals", &scf::HF::rotate_orbitals, "docstring")
         .def("save_density_and_energy", &scf::HF::save_density_and_energy, "docstring")
         .def("compute_orbital_gradient", &scf::HF::compute_orbital_gradient, "docstring")
         .def("find_occupation", &scf::HF::find_occupation, "docstring")
