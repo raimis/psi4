@@ -46,7 +46,7 @@ jobs:
                         conda-verify ^
                         deepdiff ^
                         intel-openmp=2018.0.3 ^
-                        mkl-devel ^
+                        mkl-devel=2018.0.3 ^
                         mpmath ^
                         networkx ^
                         ninja ^
