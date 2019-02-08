@@ -15,21 +15,18 @@ jobs:
       # Check ctest configuration
       - script: |
           setlocal EnableDelayedExpansion
-          ::if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
-          ::echo %CTEST_TYPE%
           echo Pipeline configuration:
           if defined CTEST_TYPE (
             echo ctest.type: %CTEST_TYPE%
             set VALID=false
             if "%CTEST_TYPE%"=="quick" set VALID=true
             if "%CTEST_TYPE%"=="full" set VALID=true
-            if "!VALID!"=="false" echo bad
             if "!VALID!"=="false" (
-              echo bad
+              echo ERROR: Invalid "ctest.type" value: "%CTEST_TYPE%". Valid values: "quick" and "full".
               exit 1
             )
           ) else (
-            echo ERROR: Define pipeline variable "ctest.type" with default value "quick".
+            echo ERROR: Pipeline variable "ctest.type" is undefined. Define "ctest.type" with default value "quick".
             exit 1
           )
         displayName: "Check ctest configuration"
