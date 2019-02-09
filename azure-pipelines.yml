@@ -140,16 +140,10 @@ jobs:
           setlocal EnableDelayedExpansion
           if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
           echo !CTEST_TYPE!
-          echo "!CTEST_TYPE!"
           ctest --build-config Debug ^
                 --label-regex !CTEST_TYPE! ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS%
-          ctest --build-config Debug ^
-                --label-regex "!CTEST_TYPE!" ^
-                --output-on-failure ^
-                --parallel %NUMBER_OF_PROCESSORS%
-
         displayName: "Test Psi4 (ctest $(ctest.type))"
         workingDirectory: $(Build.BinariesDirectory)/build
 
