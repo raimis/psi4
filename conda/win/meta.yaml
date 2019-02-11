@@ -2,7 +2,8 @@
 
 package:
   name: psi4
-  version: {{ data.get('version') }}
+  #version: {{ data.get('version') }}
+  version: "0.0.0"
 
 source:
   path: ../..
