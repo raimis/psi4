@@ -12,40 +12,19 @@ jobs:
     timeoutInMinutes: 360
     steps:
 
-      # Check cmake configuration
-      - script: |
-          setlocal EnableDelayedExpansion
-          if defined CMAKE_BUILD_TYPE (
-            echo cmake.build_type: %CMAKE_BUILD_TYPE%
-            set VALID=false
-            if "%CMAKE_BUILD_TYPE%"=="Debug" set VALID=true
-            if "%CMAKE_BUILD_TYPE%"=="Release" set VALID=true
-            if "!VALID!"=="false" (
-              echo ERROR: Invalid "cmake.build_type" value: "%CMAKE_BUILD_TYPE%". Valid values: "Debug" and "Release".
-              exit 1
-            )
-          ) else (
-            echo ERROR: Pipeline variable "cmake.build_type" is undefined. Define "ctest.type" with default value "Debug".
-            exit 1
-          )
-        displayName: "Check cmake configuration"
-
-
       # Check ctest configuration
       - script: |
           setlocal EnableDelayedExpansion
-          echo Pipeline configuration:
-          if defined CTEST_TYPE (
-            echo ctest.type: %CTEST_TYPE%
-            set VALID=false
-            if "%CTEST_TYPE%"=="quick" set VALID=true
-            if "%CTEST_TYPE%"=="full" set VALID=true
-            if "!VALID!"=="false" (
-              echo ERROR: Invalid "ctest.type" value: "%CTEST_TYPE%". Valid values: "quick" and "full".
-              exit 1
-            )
-          ) else (
+          if not defined CTEST_TYPE (
             echo ERROR: Pipeline variable "ctest.type" is undefined. Define "ctest.type" with default value "quick".
+            exit 1
+          )
+          echo ctest.type: %CTEST_TYPE%
+          set VALID=false
+          if "%CTEST_TYPE%"=="quick" set VALID=true
+          if "%CTEST_TYPE%"=="full" set VALID=true
+          if "!VALID!"=="false" (
+            echo ERROR: Invalid "ctest.type" value: "%CTEST_TYPE%". Valid values: "quick" and "full".
             exit 1
           )
         displayName: "Check ctest configuration"
@@ -53,18 +32,16 @@ jobs:
       # Check pytest configuration
       - script: |
           setlocal EnableDelayedExpansion
-          echo Pipeline configuration:
-          if defined PYTEST_TYPE (
-            echo pytest.type: %PYTEST_TYPE%
-            set VALID=false
-            if "%PYTEST_TYPE%"=="quick" set VALID=true
-            if "%PYTEST_TYPE%"=="full" set VALID=true
-            if "!VALID!"=="false" (
-              echo ERROR: Invalid "pytest.type" value: "%PYTEST_TYPE%". Valid values: "quick" and "full".
-              exit 1
-            )
-          ) else (
+          if not defined PYTEST_TYPE (
             echo ERROR: Pipeline variable "pytest.type" is undefined. Define "pytest.type" with default value "quick".
+            exit 1
+          )
+          echo pytest.type: %PYTEST_TYPE%
+          set VALID=false
+          if "%PYTEST_TYPE%"=="quick" set VALID=true
+          if "%PYTEST_TYPE%"=="full" set VALID=true
+          if "!VALID!"=="false" (
+            echo ERROR: Invalid "pytest.type" value: "%PYTEST_TYPE%". Valid values: "quick" and "full".
             exit 1
           )
         displayName: "Check pytest configuration"
@@ -168,11 +145,12 @@ jobs:
       # Test (ctest)
       - script: |
           setlocal EnableDelayedExpansion
-          if %CTEST_TYPE%=="full" set CTEST_TYPE=".*"
+          if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
           ctest --build-config Debug ^
                 --label-regex !CTEST_TYPE! ^
                 --output-on-failure ^
-                --parallel %NUMBER_OF_PROCESSORS%
+                --parallel %NUMBER_OF_PROCESSORS% ^
+                --timeout 3000
         displayName: "Test Psi4 (ctest $(ctest.type))"
         workingDirectory: $(Build.BinariesDirectory)/build
         #condition: and(succeeded(), eq(variables['ctest.type'], 'quick'))
