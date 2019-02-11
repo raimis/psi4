@@ -12,6 +12,23 @@ jobs:
     timeoutInMinutes: 360
     steps:
 
+      # Check cmake configuration
+      - script: |
+          setlocal EnableDelayedExpansion
+          if not defined CMAKE_BUILD_TYPE (
+            echo ERROR: Pipeline variable "cmake.build_type" is undefined. Define "cmake.build_type" with default value "Debug".
+            exit 1
+          )
+          echo cmake.build_type: %CMAKE_BUILD_TYPE%
+          set VALID=false
+          if "%CMAKE_BUILD_TYPE%"=="Debug" set VALID=true
+          if "%CMAKE_BUILD_TYPE%"=="Release" set VALID=true
+          if "!VALID!"=="false" (
+            echo ERROR: Invalid "cmake.build_type" value: "%CMAKE_BUILD_TYPE%". Valid values: "Debug" and "Release".
+            exit 1
+          )
+        displayName: "Check cmake configuration"
+
       # Check ctest configuration
       - script: |
           setlocal EnableDelayedExpansion
@@ -146,7 +163,7 @@ jobs:
       - script: |
           setlocal EnableDelayedExpansion
           if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
-          ctest --build-config Debug ^
+          ctest --build-config %CMAKE_BUILD_TYPE% ^
                 --label-regex !CTEST_TYPE! ^
                 --output-on-failure ^
                 --parallel %NUMBER_OF_PROCESSORS% ^
