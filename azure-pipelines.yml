@@ -9,8 +9,59 @@ jobs:
   - job: 'build'
     pool:
       vmImage: 'vs2015-win2012r2'
-    timeoutInMinutes: 120
+    timeoutInMinutes: 360
     steps:
+
+      # Check cmake configuration
+      - script: |
+          setlocal EnableDelayedExpansion
+          if not defined CMAKE_BUILD_TYPE (
+            echo ERROR: Pipeline variable "cmake.build_type" is undefined. Define "cmake.build_type" with default value "Debug".
+            exit 1
+          )
+          echo cmake.build_type: %CMAKE_BUILD_TYPE%
+          set VALID=false
+          if "%CMAKE_BUILD_TYPE%"=="Debug" set VALID=true
+          if "%CMAKE_BUILD_TYPE%"=="Release" set VALID=true
+          if "!VALID!"=="false" (
+            echo ERROR: Invalid "cmake.build_type" value: "%CMAKE_BUILD_TYPE%". Valid values: "Debug" and "Release".
+            exit 1
+          )
+        displayName: "Check cmake configuration"
+
+      # Check ctest configuration
+      - script: |
+          setlocal EnableDelayedExpansion
+          if not defined CTEST_TYPE (
+            echo ERROR: Pipeline variable "ctest.type" is undefined. Define "ctest.type" with default value "quick".
+            exit 1
+          )
+          echo ctest.type: %CTEST_TYPE%
+          set VALID=false
+          if "%CTEST_TYPE%"=="quick" set VALID=true
+          if "%CTEST_TYPE%"=="full" set VALID=true
+          if "!VALID!"=="false" (
+            echo ERROR: Invalid "ctest.type" value: "%CTEST_TYPE%". Valid values: "quick" and "full".
+            exit 1
+          )
+        displayName: "Check ctest configuration"
+
+      # Check pytest configuration
+      - script: |
+          setlocal EnableDelayedExpansion
+          if not defined PYTEST_TYPE (
+            echo ERROR: Pipeline variable "pytest.type" is undefined. Define "pytest.type" with default value "quick".
+            exit 1
+          )
+          echo pytest.type: %PYTEST_TYPE%
+          set VALID=false
+          if "%PYTEST_TYPE%"=="quick" set VALID=true
+          if "%PYTEST_TYPE%"=="full" set VALID=true
+          if "!VALID!"=="false" (
+            echo ERROR: Invalid "pytest.type" value: "%PYTEST_TYPE%". Valid values: "quick" and "full".
+            exit 1
+          )
+        displayName: "Check pytest configuration"
 
       # Install Chocolatey (https://chocolatey.org/install#install-with-powershellexe)
       - powershell: |
@@ -71,15 +122,22 @@ jobs:
 
       # Configure
       - script: |
+          setlocal EnableDelayedExpansion
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           mkdir build & cd build
+          if "%CMAKE_BUILD_TYPE%"=="Debug" set MAX_AM_ERI=6
+          if "%CMAKE_BUILD_TYPE%"=="Release" set MAX_AM_ERI=8
+          if not defined MAX_AM_ERI exit 1
+          if "%CMAKE_BUILD_TYPE%"=="Debug" set ENABLE_XHOST=OFF
+          if "%CMAKE_BUILD_TYPE%"=="Release" set ENABLE_XHOST=ON
+          if not defined ENABLE_XHOST exit 1
           cmake -G Ninja ^
-                -DCMAKE_BUILD_TYPE=Debug ^
+                -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% ^
                 -DCMAKE_INSTALL_PREFIX=../install ^
                 -DCMAKE_C_COMPILER=clang-cl ^
                 -DCMAKE_CXX_COMPILER=clang-cl ^
-                -DENABLE_XHOST=OFF ^
-                -DMAX_AM_ERI=6 ^
+                -DENABLE_XHOST=!ENABLE_XHOST! ^
+                -DMAX_AM_ERI=!MAX_AM_ERI! ^
                 $(Build.SourcesDirectory)
         displayName: "Configure Psi4"
         workingDirectory: $(Build.BinariesDirectory)
@@ -88,7 +146,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config %CMAKE_BUILD_TYPE% ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Build Psi4"
         workingDirectory: $(Build.BinariesDirectory)/build
@@ -97,7 +155,7 @@ jobs:
       - script: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
           cmake --build . ^
-                --config Debug ^
+                --config %CMAKE_BUILD_TYPE% ^
                 --target install ^
                 -- -j %NUMBER_OF_PROCESSORS%
         displayName: "Install Psi4"
@@ -110,26 +168,26 @@ jobs:
         displayName: "Test Psi4 (OpenMP)"
         workingDirectory: $(Build.BinariesDirectory)/install/lib
 
-      # Test (quick ctest)
-      #
-      # Exclude failing tests:
-      #   - ci-property
-      #
+      # Test (ctest)
       - script: |
-          ctest --build-config Debug ^
-                --label-regex quick ^
+          setlocal EnableDelayedExpansion
+          if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
+          ctest --build-config %CMAKE_BUILD_TYPE% ^
+                --label-regex !CTEST_TYPE! ^
                 --output-on-failure ^
-                --parallel %NUMBER_OF_PROCESSORS%
-        displayName: "Test Psi4 (quick ctest)"
+                --parallel %NUMBER_OF_PROCESSORS% ^
+                --timeout 3000
+        displayName: "Test Psi4 (ctest $(ctest.type))"
         workingDirectory: $(Build.BinariesDirectory)/build
+        #condition: and(succeeded(), eq(variables['ctest.type'], 'quick'))
 
-      # Test (quick pytest)
+      # Test (pytest)
       - script: |
           set PATH=$(Build.BinariesDirectory)\install\bin;%PATH%
           set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
-          psi4 --test quick
-        displayName: "Test Psi4 (full pytest)"
-        workingDirectory: $(Build.BinariesDirectory)/install/bin
+          psi4 --test %PYTEST_TYPE%
+        displayName: "Test Psi4 (pytest $(pytest.type))"
+        workingDirectory: $(Build.BinariesDirectory)
 
       # Package Psi4
       - script: |
