@@ -9,14 +9,14 @@ source:
 
 requirements:
   run:
-   - deepdiff
-   - intel-openmp=2018.0.3
-   - mkl
-   - networkx
-   - numpy
-   - pytest
-   - python=3.6
-   - qcelemental
+    - deepdiff
+    - intel-openmp=2018.0.3
+    - mkl=2018.0.3
+    - networkx
+    - numpy
+    - pytest
+    - python=3.6
+    - qcelemental
 
 build:
   number: 0

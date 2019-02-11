@@ -133,7 +133,7 @@ jobs:
           if not defined ENABLE_XHOST exit 1
           cmake -G Ninja ^
                 -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% ^
-                -DCMAKE_INSTALL_PREFIX=../install ^
+                -DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install ^
                 -DCMAKE_C_COMPILER=clang-cl ^
                 -DCMAKE_CXX_COMPILER=clang-cl ^
                 -DENABLE_XHOST=!ENABLE_XHOST! ^
@@ -191,7 +191,9 @@ jobs:
 
       # Package Psi4
       - script: |
+          setlocal EnableDelayedExpansion
           set INSTALL_DIR=$(Build.BinariesDirectory)\install
+          echo !INSTALL_DIR!
           conda build --python 3.6 ^
                       conda\win
           copy /y C:\tools\miniconda3\conda-bld\win-64\psi4-*.bz2 $(Build.ArtifactStagingDirectory)
