@@ -11,11 +11,13 @@ source:
 requirements:
   run:
     - deepdiff
+    # MKL version
     - intel-openmp=2018.0.3
     - mkl=2018.0.3
     - networkx
     - numpy
     - pytest
+    # Python version
     - python=3.6
     - qcelemental
 
@@ -29,6 +31,7 @@ build:
     - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\basis       {{PREFIX}}\Lib\share\psi4\basis
     - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\plugin      {{PREFIX}}\Lib\share\psi4\plugin
     - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\quadratures {{PREFIX}}\Lib\share\psi4\quadratures
+    # Debug build only
     - copy /y {{SYSTEMROOT}}\System32\msvcp140d.dll     {{PREFIX}}
     - copy /y {{SYSTEMROOT}}\System32\vcomp140d.dll     {{PREFIX}}
     - copy /y {{SYSTEMROOT}}\System32\vcruntime140d.dll {{PREFIX}}
@@ -38,3 +41,4 @@ test:
   commands:
     - python -c "import psi4; print(psi4)"
     - python -c "import psi4; assert psi4.test('quick') == 0"
+    #- psi4 --test quick
