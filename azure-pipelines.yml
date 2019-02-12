@@ -3,8 +3,8 @@
 trigger:
   - master
 
-varialbes:
-  - mkl.version: '2018.0.3'
+variables:
+  mkl.version: '2018.0.3'
 
 jobs:
 
