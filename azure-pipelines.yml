@@ -12,7 +12,7 @@ jobs:
     timeoutInMinutes: 360
     steps:
 
-      # Check Python configuration
+      # Check Python
       - script: |
           setlocal EnableDelayedExpansion
           if not defined PYTHON_VERSION (
@@ -28,7 +28,7 @@ jobs:
             echo ERROR: Invalid "python.version" value: "%PYTHON_VERSION%". Valid values: "3.5", "3.6", and "3.7".
             exit 1
           )
-        displayName: "Check Python configuration"
+        displayName: "Check Python %PYTHON_VERSION%"
 
       # Check cmake configuration
       - script: |
