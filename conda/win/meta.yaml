@@ -23,14 +23,14 @@ build:
   number: 0
   script:
     - dir
-    - xcopy /f /i /s /exclude:%RECIPE_DIR%\exclude.txt {{ INSTALL_DIR }}\lib\psi4 %SP_DIR%\psi4
-    - xcopy /f /i /s {{ INSTALL_DIR }}\share\psi4\basis %PREFIX%\Lib\share\psi4\basis
-    - xcopy /f /i /s {{ INSTALL_DIR }}\share\psi4\plugin %PREFIX%\Lib\share\psi4\plugin
-    - xcopy /f /i /s {{ INSTALL_DIR }}\share\psi4\quadratures %PREFIX%\Lib\share\psi4\quadratures
-    - copy /y {{ SYSTEMROOT }}\System32\msvcp140d.dll %PREFIX%
-    - copy /y {{ SYSTEMROOT }}\System32\vcomp140d.dll %PREFIX%
-    - copy /y {{ SYSTEMROOT }}\System32\vcruntime140d.dll %PREFIX%
-    - copy /y {{ SYSTEMROOT }}\System32\ucrtbased.dll %PREFIX%
+    - xcopy /f /i /s /exclude:{{RECIPE_DIR}}\exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
+    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\basis       {{PREFIX}}\Lib\share\psi4\basis
+    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\plugin      {{PREFIX}}\Lib\share\psi4\plugin
+    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\quadratures {{PREFIX}}\Lib\share\psi4\quadratures
+    - copy /y {{SYSTEMROOT}}\System32\msvcp140d.dll     {{PREFIX}}
+    - copy /y {{SYSTEMROOT}}\System32\vcomp140d.dll     {{PREFIX}}
+    - copy /y {{SYSTEMROOT}}\System32\vcruntime140d.dll {{PREFIX}}
+    - copy /y {{SYSTEMROOT}}\System32\ucrtbased.dll     {{PREFIX}}
 
 test:
   commands:
