@@ -169,31 +169,28 @@ jobs:
         workingDirectory: $(Build.BinariesDirectory)/install/lib
 
       # Test (ctest)
-      - script: |
-          setlocal EnableDelayedExpansion
-          if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
-          ctest --build-config %CMAKE_BUILD_TYPE% ^
-                --label-regex !CTEST_TYPE! ^
-                --output-on-failure ^
-                --parallel %NUMBER_OF_PROCESSORS% ^
-                --timeout 3000
-        displayName: "Test Psi4 (ctest $(ctest.type))"
-        workingDirectory: $(Build.BinariesDirectory)/build
-        #condition: and(succeeded(), eq(variables['ctest.type'], 'quick'))
+#      - script: |
+#          setlocal EnableDelayedExpansion
+#          if "%CTEST_TYPE%"=="full" set CTEST_TYPE=".*"
+#          ctest --build-config %CMAKE_BUILD_TYPE% ^
+#                --label-regex !CTEST_TYPE! ^
+#                --output-on-failure ^
+#                --parallel %NUMBER_OF_PROCESSORS% ^
+#                --timeout 3000
+#        displayName: "Test Psi4 (ctest $(ctest.type))"
+#        workingDirectory: $(Build.BinariesDirectory)/build
 
       # Test (pytest)
-      - script: |
-          set PATH=$(Build.BinariesDirectory)\install\bin;%PATH%
-          set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
-          psi4 --test %PYTEST_TYPE%
-        displayName: "Test Psi4 (pytest $(pytest.type))"
-        workingDirectory: $(Build.BinariesDirectory)
+#      - script: |
+#          set PATH=$(Build.BinariesDirectory)\install\bin;%PATH%
+#          set PYTHONPATH=$(Build.BinariesDirectory)\install\lib;%PYTHONPATH%
+#          psi4 --test %PYTEST_TYPE%
+#        displayName: "Test Psi4 (pytest $(pytest.type))"
+#        workingDirectory: $(Build.BinariesDirectory)
 
       # Package Psi4
       - script: |
-          #setlocal EnableDelayedExpansion
           set INSTALL_DIR=$(Build.BinariesDirectory)\install
-          #echo !INSTALL_DIR!
           conda build --python 3.6 ^
                       conda\win
           copy /y C:\tools\miniconda3\conda-bld\win-64\psi4-*.bz2 $(Build.ArtifactStagingDirectory)
