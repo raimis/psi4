@@ -26,7 +26,7 @@ build:
   # Set then needed
   string: "debug"
   script:
-    - echo {{ data.get('version') }}
+    #- echo {{ data.get('version') }}
     - echo __pycache__ > exclude.txt
     - dir
     # Remove file
