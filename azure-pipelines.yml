@@ -27,7 +27,7 @@ jobs:
             echo ERROR: Invalid "python.version" value: "%PYTHON_VERSION%". Valid values: "3.6" and "3.7".
             exit 1
           )
-        displayName: "Check Python %PYTHON_VERSION%"
+        displayName: "Check Python version: $(python.version)"
 
       # Check cmake configuration
       - script: |
