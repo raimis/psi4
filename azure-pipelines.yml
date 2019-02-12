@@ -3,6 +3,9 @@
 trigger:
   - master
 
+varialbes:
+  - mkl.version: '2018.0.3'
+
 jobs:
 
   # Configure, build, install, and test job
@@ -96,8 +99,8 @@ jobs:
                         conda-build ^
                         conda-verify ^
                         deepdiff ^
-                        intel-openmp=2018.0.3 ^
-                        mkl-devel=2018.0.3 ^
+                        intel-openmp=%MKL_VERSION% ^
+                        mkl-devel=%MKL_VERSION% ^
                         mpmath ^
                         networkx ^
                         ninja ^
@@ -195,9 +198,11 @@ jobs:
                       conda\win
           copy /y C:\tools\miniconda3\conda-bld\win-64\psi4-*.bz2 $(Build.ArtifactStagingDirectory)
         displayName: "Package Psi4"
+        # TODO conditional
 
       # Publish conda package
       - task: PublishBuildArtifacts@1
         inputs:
           artifactName: conda
           displayName: "Publish conda package"
+          # TODO conditional

@@ -1,3 +1,4 @@
+{% import os %}
 {% set data = load_setup_py_data(setup_file='conda/_conda_vers.py') %}
 
 package:
@@ -11,34 +12,28 @@ source:
 requirements:
   run:
     - deepdiff
-    # MKL version
-    - intel-openmp=2018.0.3
-    - mkl=2018.0.3
+    - intel-openmp={{MKL_VERSION}}
+    - mkl={{MKL_VERSION}}
     - networkx
     - numpy
     - pytest
-    # Python version
-    - python=3.6
+    - python={{PY_VER}}
     - qcelemental
 
 build:
-  number: 0
-  # Set then needed
-  string: "debug"
+  string: {{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}
   script:
-    #- echo {{ data.get('version') }}
     - echo __pycache__ > exclude.txt
-    - dir
-    # Remove file
     - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
     - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\basis       {{PREFIX}}\Lib\share\psi4\basis
     - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\plugin      {{PREFIX}}\Lib\share\psi4\plugin
     - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\quadratures {{PREFIX}}\Lib\share\psi4\quadratures
-    # Debug build only
+    {% if '{{CMAKE_BUILD_TYPE}}' == 'Debug' %}
     - copy /y {{SYSTEMROOT}}\System32\msvcp140d.dll     {{PREFIX}}
     - copy /y {{SYSTEMROOT}}\System32\vcomp140d.dll     {{PREFIX}}
     - copy /y {{SYSTEMROOT}}\System32\vcruntime140d.dll {{PREFIX}}
     - copy /y {{SYSTEMROOT}}\System32\ucrtbased.dll     {{PREFIX}}
+    {% endif %}
 
 test:
   commands:
