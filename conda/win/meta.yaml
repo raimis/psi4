@@ -21,7 +21,7 @@ requirements:
     - qcelemental
 
 build:
-  string: {{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}
+  string: "{{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}"
   script:
     - echo __pycache__ > exclude.txt
     - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
