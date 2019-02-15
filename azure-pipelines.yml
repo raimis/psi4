@@ -187,7 +187,6 @@ jobs:
                 --timeout 3000
         displayName: "Test Psi4 (ctest $(ctest.type))"
         workingDirectory: $(Build.BinariesDirectory)/build
-        #condition: and(succeeded(), eq(variables['ctest.type'], 'quick'))
 
       # Test (pytest)
       - script: |
