@@ -1,5 +1,6 @@
-{% import os %}
-{% set data = load_setup_py_data(setup_file='conda\_conda_vers.py') %}
+#{% import os %}
+{% set data = load_setup_py_data(setup_file='conda/_conda_vers.py') %}
+{% print(set_data) %}
 
 package:
   name: psi4
