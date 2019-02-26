@@ -1,4 +1,4 @@
-{% import os %}
+#{% import os %}
 {% set data = load_setup_py_data(setup_file='conda/_conda_vers.py') %}
 
 package:
@@ -21,7 +21,7 @@ source:
 #    - qcelemental
 
 build:
-  string: py{{PY_VER}}_debug
+  string: py{{PY_VER}}_
   #string: py{{PY_VER}}_{{'debug' if os.environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0'}}
   #string: {{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}
   script:
@@ -30,13 +30,13 @@ build:
 #    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\basis       {{PREFIX}}\Lib\share\psi4\basis
 #    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\plugin      {{PREFIX}}\Lib\share\psi4\plugin
 #    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\quadratures {{PREFIX}}\Lib\share\psi4\quadratures
-    {% if os.environ['CMAKE_BUILD_TYPE'] == 'Debug' %}
+#    {% if os.environ['CMAKE_BUILD_TYPE'] == 'Debug' %}
      - dir
 #    - copy /y {{SYSTEMROOT}}\System32\msvcp140d.dll     {{PREFIX}}
 #    - copy /y {{SYSTEMROOT}}\System32\vcomp140d.dll     {{PREFIX}}
 #    - copy /y {{SYSTEMROOT}}\System32\vcruntime140d.dll {{PREFIX}}
 #    - copy /y {{SYSTEMROOT}}\System32\ucrtbased.dll     {{PREFIX}}
-    {% endif %}
+#    {% endif %}
 
 #test:
 #  commands:
