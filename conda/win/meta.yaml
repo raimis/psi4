@@ -21,7 +21,7 @@ source:
 #    - qcelemental
 
 build:
-  string: {{ f'py{env.PY_VER}_' }}
+  string: py{{PY_VER}}_{{'debug' if env.CMAKE_BUILD_TYPE == 'Debug' else '0'}}
   #string: {{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}
   script:
      - echo '{{CMAKE_BUILD_TYPE}}'
