@@ -3,8 +3,8 @@
 package:
   name: psi4
   #version: {{ data.get('version') }}
-  #version: {{ GIT_DESCRIBE_TAG[1:].replace('-', '_') }}
-  version: {{ GIT_DESCRIBE_TAG}}
+  #version: {{ environ['GIT_DESCRIBE_TAG'][1:].replace('-', '_') }}
+  version: {{ environ['GIT_DESCRIBE_TAG'][1:] }}
 
 source:
   path: ../..
@@ -23,7 +23,7 @@ source:
 build:
   string: py{{ PY_VER }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}
   script:
-     - echo {{ GIT_DESCRIBE_TAG }}
+     - echo {{ GIT_BUILD_STR }} {{ GIT_DESCRIBE_HASH }} {{ GIT_DESCRIBE_NUMBER }} {{ GIT_DESCRIBE_TAG }}
 #    - echo __pycache__ > exclude.txt
 #    - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
 #    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\basis       {{PREFIX}}\Lib\share\psi4\basis
