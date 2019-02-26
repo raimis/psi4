@@ -195,7 +195,7 @@ jobs:
       # Build package
       - script: |
           set INSTALL_DIR=$(Build.BinariesDirectory)\install
-          conda build --debug --python %PYTHON_VERSION% ^
+          conda build --python %PYTHON_VERSION% ^
                       conda\win
           copy /y C:\tools\miniconda3\conda-bld\win-64\psi4-*.bz2 $(Build.ArtifactStagingDirectory)
         displayName: "Build Psi4 package"
