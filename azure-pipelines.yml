@@ -112,9 +112,8 @@ jobs:
 #                        pytest-xdist ^
 #                        python=%PYTHON_VERSION% ^
 #                        qcelemental
-
-          conda list
-        displayName: "Install conda packages"
+#          conda list
+#        displayName: "Install conda packages"
 
       # Install LLVM
       # Note: LLVM distributed by conda is too old
