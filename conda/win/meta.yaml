@@ -16,11 +16,11 @@ requirements:
 #    - networkx
 #    - numpy
 #    - pytest
-    - python
+#    - python={{ PY_VER }}
 #    - qcelemental
 
 build:
-  string: {{ environ['PKG_BUILD_STRING'] + '_debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else environ['PKG_BUILD_STRING'] }}
+  string: py{{ PY_VER }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}
   script:
 #    - echo __pycache__ > exclude.txt
 #    - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
