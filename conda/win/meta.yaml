@@ -1,4 +1,4 @@
-{% import os %}
+{% import os as os %}
 {% set data = load_setup_py_data(setup_file='conda/_conda_vers.py') %}
 
 package:
