@@ -1,5 +1,5 @@
-{% import os %}
-{% set data = load_setup_py_data(setup_file='conda\_conda_vers.py') %}
+#{% import os %}
+#{% set data = load_setup_py_data(setup_file='conda\_conda_vers.py') %}
 
 package:
   name: psi4
@@ -21,9 +21,10 @@ source:
 #    - qcelemental
 
 build:
-  string: {{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}
+#  string: {{ 'py{{PY_VER}}_' + 'debug' if '{{CMAKE_BUILD_TYPE}}' == 'Debug' else '0' }}
   script:
-    - echo __pycache__ > exclude.txt
+     - dir
+#    - echo __pycache__ > exclude.txt
 #    - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
 #    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\basis       {{PREFIX}}\Lib\share\psi4\basis
 #    - xcopy /f /i /s {{INSTALL_DIR}}\share\psi4\plugin      {{PREFIX}}\Lib\share\psi4\plugin
