@@ -20,7 +20,7 @@ requirements:
 #    - qcelemental
 
 build:
-  string: py{{ PY_VER }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}
+  string: py{{ environ['PY_VER'].replace('.', '') }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}
   script:
 #    - echo __pycache__ > exclude.txt
 #    - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
@@ -37,6 +37,5 @@ build:
 
 #test:
 #  commands:
-#    - python -c "import psi4; print(psi4)"
 #    - python -c "import psi4; assert psi4.test('quick') == 0"
-    #- psi4 --test quick
+#    - psi4 --test quick

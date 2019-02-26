@@ -106,10 +106,8 @@ jobs:
 #                        networkx ^
 #                        ninja ^
 #                        numpy ^
-#                        pint ^
 #                        pybind11 ^
 #                        pytest ^
-#                        pytest-xdist ^
 #                        python=%PYTHON_VERSION% ^
 #                        qcelemental
 #          conda list
