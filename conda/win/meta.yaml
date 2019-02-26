@@ -3,7 +3,7 @@
 package:
   name: psi4
   #version: {{ data.get('version') }}
-  version: {{ GIT_DESCRIBE_TAG[:1].replace('-', '_') }}
+  version: {{ GIT_DESCRIBE_TAG[1:].replace('-', '_') }}
 
 source:
   path: ../..
