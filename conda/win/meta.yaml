@@ -1,14 +1,12 @@
-#{% import os %}
 {% set data = load_setup_py_data(setup_file='conda/_conda_vers.py') %}
-{% print(set_data) %}
 
 package:
   name: psi4
-  version: {{ data.get('version') }}
-  #version: 0.0.0
+  #version: {{ data.get('version') }}
+  version: 0.0.0
 
 source:
-  path: ..\..
+  path: ../..
 
 #requirements:
 #  run:
