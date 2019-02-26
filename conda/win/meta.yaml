@@ -3,7 +3,6 @@
 package:
   name: psi4
   version: {{ data.get('version') }}
-  #version: {{ environ['GIT_DESCRIBE_TAG'][1:] }}_{{ GIT_BUILD_STR }}
 
 source:
   path: ../..
@@ -20,7 +19,7 @@ requirements:
 #    - qcelemental
 
 build:
-  string: py{{ environ['PY_VER'].replace('.', '') }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}
+  #string: py{{ environ['PY_VER'].replace('.', '') }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}
   script:
 #    - echo __pycache__ > exclude.txt
 #    - xcopy /f /i /s /exclude:exclude.txt {{INSTALL_DIR}}\lib\psi4 {{SP_DIR}}\psi4
