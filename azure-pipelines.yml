@@ -97,7 +97,7 @@ jobs:
       # Note: conda activate doesn't work here, because it creates a new shell!
       - script: |
           conda install cmake ^
-                        conda-build ^
+                        conda-build
 #                        conda-verify ^
 #                        deepdiff ^
 #                        intel-openmp=%MKL_VERSION% ^
@@ -113,7 +113,7 @@ jobs:
 #                        python=%PYTHON_VERSION% ^
 #                        qcelemental
 #          conda list
-#        displayName: "Install conda packages"
+        displayName: "Install conda packages"
 
       # Install LLVM
       # Note: LLVM distributed by conda is too old
