@@ -8,15 +8,15 @@ package:
 source:
   path: ../..
 
-#requirements:
-#  run:
+requirements:
+  run:
 #    - deepdiff
 #    - intel-openmp={{ MKL_VERSION }}
 #    - mkl={{ MKL_VERSION }}
 #    - networkx
 #    - numpy
 #    - pytest
-#    - python={{ PY_VER }}
+    - python
 #    - qcelemental
 
 build:
