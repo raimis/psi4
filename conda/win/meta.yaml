@@ -15,7 +15,7 @@ requirements:
 #    - networkx
 #    - numpy
 #    - pytest
-#    - python={{ PY_VER }}
+    - {{ pin_compatible('python', max_pin='x.x') }}
 #    - qcelemental
 
 build:
