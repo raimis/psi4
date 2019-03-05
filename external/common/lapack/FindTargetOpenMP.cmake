@@ -80,9 +80,9 @@ else()
                 if(CMAKE_${_lang}_COMPILER_ID STREQUAL Clang)
                     unset(USE_CLANG_CL_${_lang} CACHE)
                     if(${_lang} STREQUAL C)
-                        check_c_compiler_flag("-Xclang -fopenmp=libiomp5" USE_CLANG_CL_${_lang})
+                        check_c_compiler_flag("-Xclang -fopenmp" USE_CLANG_CL_${_lang})
                     elseif(${_lang} STREQUAL CXX)
-                        check_cxx_compiler_flag("-Xclang -fopenmp=libiomp5" USE_CLANG_CL_${_lang})
+                        check_cxx_compiler_flag("-Xclang -fopenmp" USE_CLANG_CL_${_lang})
                     else()
                         message(FATAL_ERROR "clang-cl (MSVC compatability wrapper) does not support ${_lang}")
                     endif()
@@ -94,7 +94,7 @@ else()
                 endif()
 
                 # Set OpenMP compiler options and run-time library
-                set(OpenMP_${_lang}_FLAGS "-Xclang;-fopenmp=libiomp5") # This has to be preceed by "-Xclang"
+                set(OpenMP_${_lang}_FLAGS "-Xclang;-fopenmp") # This has to be preceed by "-Xclang"
                 set(OpenMP_${_lang}_LIB_NAMES "libiomp5md")
 
             else()

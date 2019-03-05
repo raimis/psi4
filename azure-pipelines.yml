@@ -126,6 +126,14 @@ jobs:
           conda list
         displayName: "Install conda packages"
 
+      - script: |
+          echo %LIB%
+          dir $(Build.SourcesDirectory)\conda\win
+          dir $(Build.SourcesDirectory)\conda\win\$(mkl.version)
+          set LIB=$(Build.SourcesDirectory)\conda\win\$(mkl.version);%LIB%
+          echo '##vso[task.setvariable variable=LIB]%LIB%'
+          echo %LIB%
+
       # Install LLVM
       # Note: LLVM distributed by conda is too old
       - script: |
