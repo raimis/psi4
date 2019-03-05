@@ -114,7 +114,7 @@ jobs:
                         conda-verify ^
                         deepdiff ^
                         intel-openmp=%MKL_VERSION% ^
-                        mkl=%MKL_VERSION% ^
+                        mkl-devel=%MKL_VERSION% ^
                         mpmath ^
                         networkx ^
                         ninja ^
@@ -123,10 +123,6 @@ jobs:
                         pytest ^
                         python=%PYTHON_VERSION% ^
                         qcelemental
-          conda install --channel intel ^
-                        --no-deps ^
-                        mkl-devel=%MKL_VERSION% ^
-                        mkl-include=%MKL_VERSION%
           conda list
         displayName: "Install conda packages"
 
