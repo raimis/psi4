@@ -95,7 +95,7 @@ else()
 
                 # Set OpenMP compiler options and run-time library
                 set(OpenMP_${_lang}_FLAGS "-Xclang;-fopenmp") # This has to be preceed by "-Xclang"
-                set(OpenMP_${_lang}_LIB_NAMES "libiomp5md")
+                set(OpenMP_${_lang}_LIB_NAMES "libomp")
 
             else()
                 if (CMAKE_${_lang}_COMPILER_ID MATCHES GNU)
@@ -121,11 +121,11 @@ else()
 
             endif()
 
-            #find_omp_libs("${PN}_${_lang}" ${OpenMP_${_lang}_LIB_NAMES})
-            #if (${PN}_${_lang}_LIBRARIES)
+            find_omp_libs("${PN}_${_lang}" ${OpenMP_${_lang}_LIB_NAMES})
+            if (${PN}_${_lang}_LIBRARIES)
                 add_library(OpenMP::OpenMP_${_lang} INTERFACE IMPORTED)
                 target_compile_options(OpenMP::OpenMP_${_lang} INTERFACE $<$<COMPILE_LANGUAGE:${_lang}>:${OpenMP_${_lang}_FLAGS}>)
-            #    target_link_libraries(OpenMP::OpenMP_${_lang} INTERFACE ${${PN}_${_lang}_LIBRARIES})
+                target_link_libraries(OpenMP::OpenMP_${_lang} INTERFACE ${${PN}_${_lang}_LIBRARIES})
                 if (NOT ${PN}_FIND_QUIETLY)
                     message (STATUS "OpenMP::OpenMP_${_lang} target constructed.")
                 endif()
