@@ -16,7 +16,7 @@ requirements:
     - numpy
     - pytest
     - python={{ PY_VER }}
-    - qcelemental
+    - {{ pin_compatible('qcelemental', max_pin='x.x') }}
 
 build:
   string: py{{ environ['PY_VER'].replace('.', '') }}_{{ 'debug' if environ['CMAKE_BUILD_TYPE'] == 'Debug' else '0' }}

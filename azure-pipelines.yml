@@ -6,6 +6,7 @@ trigger:
 
 variables:
   mkl.version: '2019.1'
+  qcelemental.version: '0.3'
 
 jobs:
 
@@ -123,7 +124,7 @@ jobs:
                         pybind11 ^
                         pytest ^
                         python=%PYTHON_VERSION% ^
-                        qcelemental
+                        qcelemental=%QCELEMENTAL_VERSION%
           conda list
         displayName: "Install conda packages"
 
