@@ -7,7 +7,7 @@ jobs:
       vmImage: 'vs2015-win2012r2'
     timeoutInMinutes: 360
     variables:
-      llvm.version: '7.0.1' # Note: LLVM 8.0.0 fails to build the optimized libint
+      llvm.version: '9.0.0'
       mkl.version: '2019.1'
     steps:
 
